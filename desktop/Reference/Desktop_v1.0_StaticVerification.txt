@@ -1,0 +1,20 @@
+QuarrelEx Desktop v1.0 - Static Verification
+============================================
+
+Checked in the current build environment (no Windows .NET 8/MSBuild runtime available):
+
+1. Project version is 1.0.0 / FileVersion 1.0.0.0.
+2. QuarrelExConfig import/export is v3-only.
+3. Import explicitly requires JSON root Schema="QuarrelExConfig" and Version=3 before deserialization/application.
+4. BattleCityRom.ValidateSharedConfig performs complete preflight validation for gameplay values, five spawn points, eight 16-color palettes, Terrain, Flag/Fort TSA, stage count/number continuity, 13x13 maps, EnemyTypes, EnemyCounts, EnemyTotal and target capability compatibility.
+5. Config import is transactional: validation/application runs on a temporary BattleCityRom; the active ROM is replaced only after success.
+6. Config export validates the generated v3 config and displays an explicit success dialog.
+7. Undo/Redo stacks are present, limited to 50 states. New edits clear Redo.
+8. Shortcuts present: Ctrl+Z Undo, Ctrl+Y Redo, Ctrl+Shift+Z Redo, Ctrl+S Save, Ctrl+Shift+S Save As, Ctrl+O Open.
+9. Save writes to the current path. Save As updates the current path and saved-state snapshot.
+10. Undo/Redo compares current bytes against the saved snapshot to update the dirty marker.
+11. Legacy v1/v2 config example files were removed from the formal project; only QuarrelExConfig_v3_Formal_example.qexcfg.json remains.
+12. All C# source files passed a lexical delimiter/string/comment balance scan.
+
+Limit:
+- This environment does not provide dotnet/MSBuild, so final WinForms compilation/runtime testing must still be performed in Visual Studio 2022 on Windows.

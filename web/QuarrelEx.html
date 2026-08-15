@@ -1,0 +1,1575 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quarrel Ex Web</title>
+<link rel="icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEACABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAo1kIALk7PgCwH3cAjA+jAFUPuQAcHrAAADiMAABZVQAAdBwACIMAAD6FAAB3dQAAAAAAAAAAAAAAAAAAwMDAAM2DMADiZGcA2UigALU4zQB+OOIARUfZABhhtQADgn4ADJ1FADCtGABnrgMAoJ4MADw8PAAAAAAAAAAAAP///wD/y3kA/6uvAP+Q6AD8gP8Axn//AI2P/wBgqvwAS8nGAFTljQB59WAAr/VLAOjmVAB4eHgAAAAAAAAAAAD///8A//ajAP/X2gD/u/8A/6v/APKr/wC4uv8Ai9X/AHf18gCA/7gAo/+LANr/dwD//4AAxcXFAAAAAAAAAAAAYGBgAHtDBgCKLC4AgxdZAGkLewA/C4oAFRaDAAAqaQAAQT8AAFcVAAZjAAAuYwAAWVcAAAAAAAAAAAAAAAAAAJCQkACZYSQAqUtNAKI2eACHKpkAXiqpADM0ogASSYcAAmFeAAl1MwAkgRIATYICAHh2CQAsLCwAAAAAAAAAAAC/v78Av5hZAL+AgwC/bK4AvWC/AJNfvwBpa78ASH+9ADiWkwA/q2kAWbdIAIO3OACurD8AWVlZAAAAAAAAAAAAv7+/AL+4ewC/oaMAv4y/AL+AvwC1gL8Aiou/AGifvwBZt7UAYL+KAHu/aACjv1kAv79gAJOTkwAAAAAAAAAAAAAAAADQ/PwAAAAAAJB0dAAAAL4AM/8zAMgOMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAJxgnGCcYJxgnGCcAAAAAACcYJxgnGCcYJxgnAAAAAAA4GBgYGBgYGBgYGAAAAAAAAAAYGBgYGBgAAAAAAAAAAAAnGCcnJycnGAAAAAAAAAAAJycnGBgYJxgAAAAAAAAAACcnOCcnGCc4ODg4OAAAAAA4Jzg4OCcnGAAAAAAAAAAAODgnJycnOBgAAAAAAAAAAAAnODg4ODgAAAAAAAAAACc4ODg4ODg4ODgnAAAAAAAnGCcYJxgnGCcYJwAAAAAAOBg4GDgYOBg4GDgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////AB///wAf//8AH///wP///4B///+Af///gAf//4B///+Af///wP///wAf//8AH///AB/////////////8=">
+<style>
+:root{font-family:"Segoe UI","Microsoft YaHei",Arial,sans-serif;color:#202124;background:#eef1f4;--line:#d8dde4;--blue:#1a73e8;--panel:#fff;--muted:#66717f}*{box-sizing:border-box}body{margin:0;min-height:100vh}.appbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:8px;margin-right:8px}.brand img{width:30px;height:30px}.brand strong{font-size:18px}.version{font-size:12px;color:var(--muted)}button,.btn,select,input{font:inherit}.btn,button{border:1px solid #aeb6c1;background:#fff;border-radius:6px;padding:6px 10px;cursor:pointer}.btn:hover,button:hover:not(:disabled){background:#f1f4f8}.primary{background:var(--blue);border-color:var(--blue);color:#fff}.primary:hover:not(:disabled){background:#155fc0}button:disabled,input:disabled{opacity:.48;cursor:not-allowed}.status{font-size:13px;color:var(--muted);min-width:160px;flex:1}.status.ok{color:#14733c}.status.bad{color:#b3261e}.status.warn{color:#946200}.dirty{color:#b3261e;font-weight:600}
+.menu{position:relative}.menu>summary{list-style:none;border:1px solid #aeb6c1;border-radius:6px;padding:6px 10px;cursor:pointer;background:#fff}.menu>summary::-webkit-details-marker{display:none}.menu[open]>summary{background:#f1f4f8}.menupop{position:absolute;right:0;top:calc(100% + 4px);min-width:250px;background:#fff;border:1px solid var(--line);box-shadow:0 6px 20px #0002;border-radius:7px;padding:5px;z-index:30}.menupop button{width:100%;border:0;text-align:left;background:transparent}.menupop .sep{height:1px;background:var(--line);margin:4px}
+main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(480px,650px) minmax(420px,1fr);gap:12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;min-width:0}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.muted{color:var(--muted);font-size:13px}.ok{color:#14733c}.warn{color:#946200}.bad{color:#b3261e}.mono{font-family:Consolas,"SFMono-Regular",monospace}.kbd{font-family:Consolas,monospace;border:1px solid #bbb;border-bottom-width:2px;border-radius:4px;padding:1px 4px;background:#fafafa}.mapwrap{margin-top:8px;background:#e3e7ec;border-radius:6px;padding:8px;display:flex;justify-content:center;align-items:center;overflow:hidden}.mapframe{width:min(100%,416px);aspect-ratio:1/1}#map{display:block;width:100%;height:100%;image-rendering:pixelated;background:#111;border:1px solid #8c959f;cursor:crosshair;touch-action:none}.terrain-title{margin:12px 0 4px}.terrain{display:grid;grid-template-columns:repeat(6,minmax(72px,1fr));gap:6px}.tilebtn{min-width:0;border:2px solid transparent;background:#f7f8fa;border-radius:6px;padding:4px;cursor:pointer;text-align:center}.tilebtn:hover{background:#eef2f7}.tilebtn.sel{border-color:var(--blue);background:#e8f0fe}.tilebtn canvas{width:32px;height:32px;image-rendering:pixelated;display:block;margin:0 auto}.tilebtn span{display:block;font:12px Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tabs{display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:8px}.tab.active{background:#e8f0fe;border-color:#7aa7e8}.tabpane.hidden{display:none}.tabpane{min-height:480px}.scroll{overflow:auto;max-height:70vh}table{width:100%;border-collapse:collapse}th,td{padding:6px;border-bottom:1px solid #e5e8ec;text-align:left;vertical-align:middle}th{position:sticky;top:0;background:#fafbfc;z-index:1}td input{width:76px;padding:4px 5px;border:1px solid #bbc2cb;border-radius:4px}.tsa-table input{width:58px}.feature-group{border:1px solid var(--line);border-radius:7px;padding:10px;margin:10px 0}.feature-group legend{font-weight:600;padding:0 5px}.checkline{display:flex;align-items:center;gap:7px;margin:8px 0}.subcheck{margin-left:25px}.feature-meta{background:#f7f8fa;border-radius:6px;padding:8px;font:13px Consolas,monospace;white-space:pre-wrap}.info-box{white-space:pre-wrap;font:13px Consolas,monospace;background:#f7f8fa;border-radius:6px;padding:10px;min-height:250px}.help-inline{margin-left:auto}.modal{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:100;padding:18px}.modal.hidden{display:none}.modalbox{width:min(980px,96vw);height:min(82vh,820px);background:#fff;border-radius:9px;box-shadow:0 14px 40px #0005;display:grid;grid-template-rows:auto 1fr}.modalhead{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}.modalhead h2{font-size:17px;margin:0;flex:1}.modalbody{padding:12px;overflow:auto}.modalbody pre{margin:0;white-space:pre-wrap;font:14px/1.55 Consolas,"Microsoft YaHei",monospace}.rom-badge{font-size:12px;background:#eef2f7;border:1px solid #d3d8df;border-radius:999px;padding:2px 7px}.footer-note{font-size:12px;color:var(--muted);margin-top:8px}
+@media(max-width:1050px){main{grid-template-columns:1fr}.tabpane{min-height:0}.scroll{max-height:none}}@media(max-width:620px){.terrain{grid-template-columns:repeat(4,minmax(65px,1fr))}.appbar{padding:6px}.brand strong{font-size:16px}.panel{padding:8px}}
+
+/* v1.2 TSA / CHR visual editor */
+.tsa-table th,.tsa-table td{text-align:center}
+.tsa-preview{width:32px;height:32px;image-rendering:pixelated;border:1px solid #aeb6c1;background:#111}
+.attr-select{width:58px;padding:5px;border:1px solid #bbc2cb;border-radius:4px;background:#fff;text-align:center}
+.tsa-tile-btn{padding:4px 6px;min-width:58px;display:inline-flex;flex-direction:column;align-items:center;gap:2px;background:#f8f9fb}
+.tsa-tile-btn canvas,.chr-tile-btn canvas{width:32px;height:32px;image-rendering:pixelated;background:#111}
+.tsa-tile-btn span,.chr-tile-btn span{font:12px Consolas,monospace}
+.chr-modalbox{width:min(980px,97vw);height:min(90vh,900px)}
+.chr-modalbody{padding:10px}
+.chr-grid{display:grid;grid-template-columns:repeat(16,minmax(40px,1fr));gap:4px}
+.chr-tile-btn{padding:3px;min-width:0;border:2px solid transparent;background:#f7f8fa;display:flex;flex-direction:column;align-items:center;gap:1px}
+.chr-tile-btn:hover{background:#e8f0fe}
+.chr-tile-btn.selected{border-color:var(--blue);background:#dbe9ff}
+@media(max-width:760px){.chr-grid{grid-template-columns:repeat(8,minmax(40px,1fr))}}
+
+.palette-grid{display:grid;grid-template-columns:repeat(4,minmax(58px,78px));gap:4px;margin-top:8px;justify-content:start}.palette-cell{height:34px;padding:2px 4px;border:1px solid #777;border-radius:4px;font:12px Consolas,monospace;text-shadow:0 1px 2px #000;color:#fff}.nes-color-grid{display:grid;grid-template-columns:repeat(16,minmax(26px,1fr));gap:3px}.nes-color{height:30px;padding:1px;font:10px Consolas,monospace;border:1px solid #aaa;border-radius:3px;text-shadow:0 1px 2px #000;color:#fff}@media(max-width:760px){.nes-color-grid{grid-template-columns:repeat(8,minmax(28px,1fr))}}.flag-wrap{display:flex;gap:28px;flex-wrap:wrap}.flag-grid{display:grid;grid-template-columns:repeat(6,54px);gap:5px;margin-top:8px}.flag-tile{width:54px;height:54px;padding:2px}.flag-tile canvas{width:32px;height:32px;image-rendering:pixelated}.settings-grid{display:flex;gap:14px;flex-wrap:wrap}.settings-grid label{display:flex;align-items:center;gap:7px}.settings-grid input,.settings-grid select{padding:5px}.spawn-editor-wrap{max-width:540px;margin:8px 0 10px}.spawn-editor-wrap canvas{display:block;width:100%;max-width:512px;aspect-ratio:256/240;image-rendering:pixelated;background:#181c20;border:1px solid #8c959f;border-radius:5px;touch-action:none;cursor:crosshair}.spawn-row-object{display:flex;align-items:center;gap:7px}.spawn-icon{width:32px;height:32px;image-rendering:pixelated;background:#23272b;border:1px solid #9ba4ae}.tsa-table{min-width:900px}.scroll{overflow:auto}
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="brand"><img src="data:image/x-icon;base64,AAABAAEAEBAAAAEACABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAo1kIALk7PgCwH3cAjA+jAFUPuQAcHrAAADiMAABZVQAAdBwACIMAAD6FAAB3dQAAAAAAAAAAAAAAAAAAwMDAAM2DMADiZGcA2UigALU4zQB+OOIARUfZABhhtQADgn4ADJ1FADCtGABnrgMAoJ4MADw8PAAAAAAAAAAAAP///wD/y3kA/6uvAP+Q6AD8gP8Axn//AI2P/wBgqvwAS8nGAFTljQB59WAAr/VLAOjmVAB4eHgAAAAAAAAAAAD///8A//ajAP/X2gD/u/8A/6v/APKr/wC4uv8Ai9X/AHf18gCA/7gAo/+LANr/dwD//4AAxcXFAAAAAAAAAAAAYGBgAHtDBgCKLC4AgxdZAGkLewA/C4oAFRaDAAAqaQAAQT8AAFcVAAZjAAAuYwAAWVcAAAAAAAAAAAAAAAAAAJCQkACZYSQAqUtNAKI2eACHKpkAXiqpADM0ogASSYcAAmFeAAl1MwAkgRIATYICAHh2CQAsLCwAAAAAAAAAAAC/v78Av5hZAL+AgwC/bK4AvWC/AJNfvwBpa78ASH+9ADiWkwA/q2kAWbdIAIO3OACurD8AWVlZAAAAAAAAAAAAv7+/AL+4ewC/oaMAv4y/AL+AvwC1gL8Aiou/AGifvwBZt7UAYL+KAHu/aACjv1kAv79gAJOTkwAAAAAAAAAAAAAAAADQ/PwAAAAAAJB0dAAAAL4AM/8zAMgOMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAJxgnGCcYJxgnGCcAAAAAACcYJxgnGCcYJxgnAAAAAAA4GBgYGBgYGBgYGAAAAAAAAAAYGBgYGBgAAAAAAAAAAAAnGCcnJycnGAAAAAAAAAAAJycnGBgYJxgAAAAAAAAAACcnOCcnGCc4ODg4OAAAAAA4Jzg4OCcnGAAAAAAAAAAAODgnJycnOBgAAAAAAAAAAAAnODg4ODgAAAAAAAAAACc4ODg4ODg4ODgnAAAAAAAnGCcYJxgnGCcYJwAAAAAAOBg4GDgYOBg4GDgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////AB///wAf//8AH///wP///4B///+Af///gAf//4B///+Af///wP///wAf//8AH///AB/////////////8=" alt=""><div><strong id="titleText">Quarrel Ex Web</strong><div class="version">v1.5.1 · Formal release · Config v3 only</div></div></div>
+  <button id="openBtn" class="btn">打开 ROM</button><input id="fileInput" type="file" accept=".nes" hidden>
+  <button id="saveBtn" class="primary" disabled>保存</button>
+  <button id="saveAsBtn" disabled>另存 ROM</button>
+  <button id="undoBtn" disabled>撤销</button>
+  <button id="redoBtn" disabled>重做</button>
+  <button id="importConfigBtn" disabled>导入配置</button>
+  <button id="exportConfigBtn" disabled>导出配置</button>
+  <input id="configInput" type="file" accept=".qexcfg.json" hidden>
+  <details class="menu" id="toolsMenu"><summary>工具</summary><div class="menupop">
+    <button id="convertOverlayBtn" disabled>转换为 32KB Ex Overlay（Legacy）</button>
+    <button id="validateBtn" disabled>重新检查 ROM</button>
+  </div></details>
+  <details class="menu" id="helpMenu"><summary>帮助</summary><div class="menupop">
+    <button data-help="zh">中文帮助　F1</button>
+    <button data-help="en">English Help　Shift+F1</button>
+    <div class="sep"></div>
+    <button data-help="tsaZh">TSA / 属性说明（中文）</button>
+    <button data-help="tsaEn">TSA / Attribute Guide (English)</button>
+    <div class="sep"></div>
+    <button data-about>关于 Quarrel Ex Web</button>
+  </div></details>
+  <span id="romBadge" class="rom-badge">未打开 ROM</span>
+  <span id="status" class="status">请打开 Battle City / Battle City Ex ROM。</span>
+</header>
+<main>
+  <section class="panel">
+    <div class="row"><b>关卡</b><select id="stageSelect" disabled></select><span id="mapNote" class="muted"></span></div>
+    <div class="mapwrap"><div class="mapframe"><canvas id="map" width="416" height="416"></canvas></div></div>
+    <div class="row" style="margin-top:8px"><span class="muted">左键/拖动：绘制　右键：吸取　<span class="kbd">Ctrl+Z</span>：撤销　<span class="kbd">Ctrl+Y</span>：重做。地图完整显示 13×13。</span></div>
+    <h3 class="terrain-title">地形</h3>
+    <div id="terrain" class="terrain"></div>
+  </section>
+
+  <section class="panel">
+    <div class="tabs">
+      <button class="tab active" data-tab="enemyPane">敌人</button>
+      <button class="tab" data-tab="tsaPane">TSA / 属性</button>
+      <button class="tab" data-tab="palettePane">调色板</button>
+      <button class="tab" data-tab="flagPane">Flag TSA</button>
+      <button class="tab" data-tab="settingsPane">游戏设置</button>
+      <button class="tab" data-tab="exPane">Ex 选项</button>
+      <button class="tab" data-tab="infoPane">ROM 信息</button>
+    </div>
+
+    <div id="enemyPane" class="tabpane">
+      <h3>敌坦克 Type / Count</h3>
+      <p id="enemyHint" class="muted">打开 ROM 后显示敌人数据。</p>
+      <table><thead><tr><th>槽</th><th>Type (Hex)</th><th>Count</th></tr></thead><tbody id="enemyRows"></tbody></table>
+      <div id="enemySum" class="muted" style="margin-top:8px"></div>
+      <p id="enemyCountHelp" class="muted">常用基础 Type：<span class="mono">80</span> 普通，<span class="mono">A0</span> 快速，<span class="mono">C0</span> 火力，<span class="mono">E0</span> 装甲。<br>Type 的 bit2（<span class="mono">$04</span>）是闪光/奖励标志，因此 <span class="mono">84/A4/C4/E4</span> 可强制闪光；原版流程还会自动给第4、11、18辆出生敌人加 <span class="mono">$04</span>。</p>
+    </div>
+
+    <div id="tsaPane" class="tabpane hidden">
+      <div class="row"><div><h3 style="margin:0">TSA / 属性</h3><div class="muted">Attr 直接选择 0~3；TL/TR/BL/BR 点击图块预览，从 256 个背景 CHR Tile 中选择。</div></div><span class="help-inline"><button data-help="tsaZh">? 中文 TSA 说明</button> <button data-help="tsaEn">English Guide</button></span></div>
+      <div class="scroll" style="margin-top:8px"><table class="tsa-table"><thead><tr><th>ID</th><th>预览</th><th>Attr</th><th>TL 左上</th><th>TR 右上</th><th>BL 左下</th><th>BR 右下</th></tr></thead><tbody id="tsaRows"></tbody></table></div>
+    </div>
+
+    <div id="palettePane" class="tabpane hidden">
+      <h3>调色板编辑器</h3>
+      <div class="row"><label>调色板组 <select id="paletteSet"></select></label><span class="muted">点击色块，从 NES 64 色中选择。</span></div>
+      <div id="paletteGrid" class="palette-grid"></div>
+    </div>
+
+    <div id="flagPane" class="tabpane hidden">
+      <h3>Flag TSA Editor</h3>
+      <p class="muted">原 Quarrel 功能回归：Flag / Fort 各为 6×4 个背景 CHR Tile；每行的 $FF 终止字节由编辑器自动保留。</p>
+      <div class="flag-wrap"><div><b>Flag</b><div id="flagGrid" class="flag-grid"></div></div><div><b>Fort</b><div id="fortGrid" class="flag-grid"></div></div></div>
+    </div>
+
+    <div id="settingsPane" class="tabpane hidden">
+      <h3>游戏设置</h3>
+      <div class="settings-grid">
+        <label>起始命数 (1~255)<input id="startingLives" type="number" min="1" max="255"></label>
+        <label>初始坦克等级<select id="initialLevel"><option value="0">Lv0</option><option value="1">Lv1</option><option value="2">Lv2</option><option value="3">Lv3</option><option value="4">Lv4</option></select></label>
+      </div>
+      <label class="checkline"><input id="lockInitialSettings" type="checkbox" disabled>锁定初始状态：吃星星/手枪仍可升级；死亡后复活恢复设定的初始等级</label>
+      <h4>出现位置</h4>
+      <p class="muted">拖拽坦克即可修改位置，也可以在下方直接输入 X/Y。P1/P2 使用各自玩家坦克调色板，E1/E2/E3 使用敌坦克 CHR。</p>
+      <div class="spawn-editor-wrap"><canvas id="spawnCanvas" width="512" height="480"></canvas></div>
+      <table><thead><tr><th>对象 / 实际贴图</th><th>X</th><th>Y</th></tr></thead><tbody id="spawnRows"></tbody></table>
+      <div class="row" style="margin-top:12px"><button id="clearStageBtn">清空当前关卡</button><button id="clearAllBtn">清空全部关卡</button><span class="muted">清空为地形 $0D。</span></div>
+    </div>
+
+    <div id="exPane" class="tabpane hidden">
+      <h3>Battle City Ex v2 功能开关</h3>
+      <div id="exInfo" class="feature-meta">打开 ROM 后显示功能状态。</div>
+      <fieldset class="feature-group"><legend>游戏功能</legend>
+        <label class="checkline"><input id="fAuto" type="checkbox" disabled>按住 B 键自动连发</label>
+        <label class="checkline"><input id="fPistol" type="checkbox" disabled>启用手枪 / Lv4（手枪直升 Lv3）</label>
+        <label class="checkline"><input id="fDown" type="checkbox" disabled>被击中时逐级降低（Lv0 才爆炸）</label>
+        <label class="checkline subcheck"><input id="fTree" type="checkbox" disabled>Lv4 子弹可以消除树林</label>
+        <label class="checkline"><input id="fFastMove" type="checkbox" disabled>我方坦克加速移动（Phase 6.2）</label>
+        <label class="checkline"><input id="fRandom" type="checkbox" disabled>随机敌坦克出现顺序（保持各类型总数量）</label>
+        <label class="checkline"><input id="fEnemyPickup" type="checkbox" disabled>敌人可以拾取道具（32KB 70-map）</label>
+        <label class="checkline"><input id="fNoFriendly" type="checkbox" disabled>取消队友互伤（玩家子弹不再使队友硬直）</label>
+        <label class="checkline"><input id="fLockInitial" type="checkbox" disabled>锁定初始状态（死亡后恢复“游戏设置”的初始等级）</label>
+      </fieldset>
+      <fieldset class="feature-group"><legend>敌人拾取后的效果（32KB）</legend>
+        <div id="enemyEffects"></div>
+      </fieldset>
+      <div class="row"><button id="presetOriginal" disabled>原版行为</button><button id="presetRecommended" disabled>推荐 Ex</button></div>
+      <div class="footer-note">功能开关只修改 BCEX v2 配置字节，不通过 NOP/JMP 改写程序代码。</div>
+    </div>
+
+    <div id="infoPane" class="tabpane hidden">
+      <h3>ROM 信息</h3>
+      <div id="infoBox" class="info-box">打开 ROM 后显示格式信息。</div>
+    </div>
+  </section>
+</main>
+
+<div id="helpModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modalbox"><div class="modalhead"><h2 id="helpTitle">帮助</h2><button id="helpClose">关闭</button></div><div class="modalbody"><pre id="helpText"></pre></div></div>
+</div>
+
+<div id="chrModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modalbox chr-modalbox">
+    <div class="modalhead">
+      <div><h2 id="chrTitle">选择 CHR Tile</h2><div id="chrHint" class="muted"></div></div>
+      <button id="chrClose">关闭</button>
+    </div>
+    <div class="modalbody chr-modalbody">
+      <div id="chrGrid" class="chr-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="paletteModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modalbox chr-modalbox"><div class="modalhead"><h2 id="paletteTitle">选择 NES 颜色</h2><button id="paletteClose">关闭</button></div><div class="modalbody"><div id="palettePickerGrid" class="nes-color-grid"></div></div></div>
+</div>
+
+<script>
+'use strict';
+
+window.QuarrelExCore = (() => {
+  const CFG = Object.freeze({
+    mapRows: 13,
+    mapColumns: 13,
+    storageStride: 14,
+    stageSize: 0x5B,
+    stageMapStart: 0x308A,
+    enemyType1To35: 0x24FC,
+    enemyCount1To35: 0x2588,
+    enemyType36To70: 0x3D60,
+    enemyCount36To70: 0x3DEC,
+    terrainAttributes: 0x3F00,
+    terrainBlocks: 0x3F18,
+    originalTerrainAttributes: 0x1ACB,
+    originalTerrainBlocks: 0x1ADB,
+    terrain64Attributes: 0x3410,
+    terrain64Blocks: 0x3450,
+    levelPalette: 0x1585,
+    startingLives: 0x02DE,
+    initialTankStatus: 0x02CE,
+    enemy1X:0x2484, enemy1Y:0x2487, enemy2X:0x2485, enemy2Y:0x2488, enemy3X:0x2486, enemy3Y:0x2489,
+    player1X:0x248A, player1Y:0x248C, player2X:0x248B, player2Y:0x248D,
+    flagTsa:0x137D, fortTsa:0x1399,
+    paletteSpr:0x1565, paletteFrame2:0x1575, paletteFrame1:0x1595, titlePalette:0x15A5, levelSelectPalette:0x15B5, paletteMisc1:0x15D5, paletteMisc2:0x15F5,
+    exV2ConfigStart: 0x2F85,
+    expandedShift: 0x4000,
+    overlayStart: 0x0010,
+    overlayPageSize: 0x0100,
+    overlayStageCount: 35,
+    helperFileOffset: 0x2310,
+    stageDrawPatchExpanded: 0x7064,
+    exV2MapStart: 0x0010,
+    exV2MapStageStride: 0x00B6,
+    exV2MapStageCount: 70,
+  });
+
+  const RomKind = Object.freeze({
+    Original16K: 'Original16K',
+    Ex16K: 'Ex16K',
+    Ex32KOverlay: 'Ex32KOverlay',
+    Ex32K70Maps: 'Ex32K70Maps',
+  });
+
+  const ExLayout = Object.freeze({
+    Independent70Maps: 0x01,
+    CustomEnemyTotal: 0x02,
+    ExtendedTerrain1F: 0x04,
+    Terrain64: 0x08,
+    LockInitialState: 0x10,
+    BonusReplaceAlways: 0x20,
+    PlayerFastMove: 0x40,
+  });
+
+  const ExFeature = Object.freeze({
+    AutoFireB: 0x01,
+    PistolLevel4: 0x02,
+    DowngradeOnHit: 0x04,
+    PlayerFastMove: 0x08,
+    RandomEnemySpawn: 0x10,
+    Level4DestroyTrees: 0x20,
+    EnemyPowerUpPickup: 0x40,
+    NoFriendlyFire: 0x80,
+  });
+
+  const EnemyItemEffect = Object.freeze({
+    Helmet: 0x01,
+    Clock: 0x02,
+    Shovel: 0x04,
+    Star: 0x08,
+    Grenade: 0x10,
+    Tank: 0x20,
+    Pistol: 0x40,
+    All: 0x7F,
+  });
+
+  const USER_TERRAIN_IDS_17 = Object.freeze([
+    0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,
+    0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17
+  ]);
+  const USER_TERRAIN_IDS_1F = Object.freeze([
+    0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,
+    ...Array.from({length:16},(_,i)=>0x10+i)
+  ]);
+  const USER_TERRAIN_IDS_3F = Object.freeze([
+    0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,
+    ...Array.from({length:48},(_,i)=>0x10+i)
+  ]);
+
+  const ORIGINAL_DRAW_SEQUENCE = Uint8Array.from([0xA6,0x56,0xA4,0x57,0x20,0x0B,0xD8]);
+  const OVERLAY_DRAW_SEQUENCE = Uint8Array.from([0x20,0x00,0xA3,0xEA,0xEA,0xEA,0xEA]);
+  const MAP70_DRAW_SEQUENCE = Uint8Array.from([0x20,0x50,0xB2,0xEA,0xEA,0xEA,0xEA]);
+  const ORIGINAL_ATTR_REFERENCE = Uint8Array.from([0xB9,0xBB,0xDA]);
+  const ORIGINAL_TSA_REFERENCE = Uint8Array.from([0xBD,0xCB,0xDA]);
+  const EX_ATTR_REFERENCE = Uint8Array.from([0xB9,0xF0,0xFE]);
+  const EX32_ATTR_REFERENCE = Uint8Array.from([0xB9,0xBB,0xDA]);
+  const EX32_TSA_REFERENCE = Uint8Array.from([0xBD,0xF0,0xFE]);
+  const EX64_ATTR_REFERENCE = Uint8Array.from([0xB9,0x00,0xB4]);
+  const EX64_TSA_REFERENCE = Uint8Array.from([0xBD,0x40,0xB4]);
+  const EX_V2_MAGIC = Uint8Array.from([0x42,0x43,0x45,0x58]); // BCEX
+  const OVERLAY_HELPER = Uint8Array.from([
+    201,14,208,43,165,70,201,2,240,35,165,133,201,36,144,3,56,233,35,56,233,1,
+    24,105,128,133,18,165,90,133,17,160,0,177,17,201,16,144,6,201,32,176,2,208,2,
+    169,14,166,86,164,87,32,11,216,96
+  ]);
+
+  function hex(n, width=2) {
+    return Number(n).toString(16).toUpperCase().padStart(width, '0');
+  }
+
+  function spanEquals(data, offset, expected) {
+    if (offset < 0 || offset + expected.length > data.length) return false;
+    for (let i=0;i<expected.length;i++) if (data[offset+i] !== expected[i]) return false;
+    return true;
+  }
+
+  class BattleCityRom {
+    constructor(bytes) {
+      this.data = bytes instanceof Uint8Array ? bytes.slice() : new Uint8Array(bytes);
+      this.kind = null;
+      this.validate();
+    }
+
+    get prgBanks() { return this.data[4]; }
+    get chrBanks() { return this.data[5]; }
+    get isOriginal() { return this.kind === RomKind.Original16K; }
+    get isEx() { return !this.isOriginal; }
+    get isExpanded() { return this.prgBanks === 2; }
+    get hasOverlay() { return this.kind === RomKind.Ex32KOverlay; }
+    get hasIndependentMaps() { return this.kind === RomKind.Ex32K70Maps; }
+    get supportsEnemyPowerUpPickup() { return this.hasIndependentMaps; }
+    get supportsCustomEnemyTotal() { return this.hasExV2Config && (this.layoutFlags & ExLayout.CustomEnemyTotal)!==0; }
+    get supportsTerrain1F() { return this.hasExV2Config && (this.layoutFlags & ExLayout.ExtendedTerrain1F)!==0; }
+    get supportsTerrain64() { return this.hasExV2Config && (this.layoutFlags & ExLayout.Terrain64)!==0; }
+    get supportsLockInitialState() { return this.hasExV2Config && (this.layoutFlags & ExLayout.LockInitialState)!==0; }
+    get supportsBonusReplaceAlways() { return this.hasExV2Config && (this.layoutFlags & ExLayout.BonusReplaceAlways)!==0; }
+    get supportsPlayerFastMove() { return this.hasExV2Config && (this.layoutFlags & ExLayout.PlayerFastMove)!==0; }
+    get supportsNoFriendlyFire() { return this.hasExV2Config && this.supportsTerrain1F; }
+    get lockInitialState() { return this.supportsLockInitialState && (this.enemyItemFlags & 0x80)!==0; }
+    get canConvertToOverlay() { return this.kind === RomKind.Ex16K; }
+    get maxEditableStage() { return this.isOriginal ? 36 : 70; }
+    get terrainCount() {
+      if (this.isOriginal) return 16;
+      if (this.supportsTerrain64) return 64;
+      if (this.supportsTerrain1F) return 32;
+      return 24;
+    }
+    get selectableTerrainIds() {
+      if (this.isOriginal) return Array.from({length:14},(_,i)=>i);
+      if (this.supportsTerrain64) return [...USER_TERRAIN_IDS_3F];
+      if (this.supportsTerrain1F) return [...USER_TERRAIN_IDS_1F];
+      return [...USER_TERRAIN_IDS_17];
+    }
+    get prgSizeBytes() { return this.prgBanks * 0x4000; }
+    get chrSizeBytes() { return this.chrBanks * 0x2000; }
+    get mainBankShift() { return this.prgBanks === 2 ? CFG.expandedShift : 0; }
+    get spriteChrOffset() { return 0x10 + this.prgSizeBytes; }
+    get backgroundChrOffset() { return this.spriteChrOffset + 0x1000; }
+    get exV2ConfigOffset() { return this.offset(CFG.exV2ConfigStart); }
+    get hasExV2Config() {
+      return !this.isOriginal && spanEquals(this.data, this.exV2ConfigOffset, EX_V2_MAGIC) && this.data[this.exV2ConfigOffset+4] === 0x02;
+    }
+    get exV2ConfigVersion() { return this.hasExV2Config ? this.data[this.exV2ConfigOffset+4] : 0; }
+    get featureFlags() { return this.hasExV2Config ? this.data[this.exV2ConfigOffset+5] : 0; }
+    get enemyItemFlags() { return this.hasExV2Config ? this.data[this.exV2ConfigOffset+6] : 0; }
+    get layoutFlags() { return this.hasExV2Config ? this.data[this.exV2ConfigOffset+7] : 0; }
+    get terrainAttributesOffset() {
+      if (this.isOriginal) return CFG.originalTerrainAttributes + this.mainBankShift;
+      if (this.supportsTerrain64) return CFG.terrain64Attributes;
+      if (this.supportsTerrain1F) return CFG.originalTerrainAttributes + this.mainBankShift;
+      return this.offset(CFG.terrainAttributes);
+    }
+    get terrainBlocksOffset() {
+      if (this.isOriginal) return CFG.originalTerrainBlocks + this.mainBankShift;
+      if (this.supportsTerrain64) return CFG.terrain64Blocks;
+      if (this.supportsTerrain1F) return this.offset(CFG.terrainAttributes);
+      return this.offset(CFG.terrainBlocks);
+    }
+    get levelPaletteOffset() { return this.offset(CFG.levelPalette); }
+
+    cloneBytes() { return this.data.slice(); }
+    restore(bytes) { this.data = bytes.slice(); this.validate(); }
+
+    offset(base16KFileOffset) { return base16KFileOffset + this.mainBankShift; }
+    cpuToFile(cpu, shift=0) { return 0x10 + (cpu - 0xC000) + shift; }
+    ensureRange(offset, length) {
+      if (offset < 0 || length < 0 || offset + length > this.data.length) {
+        throw new Error(`ROM 地址越界: $${hex(offset,4)} + $${hex(length,4)}`);
+      }
+    }
+
+    validate() {
+      const d = this.data;
+      if (d.length < 0x10 || d[0]!==0x4E || d[1]!==0x45 || d[2]!==0x53 || d[3]!==0x1A) throw new Error('不是有效的 iNES ROM。');
+      if (![1,2].includes(this.prgBanks)) throw new Error('仅支持 16KB / 32KB PRG 的 Battle City / Ex。');
+      if (this.chrBanks !== 1) throw new Error('当前版本要求 8KB CHR-ROM。');
+      const mapper = (d[6] >> 4) | (d[7] & 0xF0);
+      if (mapper !== 0) throw new Error(`ROM Mapper=${mapper}，不是 Battle City 使用的 Mapper 0。`);
+      const expected = 0x10 + this.prgSizeBytes + this.chrSizeBytes;
+      if (d.length < expected) throw new Error('ROM 长度小于 Header 声明的 PRG+CHR 大小。');
+
+      this.kind = this.detectKind();
+      this.ensureRange(this.offset(CFG.stageMapStart), CFG.stageSize * (this.isOriginal ? 36 : 35));
+      this.ensureRange(this.offset(CFG.enemyType1To35), 35*4);
+      this.ensureRange(this.offset(CFG.enemyCount1To35), 35*4);
+      this.ensureRange(this.levelPaletteOffset, 16);
+      if (this.isOriginal) {
+        this.ensureRange(this.terrainAttributesOffset,16);
+        this.ensureRange(this.terrainBlocksOffset,16*4);
+      } else {
+        this.ensureRange(this.offset(CFG.enemyType36To70),35*4);
+        this.ensureRange(this.offset(CFG.enemyCount36To70),35*4);
+        this.ensureRange(this.terrainAttributesOffset,this.terrainCount);
+        this.ensureRange(this.terrainBlocksOffset,this.terrainCount*4);
+        if (!this.hasExpectedExtendedWater()) throw new Error('检测到 Ex 程序结构，但 10~17 扩展水块 TSA 表不完整。');
+        if (this.hasOverlay) {
+          this.ensureRange(CFG.overlayStart, CFG.overlayPageSize*CFG.overlayStageCount);
+          this.ensureRange(CFG.helperFileOffset, OVERLAY_HELPER.length);
+        } else if (this.hasIndependentMaps) {
+          this.ensureRange(CFG.exV2MapStart, CFG.exV2MapStageStride*CFG.exV2MapStageCount);
+        }
+      }
+    }
+
+    detectKind() {
+      if (this.prgBanks === 1) {
+        if (this.looksLikeEx(0)) return RomKind.Ex16K;
+        if (this.looksLikeOriginal(0)) return RomKind.Original16K;
+        throw new Error('未识别为受支持的 Battle City 日版原版或本项目 Ex ROM。');
+      }
+      if (!this.looksLikeEx(CFG.expandedShift)) throw new Error('检测到 32KB NROM，但第二个 PRG Bank 不是受支持的 Battle City Ex 主程序。');
+      const configOffset = CFG.exV2ConfigStart + CFG.expandedShift;
+      const hasV2Magic = spanEquals(this.data, configOffset, EX_V2_MAGIC) && this.data[configOffset+4] === 0x02;
+      const layoutOffset = configOffset + 7;
+      const independent = hasV2Magic && layoutOffset < this.data.length && (this.data[layoutOffset] & ExLayout.Independent70Maps) !== 0;
+      const patch = CFG.stageDrawPatchExpanded;
+      this.ensureRange(patch,7);
+      if (independent) {
+        if (!spanEquals(this.data, patch, MAP70_DRAW_SEQUENCE)) throw new Error('BCEX v2 声明为32KB独立70地图，但关卡绘制入口不是预期的 $B250 helper。');
+        return RomKind.Ex32K70Maps;
+      }
+      if (!spanEquals(this.data, patch, OVERLAY_DRAW_SEQUENCE)) throw new Error('检测到 32KB Battle City Ex，但没有找到受支持的 Overlay / 70-map 读取补丁。');
+      return RomKind.Ex32KOverlay;
+    }
+
+    looksLikeOriginal(shift) {
+      const attrRef = this.cpuToFile(0xD817, shift);
+      const tsaRef = this.cpuToFile(0xD832, shift);
+      if (!spanEquals(this.data,attrRef,ORIGINAL_ATTR_REFERENCE) || !spanEquals(this.data,tsaRef,ORIGINAL_TSA_REFERENCE)) return false;
+      const water = CFG.originalTerrainBlocks + shift + 0x0A*4;
+      return spanEquals(this.data,water,Uint8Array.from([0x12,0x12,0x12,0x12]));
+    }
+
+    looksLikeEx(shift) {
+      const attrRef = this.cpuToFile(0xD817, shift);
+      const tsaRef = this.cpuToFile(0xD832, shift);
+      if (attrRef < 0 || tsaRef < 0 || tsaRef + 3 > this.data.length) return false;
+      if (spanEquals(this.data,attrRef,EX_ATTR_REFERENCE) &&
+          this.data[tsaRef] === 0xBD && this.data[tsaRef+2] === 0xFF &&
+          [0x04,0x08].includes(this.data[tsaRef+1])) return true;
+      if (spanEquals(this.data,attrRef,EX32_ATTR_REFERENCE) &&
+          spanEquals(this.data,tsaRef,EX32_TSA_REFERENCE)) return true;
+      if (spanEquals(this.data,attrRef,EX64_ATTR_REFERENCE) &&
+          spanEquals(this.data,tsaRef,EX64_TSA_REFERENCE)) return true;
+      return false;
+    }
+
+    hasExpectedExtendedWater() {
+      let found=0;
+      for (let id=0x10;id<=0x17;id++) {
+        for (let q=0;q<4;q++) if (this.data[this.terrainBlocksOffset+id*4+q]===0x12) { found++; break; }
+      }
+      return found>=8;
+    }
+
+    isDemoStage(stage) { return this.isOriginal && stage===36; }
+    validateStage(stage) { if (stage<1 || stage>this.maxEditableStage) throw new Error('关卡编号超出范围。'); }
+    validateCell(row,col) { if (row<0||row>=13||col<0||col>=13) throw new Error('地图坐标超出13×13范围。'); }
+    validateTerrainId(id) { if (id<0||id>=this.terrainCount) throw new Error('地形ID超出范围。'); }
+
+    getPhysicalMapStage(stage) { return this.isOriginal ? stage : (stage<=35 ? stage : stage-35); }
+    stageMapOffset(physicalStage) { return this.offset(CFG.stageMapStart + (physicalStage-1)*CFG.stageSize); }
+    getNibble(base,index) { const b=this.data[base+(index>>1)]; return (index&1)?(b&0x0F):(b>>4); }
+    setNibble(base,index,value) { const p=base+(index>>1),b=this.data[p]; this.data[p]=(index&1)?((b&0xF0)|(value&0x0F)):(((value&0x0F)<<4)|(b&0x0F)); }
+    overlayOffset(physicalStage,nibbleIndex) { return CFG.overlayStart+(physicalStage-1)*CFG.overlayPageSize+nibbleIndex; }
+    independentMapOffset(stage,row,col) { return CFG.exV2MapStart+(stage-1)*CFG.exV2MapStageStride+row*CFG.storageStride+col; }
+
+    getCell(stage,row,col) {
+      this.validateStage(stage); this.validateCell(row,col);
+      if (this.hasIndependentMaps) return this.data[this.independentMapOffset(stage,row,col)];
+      const physical=this.getPhysicalMapStage(stage), idx=row*CFG.storageStride+col;
+      const raw=this.getNibble(this.stageMapOffset(physical),idx);
+      if (this.hasOverlay && raw===0x0E) {
+        const ext=this.data[this.overlayOffset(physical,idx)];
+        if (ext>=0x10&&ext<this.terrainCount) return ext;
+      }
+      return raw;
+    }
+
+    setCell(stage,row,col,terrainId) {
+      this.validateStage(stage); this.validateCell(row,col); this.validateTerrainId(terrainId);
+      if (terrainId===0x0E || terrainId===0x0F) throw new Error('地形 ID $0E/$0F 为内部保留值，编辑器禁止写入。');
+      if (this.isOriginal && terrainId>0x0F) throw new Error('原版 Battle City 只能保存地形 ID 00~0F。');
+      if (this.hasIndependentMaps) { this.data[this.independentMapOffset(stage,row,col)] = terrainId; return false; }
+      let converted=false;
+      if (terrainId>=0x10) converted=this.ensureExpandedForExtendedTerrain();
+      const physical=this.getPhysicalMapStage(stage),idx=row*CFG.storageStride+col,map=this.stageMapOffset(physical);
+      if (terrainId>=0x10) {
+        this.setNibble(map,idx,0x0E); this.data[this.overlayOffset(physical,idx)]=terrainId;
+      } else {
+        this.setNibble(map,idx,terrainId&0x0F); if (this.hasOverlay) this.data[this.overlayOffset(physical,idx)]=0;
+      }
+      return converted;
+    }
+
+    enemyTypeOffset(stage) {
+      if (this.isOriginal) return this.offset(CFG.enemyType1To35+(Math.min(stage,35)-1)*4);
+      return stage<=35 ? this.offset(CFG.enemyType1To35+(stage-1)*4) : this.offset(CFG.enemyType36To70+(stage-36)*4);
+    }
+    enemyCountOffset(stage) {
+      if (this.isOriginal) return this.offset(CFG.enemyCount1To35+(Math.min(stage,35)-1)*4);
+      return stage<=35 ? this.offset(CFG.enemyCount1To35+(stage-1)*4) : this.offset(CFG.enemyCount36To70+(stage-36)*4);
+    }
+    getEnemyData(stage) {
+      this.validateStage(stage);
+      const to=this.enemyTypeOffset(stage),co=this.enemyCountOffset(stage);
+      return {types:Array.from(this.data.slice(to,to+4)), counts:Array.from(this.data.slice(co,co+4))};
+    }
+    setEnemyType(stage,slot,value) { this.validateStage(stage); if(slot<0||slot>3)throw new Error('敌人槽位超出范围。'); this.data[this.enemyTypeOffset(stage)+slot]=value&0xFF; }
+    setEnemyCount(stage,slot,value) { this.validateStage(stage); if(slot<0||slot>3)throw new Error('敌人槽位超出范围。'); if(value<0||value>255)throw new Error('单个敌人 Count 必须在 0~255。'); this.data[this.enemyCountOffset(stage)+slot]=value&0xFF; }
+    getEnemyTotal(stage) { return this.getEnemyData(stage).counts.reduce((a,b)=>a+b,0); }
+    validateEnemyTotal(counts) {
+      const total=counts.reduce((a,b)=>a+Number(b||0),0);
+      if(this.supportsCustomEnemyTotal && (total<1||total>255)) throw new Error('当前 BCEX v2 支持自定义总敌人数，但四个 Count 合计必须在 1~255。');
+      return total;
+    }
+
+    validateAllEnemyTotals() {
+      if(!this.supportsCustomEnemyTotal) return true;
+      for(let stage=1;stage<=70;stage++){
+        const total=this.getEnemyTotal(stage);
+        if(total<1||total>255) throw new Error(`Stage ${stage} 的敌人 Count 合计=${total}，必须在 1~255。`);
+      }
+      return true;
+    }
+
+    getTerrainAttribute(id) { this.validateTerrainId(id); return this.data[this.terrainAttributesOffset+id]; }
+    setTerrainAttribute(id,value) { this.validateTerrainId(id); if(value<0||value>3)throw new Error('Attr 只能选择 0~3。'); this.data[this.terrainAttributesOffset+id]=value&0x03; }
+    getTerrainTiles(id) { this.validateTerrainId(id); const o=this.terrainBlocksOffset+id*4; return Array.from(this.data.slice(o,o+4)); }
+    setTerrainTile(id,q,value) { this.validateTerrainId(id); if(q<0||q>3)throw new Error('TSA quadrant超出范围。'); this.data[this.terrainBlocksOffset+id*4+q]=value&0xFF; }
+    getLevelPaletteByte(index) { if(index<0||index>=16)throw new Error('Palette索引越界。'); return this.data[this.levelPaletteOffset+index]; }
+    getChrByte(offset) { this.ensureRange(offset,1); return this.data[offset]; }
+
+    isFeatureEnabled(flag) { return this.hasExV2Config && (this.featureFlags & flag)!==0; }
+    setFeature(flag,enabled) {
+      if(!this.hasExV2Config) throw new Error('当前 ROM 没有 BCEX v2 配置块。');
+      if(flag===ExFeature.PlayerFastMove && !this.supportsPlayerFastMove) throw new Error('我方坦克加速移动需要 BCEX v2 Phase 6.2 或更新 ROM。');
+      if(flag===ExFeature.EnemyPowerUpPickup && !this.supportsEnemyPowerUpPickup) throw new Error('敌人拾取道具只支持32KB / 70独立地图格式。');
+      if(flag===ExFeature.NoFriendlyFire && !this.supportsNoFriendlyFire) throw new Error('取消队友互伤需要 Phase 5 或更新 ROM。');
+      let value=this.featureFlags;
+      value=enabled ? (value|flag) : (value&~flag);
+      if(flag===ExFeature.PistolLevel4 && !enabled) value &= ~ExFeature.Level4DestroyTrees;
+      this.data[this.exV2ConfigOffset+5]=value&0xFF;
+    }
+    setFeatureFlags(flags) {
+      if(!this.hasExV2Config) throw new Error('当前 ROM 没有 BCEX v2 配置块。');
+      if((flags&ExFeature.PistolLevel4)===0) flags &= ~ExFeature.Level4DestroyTrees;
+      if(!this.supportsEnemyPowerUpPickup) flags &= ~ExFeature.EnemyPowerUpPickup;
+      if(!this.supportsNoFriendlyFire) flags &= ~ExFeature.NoFriendlyFire;
+      if(!this.supportsPlayerFastMove) flags &= ~ExFeature.PlayerFastMove;
+      this.data[this.exV2ConfigOffset+5]=flags&0xFF;
+    }
+    isEnemyItemEffectEnabled(flag) { return this.hasExV2Config && (this.enemyItemFlags&flag)!==0; }
+    setEnemyItemEffect(flag,enabled) {
+      if(!this.supportsEnemyPowerUpPickup||!this.hasExV2Config)throw new Error('当前 ROM 不支持敌人道具效果配置。');
+      let v=this.enemyItemFlags; v=enabled?(v|flag):(v&~flag); this.data[this.exV2ConfigOffset+6]=(this.enemyItemFlags&0x80)|(v&0x7F);
+    }
+
+    ensureExpandedForExtendedTerrain() {
+      if (this.hasOverlay) return false;
+      if (this.isOriginal) throw new Error('原版 Battle City 不会自动转换为 Ex。');
+      if (this.kind!==RomKind.Ex16K) throw new Error('当前 ROM 不能自动转换为32KB Legacy Overlay。');
+      if (this.data.length<0x6010) throw new Error('16KB Ex ROM长度不足，无法扩容。');
+      const old=this.data,newr=new Uint8Array(0xA010);
+      newr.set(old.slice(0,0x10),0); newr[4]=2;
+      newr.set(old.slice(0x10,0x4010),0x4010);
+      newr.set(old.slice(0x4010,0x6010),0x8010);
+      newr.set(OVERLAY_HELPER,CFG.helperFileOffset);
+      if(!spanEquals(newr,CFG.stageDrawPatchExpanded,ORIGINAL_DRAW_SEQUENCE)) throw new Error('CPU $F054 绘制代码与预期不一致，已停止自动扩容。');
+      newr.set(OVERLAY_DRAW_SEQUENCE,CFG.stageDrawPatchExpanded);
+      this.data=newr; this.validate(); return true;
+    }
+
+    get startingLives(){ return this.data[this.offset(CFG.startingLives)]; }
+    setStartingLives(v){v=Math.max(1,Math.min(255,Number(v)||1));this.data[this.offset(CFG.startingLives)]=v;}
+    get initialTankLevel(){const raw=this.data[this.offset(CFG.initialTankStatus)],a=[0,0x20,0x40,0x60,0x63];let i=a.indexOf(raw);if(i>=0)return i;return raw>=0x63?4:raw>=0x60?3:raw>=0x40?2:raw>=0x20?1:0;}
+    setInitialTankLevel(level){const max=this.isOriginal?3:4;level=Math.max(0,Math.min(max,Number(level)||0));this.data[this.offset(CFG.initialTankStatus)]=[0,0x20,0x40,0x60,0x63][level];}
+    spawnOffsets(kind){return {Enemy1:[CFG.enemy1X,CFG.enemy1Y],Enemy2:[CFG.enemy2X,CFG.enemy2Y],Enemy3:[CFG.enemy3X,CFG.enemy3Y],Player1:[CFG.player1X,CFG.player1Y],Player2:[CFG.player2X,CFG.player2Y]}[kind];}
+    getSpawn(kind){const o=this.spawnOffsets(kind);if(!o)throw new Error('未知出现位置。');return {X:this.data[this.offset(o[0])],Y:this.data[this.offset(o[1])]};}
+    setSpawn(kind,x,y){const o=this.spawnOffsets(kind);this.data[this.offset(o[0])]=Math.max(0,Math.min(255,Number(x)||0));this.data[this.offset(o[1])]=Math.max(0,Math.min(255,Number(y)||0));}
+    paletteOffset(kind){return {Sprite:CFG.paletteSpr,Frame2:CFG.paletteFrame2,Level:CFG.levelPalette,Frame1:CFG.paletteFrame1,Title:CFG.titlePalette,LevelSelect:CFG.levelSelectPalette,Misc1:CFG.paletteMisc1,Misc2:CFG.paletteMisc2}[kind];}
+    getPalette(kind){const o=this.offset(this.paletteOffset(kind));return Array.from(this.data.slice(o,o+16));}
+    setPaletteByte(kind,index,value){if(index<0||index>=16)throw new Error('Palette索引越界。');this.data[this.offset(this.paletteOffset(kind))+index]=Number(value)&0x3F;}
+    getFlagTsa(fort=false){const base=this.offset(fort?CFG.fortTsa:CFG.flagTsa),a=[];for(let r=0;r<4;r++)for(let c=0;c<6;c++)a.push(this.data[base+r*7+c]);return a;}
+    setFlagTsaTile(fort,row,col,tile){const base=this.offset(fort?CFG.fortTsa:CFG.flagTsa);this.data[base+row*7+col]=Number(tile)&0xFF;this.data[base+row*7+6]=0xFF;}
+    setLockInitialState(on){if(!this.supportsLockInitialState)throw new Error('锁定初始状态需要 Phase 6 或更新 ROM。');this.data[this.exV2ConfigOffset+6]=on?(this.enemyItemFlags|0x80):(this.enemyItemFlags&0x7F);}
+    clearStage(stage){for(let r=0;r<13;r++)for(let c=0;c<13;c++)this.setCell(stage,r,c,0x0D);}
+    clearAllStages(){const max=this.isOriginal?36:(this.hasIndependentMaps?70:35);for(let st=1;st<=max;st++)this.clearStage(st);}
+    exportSharedConfig(){
+      const Palettes={};for(const k of ['Sprite','Frame2','Level','Frame1','Title','LevelSelect','Misc1','Misc2'])Palettes[k]=this.getPalette(k);
+      const Spawns={};for(const k of ['Enemy1','Enemy2','Enemy3','Player1','Player2'])Spawns[k]=this.getSpawn(k);
+      const Stages=[];
+      const stageMax=this.isOriginal?35:70;
+      for(let stage=1;stage<=stageMax;stage++){
+        const ed=this.getEnemyData(stage);
+        const Map=Array.from({length:13},(_,r)=>Array.from({length:13},(_,c)=>this.getCell(stage,r,c)));
+        Stages.push({Stage:stage,Map,EnemyTypes:Array.from(ed.types),EnemyCounts:Array.from(ed.counts),EnemyTotal:Array.from(ed.counts).reduce((a,b)=>a+b,0)});
+      }
+      return {Schema:'QuarrelExConfig',Version:3,Gameplay:{StartingLives:this.startingLives,InitialTankLevel:this.initialTankLevel,LockInitialState:this.lockInitialState,PlayerFastMove:this.supportsPlayerFastMove&&this.isFeatureEnabled(ExFeature.PlayerFastMove),FeatureFlags:this.hasExV2Config?this.featureFlags:null,EnemyItemFlags:this.supportsEnemyPowerUpPickup?(this.enemyItemFlags&0x7F):null,Spawns},Palettes,Terrain:this.selectableTerrainIds.map(Id=>({Id,Attr:this.getTerrainAttribute(Id)&3,Tiles:this.getTerrainTiles(Id)})),FlagTsa:{Flag:this.getFlagTsa(false),Fort:this.getFlagTsa(true)},Stages};
+    }
+    validateSharedConfig(cfg){
+      const errors=[],warnings=[];
+      const err=m=>errors.push(m),warn=m=>{if(!warnings.includes(m))warnings.push(m);};
+      const isInt=n=>Number.isInteger(n);
+
+      if(!cfg||typeof cfg!=='object'){err('配置文件为空或根节点不是对象。');return {errors,warnings};}
+      if(cfg.Schema!=='QuarrelExConfig')err('Schema 必须为 "QuarrelExConfig"。');
+      if(cfg.Version!==3)err(`只支持 QuarrelExConfig v3；当前 Version=${cfg.Version}。`);
+
+      const g=cfg.Gameplay;
+      if(!g||typeof g!=='object')err('缺少 Gameplay。');
+      else{
+        if(!isInt(g.StartingLives)||g.StartingLives<1||g.StartingLives>255)err(`Gameplay.StartingLives=${g.StartingLives}，必须是 1~255 的整数。`);
+        if(!isInt(g.InitialTankLevel)||g.InitialTankLevel<0||g.InitialTankLevel>4)err(`Gameplay.InitialTankLevel=${g.InitialTankLevel}，必须是 0~4 的整数。`);
+        else if(this.isOriginal&&g.InitialTankLevel===4)warn('目标为原版 ROM，不支持 Lv4；InitialTankLevel=4 将按 Lv3 导入。');
+        if(g.FeatureFlags!=null&&(!isInt(g.FeatureFlags)||g.FeatureFlags<0||g.FeatureFlags>255))err('Gameplay.FeatureFlags 必须在 0~255 或为 null。');
+        if(g.EnemyItemFlags!=null&&(!isInt(g.EnemyItemFlags)||g.EnemyItemFlags<0||g.EnemyItemFlags>0x7F))err('Gameplay.EnemyItemFlags 必须在 0~127 或为 null。');
+        if(g.PlayerFastMove!=null&&typeof g.PlayerFastMove!=='boolean')err('Gameplay.PlayerFastMove 必须是 boolean 或 null。');
+        if(typeof g.LockInitialState!=='boolean')err('Gameplay.LockInitialState 必须是 boolean。');
+        if(g.FeatureFlags!=null&&g.PlayerFastMove!=null&&(((g.FeatureFlags&ExFeature.PlayerFastMove)!==0)!==g.PlayerFastMove))err('Gameplay.PlayerFastMove 与 FeatureFlags bit3 不一致。');
+
+        if(!this.hasExV2Config&&(g.FeatureFlags!=null||g.EnemyItemFlags!=null||g.LockInitialState||g.PlayerFastMove===true))warn('目标 ROM 没有 BCEX v2 配置块；Ex 功能相关字段将被忽略。');
+        else if(this.hasExV2Config&&g.FeatureFlags!=null){
+          const flags=g.FeatureFlags&0xFF;
+          if((flags&ExFeature.PlayerFastMove)&&!this.supportsPlayerFastMove)warn('目标 ROM 不支持“我方坦克加速移动”；该位将被清除。');
+          if((flags&ExFeature.EnemyPowerUpPickup)&&!this.supportsEnemyPowerUpPickup)warn('目标 ROM 不支持“敌人拾取道具”；该位将被清除。');
+          if((flags&ExFeature.NoFriendlyFire)&&!this.supportsNoFriendlyFire)warn('目标 ROM 不支持“取消队友互伤”；该位将被清除。');
+          if((flags&ExFeature.Level4DestroyTrees)&&!(flags&ExFeature.PistolLevel4))warn('配置开启了 Lv4 消树林但未开启手枪/Lv4；导入时 Lv4 消树林位会自动清除。');
+        }
+        if(g.EnemyItemFlags!=null&&!this.supportsEnemyPowerUpPickup)warn('目标 ROM 不支持敌人道具效果；EnemyItemFlags 将被忽略。');
+        if(g.LockInitialState&&!this.supportsLockInitialState)warn('目标 ROM 不支持锁定初始状态；该选项将被忽略。');
+
+        const spawns=g.Spawns;
+        if(!spawns||typeof spawns!=='object')err('Gameplay.Spawns 缺失。');
+        else for(const k of ['Enemy1','Enemy2','Enemy3','Player1','Player2']){
+          const sp=spawns[k];
+          if(!sp||typeof sp!=='object'){err(`Gameplay.Spawns 缺少 ${k}。`);continue;}
+          if(!isInt(sp.X)||sp.X<0||sp.X>255||!isInt(sp.Y)||sp.Y<0||sp.Y>255)err(`Gameplay.Spawns.${k} 的 X/Y 必须是 0~255 的整数。`);
+        }
+      }
+
+      const palettes=cfg.Palettes;
+      if(!palettes||typeof palettes!=='object')err('缺少 Palettes。');
+      else for(const k of ['Sprite','Frame2','Level','Frame1','Title','LevelSelect','Misc1','Misc2']){
+        const pal=palettes[k];
+        if(!Array.isArray(pal)||pal.length!==16){err(`Palettes.${k} 必须正好包含 16 个颜色值。`);continue;}
+        pal.forEach((v,i)=>{if(!isInt(v)||v<0||v>0x3F)err(`Palettes.${k}[${i}]=${v}，NES 调色板编号必须在 0~63。`);});
+      }
+
+      if(!Array.isArray(cfg.Terrain)||cfg.Terrain.length===0)err('Terrain 缺失或为空。');
+      else{
+        const seen=new Set();
+        for(const td of cfg.Terrain){
+          if(!td||typeof td!=='object'){err('Terrain 中存在无效项。');continue;}
+          if(!isInt(td.Id)){err('Terrain.Id 必须是整数。');continue;}
+          if(seen.has(td.Id))err(`Terrain ID $${hex(td.Id)} 重复。`);seen.add(td.Id);
+          if(td.Id<0||td.Id>0x3F)err(`Terrain ID ${td.Id} 超出 Config v3 支持范围 $00~$3F。`);
+          if(td.Id===0x0E||td.Id===0x0F)warn(`Terrain $${hex(td.Id)} 为内部保留 ID；导入时会忽略。`);
+          if(td.Id>=this.terrainCount)warn(`Terrain $${hex(td.Id)} 超出目标 ROM 的 TSA 范围；该定义将被忽略。`);
+          if(!isInt(td.Attr)||td.Attr<0||td.Attr>3)err(`Terrain $${hex(td.Id)} 的 Attr=${td.Attr}，只能是 0~3。`);
+          if(!Array.isArray(td.Tiles)||td.Tiles.length!==4)err(`Terrain $${hex(td.Id)} 必须包含 TL/TR/BL/BR 共 4 个 CHR Tile。`);
+          else td.Tiles.forEach((v,i)=>{if(!isInt(v)||v<0||v>255)err(`Terrain $${hex(td.Id)} Tiles[${i}]=${v}，CHR Tile 必须在 0~255。`);});
+        }
+      }
+
+      const ft=cfg.FlagTsa;
+      if(!ft||typeof ft!=='object')err('缺少 FlagTsa。');
+      else for(const k of ['Flag','Fort']){
+        const a=ft[k];
+        if(!Array.isArray(a)||a.length!==24){err(`FlagTsa.${k} 必须正好包含 24 个 CHR Tile（6×4）。`);continue;}
+        a.forEach((v,i)=>{if(!isInt(v)||v<0||v>255)err(`FlagTsa.${k}[${i}]=${v}，CHR Tile 必须在 0~255。`);});
+      }
+
+      if(!Array.isArray(cfg.Stages)||![35,70].includes(cfg.Stages.length))err(`Stages 必须包含完整 35 关（原版）或 70 关（Ex）；当前数量=${Array.isArray(cfg.Stages)?cfg.Stages.length:0}。`);
+      else{
+        const configMax=cfg.Stages.length,stageMap=new Map();
+        for(const sc of cfg.Stages){
+          if(!sc||typeof sc!=='object'){err('Stages 中存在无效项。');continue;}
+          if(!isInt(sc.Stage)||sc.Stage<1||sc.Stage>configMax){err(`Stage 编号 ${sc.Stage} 超出 1~${configMax}。`);continue;}
+          if(stageMap.has(sc.Stage))err(`Stage ${sc.Stage} 重复。`);stageMap.set(sc.Stage,sc);
+
+          if(!Array.isArray(sc.EnemyTypes)||sc.EnemyTypes.length!==4)err(`Stage ${sc.Stage} 的 EnemyTypes 必须正好包含 4 项。`);
+          else sc.EnemyTypes.forEach((v,i)=>{if(!isInt(v)||v<0||v>255)err(`Stage ${sc.Stage} EnemyTypes[${i}]=${v}，必须在 0~255。`);});
+
+          if(!Array.isArray(sc.EnemyCounts)||sc.EnemyCounts.length!==4)err(`Stage ${sc.Stage} 的 EnemyCounts 必须正好包含 4 项。`);
+          else{
+            let countOk=true;
+            sc.EnemyCounts.forEach((v,i)=>{if(!isInt(v)||v<0||v>255){err(`Stage ${sc.Stage} EnemyCounts[${i}]=${v}，必须在 0~255。`);countOk=false;}});
+            if(countOk){
+              const sum=sc.EnemyCounts.reduce((a,b)=>a+b,0);
+              if(sum<1||sum>255)err(`Stage ${sc.Stage} 四个 EnemyCounts 合计=${sum}，必须在 1~255。`);
+              if(!isInt(sc.EnemyTotal)||sc.EnemyTotal!==sum)err(`Stage ${sc.Stage} 的 EnemyTotal=${sc.EnemyTotal}，但 EnemyCounts 合计=${sum}。`);
+              if(!this.supportsCustomEnemyTotal&&sum!==20)warn(`Stage ${sc.Stage} 敌人总数=${sum}，但目标 ROM 只支持固定20辆；该关 EnemyCounts 将保持目标 ROM 原值。`);
+            }
+          }
+
+          if(!Array.isArray(sc.Map)||sc.Map.length!==13||sc.Map.some(row=>!Array.isArray(row)||row.length!==13))err(`Stage ${sc.Stage} 的 Map 必须是完整 13×13。`);
+          else{
+            let warned=false;
+            for(let r=0;r<13;r++)for(let c=0;c<13;c++){
+              const id=sc.Map[r][c];
+              if(!isInt(id)||id<0||id>0x3F){err(`Stage ${sc.Stage} Map[${r},${c}]=${id}，地形 ID 必须在 $00~$3F。`);continue;}
+              if((id===0x0E||id===0x0F||id>=this.terrainCount)&&!warned){
+                warn(`Stage ${sc.Stage} 含目标 ROM 无法写入/保留的地形 ID；这些格子导入时保持目标 ROM 原值。`);warned=true;
+              }
+            }
+          }
+        }
+        for(let i=1;i<=configMax;i++)if(!stageMap.has(i))err(`Stages 缺少 Stage ${i}。`);
+
+        const targetMax=this.isOriginal?35:70;
+        if(configMax>targetMax)warn(`配置包含 Stage 36~${configMax}，但目标 ROM 只支持 Stage 1~${targetMax}；超出的关卡将忽略。`);
+        else if(configMax<targetMax)warn(`配置只包含 Stage 1~${configMax}；目标 ROM 的 Stage ${configMax+1}~${targetMax} 将保持原值。`);
+
+        if(!this.hasIndependentMaps&&configMax===70){
+          for(let st=36;st<=70;st++){
+            const a=stageMap.get(st-35),b=stageMap.get(st);
+            if(a&&b&&Array.isArray(a.Map)&&Array.isArray(b.Map)&&JSON.stringify(a.Map)!==JSON.stringify(b.Map)){
+              warn('目标 ROM 的 Stage36~70 地图复用 Stage1~35；配置中的独立二周目地图无法写入，但 Enemy Type/Count 仍可导入。');break;
+            }
+          }
+        }
+      }
+      return {errors,warnings};
+    }
+
+    applySharedConfig(cfg){
+      const validation=this.validateSharedConfig(cfg);
+      if(validation.errors.length)throw new Error('配置文件检查失败：\n- '+validation.errors.join('\n- '));
+      const notes=[...validation.warnings],g=cfg.Gameplay;
+
+      this.setStartingLives(g.StartingLives);
+      this.setInitialTankLevel(Math.min(g.InitialTankLevel,this.isOriginal?3:4));
+      if(this.hasExV2Config&&g.FeatureFlags!=null)this.setFeatureFlags(g.FeatureFlags);
+      if(this.supportsEnemyPowerUpPickup&&g.EnemyItemFlags!=null)this.data[this.exV2ConfigOffset+6]=(this.enemyItemFlags&0x80)|(g.EnemyItemFlags&0x7F);
+      if(this.supportsLockInitialState)this.setLockInitialState(g.LockInitialState);
+
+      for(const k of ['Enemy1','Enemy2','Enemy3','Player1','Player2']){const sp=g.Spawns[k];this.setSpawn(k,sp.X,sp.Y);}
+      for(const k of ['Sprite','Frame2','Level','Frame1','Title','LevelSelect','Misc1','Misc2'])for(let i=0;i<16;i++)this.setPaletteByte(k,i,cfg.Palettes[k][i]);
+
+      for(const td of cfg.Terrain){
+        if(td.Id===0x0E||td.Id===0x0F||td.Id<0||td.Id>=this.terrainCount)continue;
+        this.setTerrainAttribute(td.Id,td.Attr);
+        for(let q=0;q<4;q++)this.setTerrainTile(td.Id,q,td.Tiles[q]);
+      }
+      for(let r=0;r<4;r++)for(let c=0;c<6;c++){
+        this.setFlagTsaTile(false,r,c,cfg.FlagTsa.Flag[r*6+c]);
+        this.setFlagTsaTile(true,r,c,cfg.FlagTsa.Fort[r*6+c]);
+      }
+
+      const targetMax=this.isOriginal?35:70;
+      for(const sc of [...cfg.Stages].sort((a,b)=>a.Stage-b.Stage)){
+        const stage=sc.Stage;if(stage<1||stage>targetMax)continue;
+        for(let slot=0;slot<4;slot++)this.setEnemyType(stage,slot,sc.EnemyTypes[slot]);
+        const sum=sc.EnemyCounts.reduce((a,b)=>a+b,0);
+        if(this.supportsCustomEnemyTotal||sum===20)for(let slot=0;slot<4;slot++)this.setEnemyCount(stage,slot,sc.EnemyCounts[slot]);
+        if(stage>35&&!this.hasIndependentMaps)continue;
+        for(let r=0;r<13;r++)for(let c=0;c<13;c++){
+          const id=sc.Map[r][c];
+          if(id===0x0E||id===0x0F||id<0||id>=this.terrainCount)continue;
+          this.setCell(stage,r,c,id);
+        }
+      }
+      return notes;
+    }
+
+    describe() {
+      let mode='';
+      switch(this.kind){
+        case RomKind.Original16K: mode='Battle City 原版 16KB';break;
+        case RomKind.Ex16K: mode='Battle City Ex 16KB';break;
+        case RomKind.Ex32KOverlay: mode='Quarrel Ex 32KB Overlay';break;
+        case RomKind.Ex32K70Maps: mode='BCEX v2 32KB / 70独立地图';break;
+      }
+      const lines=[
+        `PRG: ${this.prgSizeBytes/1024} KiB`,
+        `CHR: ${this.chrSizeBytes/1024} KiB`,
+        `模式: ${mode}`,
+        `地图表: $${hex(this.offset(CFG.stageMapStart),4)} 起，每关 $${hex(CFG.stageSize,2)} bytes`,
+        `1~35 Type: $${hex(this.offset(CFG.enemyType1To35),4)}`,
+        `1~35 Count: $${hex(this.offset(CFG.enemyCount1To35),4)}`,
+        `Terrain Attr: $${hex(this.terrainAttributesOffset,4)}`,
+        `Terrain TSA: $${hex(this.terrainBlocksOffset,4)}`,
+      ];
+      if(this.isOriginal){
+        lines.push('关卡: Stage 1~35 + Demo','地形: 00~0F（原版16项）','Ex 10~17 / 36~70独立敌人: 不适用');
+      }else{
+        lines.push(this.hasIndependentMaps?'Stage 1~70 地图: 全部独立（1 byte terrain ID）':'Stage 36~70 地图: 复用 Stage 1~35');
+        lines.push(`36~70 Type: $${hex(this.offset(CFG.enemyType36To70),4)}`,`36~70 Count: $${hex(this.offset(CFG.enemyCount36To70),4)}`);
+        if(this.supportsTerrain64) lines.push('地形定义: 00~3F 共64项；20~3F为预留自定义槽。');
+        else if(this.supportsTerrain1F) lines.push('地形定义: 00~1F 共32项；18~1F为新增单格砖/钢。');
+        else lines.push('地形定义: Legacy 00~17（用户选择跳过0E/0F）。');
+        if(this.hasIndependentMaps) lines.push(`70-map table: $${hex(CFG.exV2MapStart,4)} 起，stride=$${hex(CFG.exV2MapStageStride,2)}`);
+        else lines.push(`Overlay: ${this.hasOverlay?'$0010~$230F':'未建立；首次放置10~17时自动建立'}`);
+        if(this.hasExV2Config){
+          lines.push(`BCEX v2: version ${this.exV2ConfigVersion}, FeatureFlags=$${hex(this.featureFlags)}`);
+          lines.push(`LayoutFlags=$${hex(this.layoutFlags)}${this.supportsCustomEnemyTotal?'（支持 1~255 自定义总敌人数）':''}`);
+          if(this.supportsPlayerFastMove)lines.push(`我方坦克加速移动: ${this.isFeatureEnabled(ExFeature.PlayerFastMove)?'ON':'OFF'}（Phase 6.2）`);
+          lines.push('Feature: bit0 B连发 / bit1 手枪+Lv4 / bit2受击降级 / bit3我方坦克加速 / bit4随机敌人 / bit5消树 / bit7取消队友互伤');
+          lines.push('Layout: bit0 70独立地图 / bit1敌人1~255 / bit2地形到1F / bit3 64地形槽 / bit4锁定初始状态 / bit5奖励立即替换 / bit6加速移动运行支持');
+          if(this.supportsEnemyPowerUpPickup)lines.push(`32KB敌人拾取: bit6；EnemyItemFlags=$${hex(this.enemyItemFlags)}`);if(this.supportsLockInitialState)lines.push(`锁定初始状态: ${this.lockInitialState?'ON':'OFF'} / Initial Lv${this.initialTankLevel}`);
+        }else lines.push('BCEX v2: 未检测到（Legacy Ex；高级功能开关不可编辑）');
+      }
+      return lines.join('\n');
+    }
+  }
+
+  return { CFG, RomKind, ExLayout, ExFeature, EnemyItemEffect, USER_TERRAIN_IDS_17, USER_TERRAIN_IDS_1F, USER_TERRAIN_IDS_3F, BattleCityRom, hex };
+})();
+
+</script>
+<script>
+'use strict';
+window.QuarrelExHelp = {
+  zh: `Quarrel Ex Web v1.5.1 中文帮助
+============================
+
+1. 支持的 ROM
+-------------
+- Battle City 日版原版 16KB
+- Legacy Ex 16KB / 32KB Overlay
+- BCEX v2 16KB
+- BCEX v2 32KB / 70 张独立地图
+
+编辑器会根据 ROM 程序特征与 BCEX LayoutFlags 自动开放相应功能。
+
+2. 地图
+-------
+左键/拖动绘制，右键吸取，Ctrl+Z 撤销。地图完整显示 13×13。
+地形 ID $0E 和 $0F 是内部保留值，地图选择与 TSA 编辑都不会显示，也禁止手工写入。
+32KB 70-map 的 Stage 1~70 全部独立；其他 Ex 的 Stage 36~70 地图按对应格式处理。
+
+3. 敌人
+-------
+每关 4 个 Type / Count。支持 CustomEnemyTotal 的 BCEX ROM 中，4 个 Count 合计就是实际敌人总数，范围 1~255；单槽 0~255。
+不支持该能力的 ROM 建议保持合计 20。
+Type 为原始字节：常用基础值 $80/$A0/$C0/$E0。bit2（$04）是闪光/奖励标志，因此 $84/$A4/$C4/$E4 可强制闪光；原版还会自动给第4、11、18辆出生敌人加 $04。
+
+4. TSA / 属性
+-------------
+Attr 只能选 0~3。TL/TR/BL/BR 是一个 16×16 地形里的四个 8×8 CHR Tile。
+点击图块可从 256 个背景 CHR Tile 中可视化选择。详见 TSA / 属性专用帮助。
+
+5. 调色板编辑器
+---------------
+恢复原 Quarrel 的 Palette Editor：Sprite、Frame2、Level、Frame1、Title、Level Select、Misc1、Misc2 共 8 组，每组 16 个 NES 色号。
+点击色块可从 NES 64 色中选择。修改 Level Palette 会同步影响地图、TSA 和 CHR 预览。v1.4.2 起 4×4 色块与 64 色选择器均缩小，以减少页面占用。
+
+6. Flag TSA Editor
+------------------
+恢复原 Quarrel 的 Flag / Fort TSA Editor。两组都是 6×4 个背景 CHR Tile。
+ROM 每行后的 $FF 终止字节由编辑器自动保留。点击格子可打开 CHR Tile Picker。
+
+7. 游戏设置
+-----------
+- 起始命数：1~255
+- 初始坦克等级：原版 Lv0~Lv3，Ex Lv0~Lv4
+- Phase 6 锁定初始状态
+- 敌人出生点 1/2/3 和玩家 P1/P2 的 X/Y（0~255）
+- 清空当前关卡 / 清空全部关卡（写成地形 $0D）
+
+锁定初始状态不会限制当前生命吃星星或手枪升级；玩家真正死亡后，再出生时恢复所设定的初始等级。
+
+8. Ex 功能开关
+--------------
+BCEX v2 FeatureFlags：
+bit0 B 键自动连发
+bit1 手枪 / Lv4
+bit2 被击中逐级降级
+bit3 我方坦克加速移动（Phase 6.2；开启后取消原版玩家移动的周期性跳帧）
+bit4 随机敌坦克出现顺序
+bit5 Lv4 消除树林
+bit6 敌人拾取道具（32KB）
+bit7 取消队友互伤
+
+Phase 6 的 EnemyItemFlags bit7 另外用于“锁定初始状态”；bits0~6 仍是敌人道具效果。
+
+9. 红色奖励坦克 / Phase 6.1+
+---------------------------
+每次击中闪光奖励坦克都会立即重新生成道具；若已有道具，旧道具立刻消失并被新的随机道具替换。Phase 5/6 的 Pending 队列已经废弃。
+开启“被击中逐级降级”时，非致死降级会播放和普通坦克被子弹打中相同的命中音效。
+
+10. 通用配置文件
+----------------
+“导出配置”与“导入配置”只使用 QuarrelExConfig v3 JSON（\`.qexcfg.json\`）。正式版不再导入 v1/v2。
+Web v1.5 与 C# Desktop v1.0 完全通用。
+
+配置包含：
+- 起始命数、初始等级、锁定选项
+- FeatureFlags / EnemyItemFlags
+- 玩家/敌人出现位置
+- 8 组调色板
+- 可编辑 TSA（自动排除 $0E/$0F）
+- Flag / Fort TSA
+- Ex Stage 1~70（原版 Stage 1~35）的完整关卡数据
+  · 13×13 Map
+  · 4 个 EnemyTypes
+  · 4 个 EnemyCounts
+  · EnemyTotal（四个 Count 合计）
+
+导入到非70独立地图的 Ex 时，Stage36~70 地图不会覆盖 Stage1~35，但36~70 Enemy Type/Count仍会导入。
+
+11. 保存 / 另存为 / 撤销重做
+---------------------------
+Ctrl+S：保存。支持 File System Access API 时写回当前文件；没有可写句柄时自动进入“另存为”。
+Ctrl+Shift+S：另存为，成功后新文件成为当前文件。
+Ctrl+Z：撤销。Ctrl+Y 或 Ctrl+Shift+Z：重做。历史最多保留 50 个状态。
+不支持直接文件写入的浏览器会退回普通下载方式。ROM 数据只在本机处理。
+
+12. 配置文件检查
+----------------
+正式版只接受 QuarrelExConfig v3。导入前检查 Schema/Version、字段类型与范围、出生点、8组调色板、TSA、Flag/Fort TSA、Stage 数量/编号、13×13 地图、Enemy Type/Count、EnemyTotal 和目标 ROM 能力兼容性。
+有硬错误时不会修改当前 ROM；只有可兼容降级项才会以警告形式继续。
+`,
+  en: `Quarrel Ex Web v1.5.1 English Help
+================================
+
+Supported ROMs include the original 16KB Battle City, legacy Ex ROMs, BCEX v2 16KB, and BCEX v2 32KB/70-map ROMs.
+
+Map editing uses a full 13x13 view. Left click/drag paints, right click picks. Ctrl+Z undoes; Ctrl+Y or Ctrl+Shift+Z redoes. Terrain IDs $0E and $0F are internal/reserved and are hidden from both map and TSA editors.
+
+On ROMs with CustomEnemyTotal, the sum of the four Count bytes is the actual enemy total and must be 1-255. Individual Count values may be 0-255.
+
+TSA / Attribute: Attr is restricted to 0-3. TL/TR/BL/BR are the four 8x8 background CHR tiles composing a 16x16 terrain block. Click a tile button to use the visual 256-tile CHR picker.
+
+Palette Editor restores the original Quarrel concept with eight 16-color groups: Sprite, Frame2, Level, Frame1, Title, Level Select, Misc1 and Misc2. v1.4.2 uses smaller 4x4 swatches and a more compact 64-color picker.
+
+Flag TSA Editor restores visual Flag/Fort editing as 6x4 background CHR tile grids. Per-row $FF terminators are preserved automatically.
+
+Game Settings include starting lives (1-255), initial tank level, Phase6 Lock Initial State, three enemy spawn points, P1/P2 spawn points, and clear-current/all-stage commands. Lock Initial State does not stop stars/pistol upgrades during the current life; after an actual death, respawn returns to the configured base level.
+
+BCEX FeatureFlags: bit0 auto fire, bit1 pistol/Lv4, bit2 downgrade on hit, bit3 player fast movement (Phase 6.2), bit4 random enemy order, bit5 Lv4 destroys forest, bit6 enemy item pickup (32KB), bit7 no friendly fire. In Phase6, EnemyItemFlags bit7 is used for Lock Initial State while bits0-6 remain enemy-item-effect switches.
+
+Phase6.1+ bonus handling: every hit on a flashing bonus tank immediately respawns the bonus; any active bonus is replaced at once. The old Pending queue is retired. Non-lethal player downgrade also plays the normal bullet-hit-tank sound.
+
+Import/Export Config accepts QuarrelExConfig v3 JSON (\`.qexcfg.json\`) only and is shared with Desktop v1.0. v3 also transfers Ex Stage 1-70 (original Stage 1-35), with a 13x13 Map, four raw EnemyTypes, four EnemyCounts and EnemyTotal per stage. Enemy Type bit2 ($04) is the flashing/bonus flag; common bases are $80/$A0/$C0/$E0, and forced-flashing forms are $84/$A4/$C4/$E4. The original game also adds $04 to the 4th, 11th and 18th spawned enemies.
+
+Save uses the current writable file handle when available; Save As uses Ctrl+Shift+S. Config v3 import runs full preflight validation and is transactional: hard errors leave the ROM untouched.
+`,
+  tsaZh: `Quarrel Ex Web v1.5.1 - TSA / 属性说明
+====================================
+
+一个地图“地形 ID”代表一个 16×16 复合块。它由：
+- Attr：0~3，选择背景调色板组
+- TL：左上 8×8 CHR Tile
+- TR：右上 8×8 CHR Tile
+- BL：左下 8×8 CHR Tile
+- BR：右下 8×8 CHR Tile
+组成。
+
+地形 ID 和 CHR Tile 编号不是同一个东西。
+例如整块海水可以是地形 ID $0A，但四个子 Tile 都使用 CHR Tile $12。
+
+Attr 只有 2 bit，因此有效值就是 0、1、2、3。编辑器用下拉框限制范围。
+
+点击 TL/TR/BL/BR 后会显示 256 个背景 CHR Tile，并使用当前 Attr 的关卡调色板预览。选择后 16×16 预览、地形栏和地图会同步更新。
+
+$0E/$0F 为 Battle City 内部/保留地形 ID，Web v1.5 与 Desktop v1.0 都将它们屏蔽，不允许在地图或 TSA 编辑器中选择。
+
+修改 TSA 不只可能改变外观。Battle City 的砖、钢、水、树林、冰等碰撞/破坏行为与展开后的 8×8 Tile 类型有关，因此请保留 ROM 备份。
+`,
+  tsaEn: `Quarrel Ex Web v1.5.1 - TSA / Attribute Guide
+===========================================
+
+A terrain ID is a 16x16 composite block made from Attr (background palette 0-3) and four 8x8 CHR tiles: TL, TR, BL and BR.
+
+Terrain IDs are not CHR tile IDs. For example, terrain $0A may represent full water while all four quadrants use CHR tile $12.
+
+Attr is a 2-bit value, so only 0, 1, 2 and 3 are valid. Click TL/TR/BL/BR to open the visual 256-tile CHR picker. The picker previews tiles using the terrain's current Attr palette.
+
+Terrain IDs $0E/$0F are internal/reserved and are hidden from map/TSA editing in Web v1.5 and Desktop v1.0.
+
+Changing TSA can affect more than appearance: Battle City collision and destruction behavior depends on the expanded 8x8 tile types used for brick, steel, water, forest, ice, etc. Keep ROM backups.
+`
+};
+
+</script>
+<script>
+'use strict';
+
+(() => {
+  const { BattleCityRom, RomKind, ExFeature, EnemyItemEffect, hex } = window.QuarrelExCore;
+  const HELP = window.QuarrelExHelp;
+  const $ = id => document.getElementById(id);
+  const rgbCss = rgb => `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+
+  const NESPAL = [
+    [84,84,84],[0,30,116],[8,16,144],[48,0,136],[68,0,100],[92,0,48],[84,4,0],[60,24,0],[32,42,0],[8,58,0],[0,64,0],[0,60,0],[0,50,60],[0,0,0],[0,0,0],[0,0,0],
+    [152,150,152],[8,76,196],[48,50,236],[92,30,228],[136,20,176],[160,20,100],[152,34,32],[120,60,0],[84,90,0],[40,114,0],[8,124,0],[0,118,40],[0,102,120],[0,0,0],[0,0,0],[0,0,0],
+    [236,238,236],[76,154,236],[120,124,236],[176,98,236],[228,84,236],[236,88,180],[236,106,100],[212,136,32],[160,170,0],[116,196,0],[76,208,32],[56,204,108],[56,180,204],[60,60,60],[0,0,0],[0,0,0],
+    [236,238,236],[168,204,236],[188,188,236],[212,178,236],[236,174,236],[236,174,212],[236,180,176],[228,196,144],[204,210,120],[180,222,120],[168,226,144],[152,226,180],[160,214,228],[160,162,160],[0,0,0],[0,0,0]
+  ];
+
+  const TERRAIN_NAMES = {
+    0x00:'砖右半',0x01:'砖下半',0x02:'砖左半',0x03:'砖上半',0x04:'整砖',
+    0x05:'钢右半',0x06:'钢下半',0x07:'钢左半',0x08:'钢上半',0x09:'整钢',
+    0x0A:'整水',0x0B:'树林',0x0C:'冰',0x0D:'空白',0x0E:'内部0E',0x0F:'内部0F',
+    0x10:'右下单水',0x11:'左下单水',0x12:'上横双水',0x13:'下横双水',
+    0x14:'左上单水',0x15:'右上单水',0x16:'左竖双水',0x17:'右竖双水',
+    0x18:'左上单砖',0x19:'右上单砖',0x1A:'左下单砖',0x1B:'右下单砖',
+    0x1C:'左上单钢',0x1D:'右上单钢',0x1E:'左下单钢',0x1F:'右下单钢'
+  };
+  for(let id=0x20;id<=0x3F;id++) TERRAIN_NAMES[id]=`自定义 ${hex(id)}`;
+
+  let model = null;
+  let filename = 'Battle_City.nes';
+  let fileHandle = null;
+  let history = [];
+  let redoHistory = [];
+  let savedBytes = null;
+  let selectedTerrain = 0x0D;
+  let painting = false;
+  let dirty = false;
+  let tileCache = new Map();
+  let lastPaintCell = '';
+  let chrPickTarget = null;
+
+  const featureBindings = [
+    ['fAuto', ExFeature.AutoFireB],
+    ['fPistol', ExFeature.PistolLevel4],
+    ['fDown', ExFeature.DowngradeOnHit],
+    ['fTree', ExFeature.Level4DestroyTrees],
+    ['fFastMove', ExFeature.PlayerFastMove],
+    ['fRandom', ExFeature.RandomEnemySpawn],
+    ['fEnemyPickup', ExFeature.EnemyPowerUpPickup],
+    ['fNoFriendly', ExFeature.NoFriendlyFire],
+  ];
+  const enemyEffects = [
+    [EnemyItemEffect.Helmet,'头盔'],[EnemyItemEffect.Clock,'时钟'],[EnemyItemEffect.Shovel,'铲子'],
+    [EnemyItemEffect.Star,'星星'],[EnemyItemEffect.Grenade,'手雷'],[EnemyItemEffect.Tank,'坦克'],[EnemyItemEffect.Pistol,'手枪']
+  ];
+
+  function setStatus(text, cls='') {
+    const el=$('status'); el.textContent=text; el.className='status '+cls;
+  }
+  function markDirty(v=true) { dirty=v; refreshTitle(); }
+  function refreshTitle() {
+    const base=model ? filename : 'Quarrel Ex Web';
+    document.title=`Quarrel Ex Web - ${base}${dirty?' *':''}`;
+    $('titleText').textContent='Quarrel Ex Web'+(dirty?' *':'');
+  }
+  function closeMenus() { document.querySelectorAll('details.menu[open]').forEach(d=>d.removeAttribute('open')); }
+  function clearCaches(){tileCache=new Map();}
+
+  function resetUiBeforeLoad() {
+    painting=false; lastPaintCell=''; chrPickTarget=null; history=[]; redoHistory=[]; savedBytes=null; fileHandle=null; model=null; clearCaches();
+    $('stageSelect').innerHTML=''; $('stageSelect').disabled=true;
+    $('terrain').innerHTML=''; $('enemyRows').innerHTML=''; $('tsaRows').innerHTML=''; $('paletteGrid').innerHTML=''; $('flagGrid').innerHTML=''; $('fortGrid').innerHTML=''; $('spawnRows').innerHTML='';
+    $('enemySum').textContent=''; $('mapNote').textContent=''; $('infoBox').textContent='打开 ROM 后显示格式信息。';
+    $('romBadge').textContent='未打开 ROM';
+    $('saveBtn').disabled=true; $('saveAsBtn').disabled=true; $('importConfigBtn').disabled=true; $('exportConfigBtn').disabled=true; $('undoBtn').disabled=true; $('redoBtn').disabled=true;
+    $('convertOverlayBtn').disabled=true; $('validateBtn').disabled=true;
+    const ctx=$('map').getContext('2d'); ctx.fillStyle='#111';ctx.fillRect(0,0,416,416);
+    $('chrModal')?.classList.add('hidden'); $('paletteModal')?.classList.add('hidden');
+    refreshExOptions();
+  }
+
+  function bytesEqual(a,b){
+    if(!a||!b||a.length!==b.length)return false;
+    for(let i=0;i<a.length;i++)if(a[i]!==b[i])return false;
+    return true;
+  }
+  function updateHistoryButtons(){
+    $('undoBtn').disabled=!model||history.length===0;
+    $('redoBtn').disabled=!model||redoHistory.length===0;
+  }
+  function updateDirtyFromSaved(){
+    dirty=!!model&&!bytesEqual(model.cloneBytes(),savedBytes);
+    refreshTitle();
+  }
+  function snapshot() {
+    if(!model)return;
+    history.push(model.cloneBytes());
+    if(history.length>50)history.shift();
+    redoHistory=[];
+    updateHistoryButtons();
+  }
+
+  function undo() {
+    if(!model||!history.length)return;
+    const stage=currentStage();
+    try {
+      redoHistory.push(model.cloneBytes());
+      if(redoHistory.length>50)redoHistory.shift();
+      model=new BattleCityRom(history.pop()); clearCaches();
+      updateHistoryButtons(); updateDirtyFromSaved();
+      populateStages(stage); refreshAll(); setStatus('已撤销。','ok');
+    } catch(err){ setStatus('撤销失败：'+err.message,'bad'); }
+  }
+
+  function redo() {
+    if(!model||!redoHistory.length)return;
+    const stage=currentStage();
+    try {
+      history.push(model.cloneBytes());
+      if(history.length>50)history.shift();
+      model=new BattleCityRom(redoHistory.pop()); clearCaches();
+      updateHistoryButtons(); updateDirtyFromSaved();
+      populateStages(stage); refreshAll(); setStatus('已重做。','ok');
+    } catch(err){ setStatus('重做失败：'+err.message,'bad'); }
+  }
+
+  function currentStage(){return Number($('stageSelect').value||1);}
+
+  function populateStages(preferred=1) {
+    const s=$('stageSelect'); s.innerHTML='';
+    if(!model){s.disabled=true;return;}
+    if(model.isOriginal){
+      for(let i=1;i<=35;i++){const o=new Option('Stage '+i,i);s.add(o);}
+      s.add(new Option('Demo',36));
+    } else {
+      for(let i=1;i<=70;i++)s.add(new Option('Stage '+i,i));
+    }
+    s.value=String(Math.min(Math.max(preferred,1),model.maxEditableStage)); s.disabled=false;
+  }
+
+  function tilePixels(tile) {
+    const key=tile&0xFF;
+    if(tileCache.has(key))return tileCache.get(key);
+    const start=model.backgroundChrOffset+key*16, out=new Uint8Array(64);
+    for(let y=0;y<8;y++){
+      const a=model.getChrByte(start+y),b=model.getChrByte(start+y+8);
+      for(let x=0;x<8;x++){const bit=7-x;out[y*8+x]=((a>>bit)&1)|(((b>>bit)&1)<<1);}
+    }
+    tileCache.set(key,out); return out;
+  }
+
+  function spriteTilePixels(tile) {
+    const key='spr'+(tile&0xFF);
+    if(tileCache.has(key))return tileCache.get(key);
+    const start=model.spriteChrOffset+(tile&0xFF)*16,out=new Uint8Array(64);
+    for(let y=0;y<8;y++){
+      const a=model.getChrByte(start+y),b=model.getChrByte(start+y+8);
+      for(let x=0;x<8;x++){const bit=7-x;out[y*8+x]=((a>>bit)&1)|(((b>>bit)&1)<<1);}
+    }
+    tileCache.set(key,out);return out;
+  }
+
+  function drawSpriteTile(ctx,tile,paletteIndex,dx,dy,scale=2){
+    const pix=spriteTilePixels(tile),pal=model.getPalette('Sprite');
+    for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+      const ci=pix[y*8+x];if(ci===0)continue;
+      const rgb=NESPAL[pal[(paletteIndex&3)*4+ci]&0x3F];
+      ctx.fillStyle=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;ctx.fillRect(dx+x*scale,dy+y*scale,scale,scale);
+    }
+  }
+
+  function drawTankSprite(ctx,kind,cx,cy,scale=2){
+    const player=kind==='Player1'||kind==='Player2',base=player?0x00:0x80;
+    const pal=kind==='Player1'?0:kind==='Player2'?1:2;
+    const half=8*scale,left=cx-half,top=cy-half;
+    drawSpriteTile(ctx,base,pal,left,top,scale);
+    drawSpriteTile(ctx,base+1,pal,left,top+8*scale,scale);
+    drawSpriteTile(ctx,base+2,pal,left+8*scale,top,scale);
+    drawSpriteTile(ctx,base+3,pal,left+8*scale,top+8*scale,scale);
+  }
+
+  function drawBlock(ctx,id,dx,dy,scale=2) {
+    const attr=model.getTerrainAttribute(id)&3, tiles=model.getTerrainTiles(id);
+    for(let q=0;q<4;q++){
+      const pix=tilePixels(tiles[q]),ox=(q&1)*8,oy=(q>>1)*8;
+      for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+        const ci=pix[y*8+x], pi=model.getLevelPaletteByte(attr*4+(ci?ci:0))&0x3F, rgb=NESPAL[pi];
+        ctx.fillStyle=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+        ctx.fillRect(dx+(ox+x)*scale,dy+(oy+y)*scale,scale,scale);
+      }
+    }
+  }
+
+  function drawChrTile(ctx,tile,attr,dx=0,dy=0,scale=4) {
+    const pix=tilePixels(tile&0xFF);
+    for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+      const ci=pix[y*8+x],pi=model.getLevelPaletteByte((attr&3)*4+(ci?ci:0))&0x3F,rgb=NESPAL[pi];
+      ctx.fillStyle=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+      ctx.fillRect(dx+x*scale,dy+y*scale,scale,scale);
+    }
+  }
+
+  function renderMap() {
+    const cv=$('map'),ctx=cv.getContext('2d'); ctx.imageSmoothingEnabled=false;ctx.fillStyle='#111';ctx.fillRect(0,0,416,416);
+    if(!model)return;
+    const stage=currentStage();
+    for(let r=0;r<13;r++)for(let c=0;c<13;c++){
+      let id=model.getCell(stage,r,c); if(id>=model.terrainCount)id=0x0D;
+      drawBlock(ctx,id,c*32,r*32,2);
+    }
+    ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;
+    for(let i=0;i<=13;i++){ctx.beginPath();ctx.moveTo(i*32+.5,0);ctx.lineTo(i*32+.5,416);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*32+.5);ctx.lineTo(416,i*32+.5);ctx.stroke();}
+    if(model.isOriginal&&stage===36)$('mapNote').textContent='原版 Demo 地图；敌人 Type/Count 与 Stage 35 共用。';
+    else if(model.isOriginal)$('mapNote').textContent='Battle City 原版：Stage 1~35 使用独立地图。';
+    else if(model.hasIndependentMaps)$('mapNote').textContent=`BCEX v2 32KB：Stage 1~70 地图全部独立，00~${hex(model.terrainCount-1)} 直接保存。`;
+    else if(stage>35)$('mapNote').textContent=`Stage ${stage} 地图与 Stage ${stage-35} 共用；敌人配置独立。`;
+    else $('mapNote').textContent='Stage 1~35 使用独立地图。';
+  }
+
+  function buildTerrain() {
+    const box=$('terrain');box.innerHTML='';if(!model)return;
+    const ids=model.selectableTerrainIds;
+    if(!ids.includes(selectedTerrain)) selectedTerrain=ids.includes(0x0D)?0x0D:ids[0];
+    ids.forEach(id=>{
+      const b=document.createElement('button');b.type='button';b.className='tilebtn'+(id===selectedTerrain?' sel':'');b.title=`ID $${hex(id)} ${TERRAIN_NAMES[id]||''}`;
+      const c=document.createElement('canvas');c.width=32;c.height=32;drawBlock(c.getContext('2d'),id,0,0,2);
+      const sp=document.createElement('span');sp.textContent=`${hex(id)} ${TERRAIN_NAMES[id]||'地形'}`;
+      b.append(c,sp);b.addEventListener('click',()=>{selectedTerrain=id;buildTerrain();});box.appendChild(b);
+    });
+  }
+
+  function refreshEnemy() {
+    const tb=$('enemyRows');tb.innerHTML='';if(!model)return;
+    const stage=currentStage(),data=model.getEnemyData(stage);let sum=0;
+    for(let i=0;i<4;i++){
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${i+1}</td><td><input class="mono" data-kind="type" data-slot="${i}" maxlength="2" value="${hex(data.types[i])}"></td><td><input data-kind="count" data-slot="${i}" type="number" min="0" max="255" value="${data.counts[i]}"></td>`;
+      tb.appendChild(tr);sum+=data.counts[i];
+    }
+    tb.querySelectorAll('input').forEach(i=>i.addEventListener('change',enemyChanged));
+
+    if(model.supportsCustomEnemyTotal){
+      const good=sum>=1&&sum<=255;
+      $('enemySum').textContent=`总敌人数：${sum} / 1~255${good?'（有效）':'（超出范围）'}`;
+      $('enemySum').className=good?'ok':'bad';
+      $('enemyCountHelp').innerHTML='四个 Count 的<b>合计</b>就是本关实际敌人总数，范围 <b>1~255</b>；单个槽允许 0~255。20不再是硬限制。';
+    }else{
+      $('enemySum').textContent=`数量合计：${sum}${sum===20?'（原版有效）':'（当前ROM运行程序仍按20辆设计）'}`;
+      $('enemySum').className=sum===20?'ok':'warn';
+      $('enemyCountHelp').innerHTML='当前 ROM 没有“自定义总敌人数”运行支持。建议四个 Count 合计保持 <b>20</b>。';
+    }
+    $('enemyHint').textContent=model.isOriginal?(stage===36?'Demo 与 Stage35 共用敌人数据。':'原版 Stage1~35 敌人表。'):(stage<=35?'Stage1~35 原敌人表。':'Stage36~70 Ex 独立敌人表。');
+  }
+
+  function enemyChanged(e) {
+    if(!model)return;
+    try{
+      const stage=currentStage(),slot=Number(e.target.dataset.slot);
+      if(e.target.dataset.kind==='type'){
+        let v=parseInt(e.target.value,16);if(!Number.isFinite(v))v=0;
+        snapshot();model.setEnemyType(stage,slot,v);
+      }else{
+        let v=parseInt(e.target.value,10);if(!Number.isFinite(v))v=0;v=Math.max(0,Math.min(255,v));
+        const data=model.getEnemyData(stage),proposed=data.counts.slice();proposed[slot]=v;
+        model.validateEnemyTotal(proposed);
+        snapshot();model.setEnemyCount(stage,slot,v);
+      }
+      markDirty();refreshEnemy();refreshInfo();setStatus('敌人配置已更新。','ok');
+    }catch(err){setStatus(err.message,'bad');refreshEnemy();}
+  }
+
+  function createMiniBlockCanvas(id) {
+    const cv=document.createElement('canvas');cv.width=32;cv.height=32;cv.className='tsa-preview';
+    drawBlock(cv.getContext('2d'),id,0,0,2);return cv;
+  }
+
+  function createTilePickButton(id,q,tile,attr) {
+    const b=document.createElement('button');b.type='button';b.className='tsa-tile-btn';b.dataset.id=String(id);b.dataset.q=String(q);
+    b.title=`点击选择 CHR Tile $${hex(tile)}（${['TL 左上','TR 右上','BL 左下','BR 右下'][q]}）`;
+    const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,attr,0,0,4);
+    const sp=document.createElement('span');sp.textContent=`$${hex(tile)}`;
+    b.append(cv,sp);b.addEventListener('click',()=>openChrPicker(id,q));return b;
+  }
+
+  function refreshTSA() {
+    const tb=$('tsaRows');tb.innerHTML='';if(!model)return;
+    for(const id of model.selectableTerrainIds){
+      const attr=model.getTerrainAttribute(id)&3,t=model.getTerrainTiles(id),tr=document.createElement('tr');
+      const idTd=document.createElement('td');idTd.className='mono';idTd.textContent=hex(id);
+      const pvTd=document.createElement('td');pvTd.appendChild(createMiniBlockCanvas(id));
+      const attrTd=document.createElement('td');
+      const sel=document.createElement('select');sel.dataset.id=String(id);sel.className='attr-select';
+      for(let p=0;p<4;p++)sel.add(new Option(`${p}`,p));
+      sel.value=String(attr);sel.addEventListener('change',attrChanged);attrTd.appendChild(sel);
+      tr.append(idTd,pvTd,attrTd);
+      for(let q=0;q<4;q++){const td=document.createElement('td');td.appendChild(createTilePickButton(id,q,t[q],attr));tr.appendChild(td);}
+      tb.appendChild(tr);
+    }
+  }
+
+  function attrChanged(e) {
+    if(!model)return;
+    try{
+      const id=Number(e.target.dataset.id),v=Number(e.target.value);
+      snapshot();model.setTerrainAttribute(id,v);
+      markDirty();renderMap();buildTerrain();refreshTSA();refreshInfo();
+      setStatus(`地形 $${hex(id)} Attr 已设为 ${v}。`,'ok');
+    }catch(err){setStatus(err.message,'bad');refreshTSA();}
+  }
+
+  function openChrPicker(id,q) {
+    if(!model)return;
+    chrPickTarget={id,q};
+    const current=model.getTerrainTiles(id)[q],attr=model.getTerrainAttribute(id)&3;
+    $('chrTitle').textContent=`选择 CHR Tile - 地形 $${hex(id)} / ${['TL 左上','TR 右上','BL 左下','BR 右下'][q]}`;
+    $('chrHint').textContent=`当前 Attr = ${attr}（背景调色板 ${attr}）；当前 Tile = $${hex(current)}。点击任意图块完成选择。`;
+    const grid=$('chrGrid');grid.innerHTML='';
+    for(let tile=0;tile<256;tile++){
+      const b=document.createElement('button');b.type='button';b.className='chr-tile-btn'+(tile===current?' selected':'');b.title=`CHR Tile $${hex(tile)}`;
+      const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,attr,0,0,4);
+      const sp=document.createElement('span');sp.textContent=hex(tile);
+      b.append(cv,sp);b.addEventListener('click',()=>chooseChrTile(tile));grid.appendChild(b);
+    }
+    $('chrModal').classList.remove('hidden');
+    requestAnimationFrame(()=>grid.querySelector('.selected')?.scrollIntoView({block:'center',inline:'center'}));
+  }
+
+  function chooseChrTile(tile) {
+    if(!model||!chrPickTarget)return;
+    if(chrPickTarget.flagTsa){model.setFlagTsaTile(chrPickTarget.fort,chrPickTarget.row,chrPickTarget.col,tile);hideChrPicker();markDirty();refreshFlagTsa();return;}
+    try{
+      snapshot();model.setTerrainTile(chrPickTarget.id,chrPickTarget.q,tile);
+      const {id,q}=chrPickTarget;hideChrPicker();markDirty();
+      renderMap();buildTerrain();refreshTSA();refreshInfo();
+      setStatus(`地形 $${hex(id)} ${['TL','TR','BL','BR'][q]} = CHR Tile $${hex(tile)}。`,'ok');
+    }catch(err){setStatus(err.message,'bad');}
+  }
+
+  function hideChrPicker(){chrPickTarget=null;$('chrModal').classList.add('hidden');}
+
+
+  const PALETTE_KINDS=[['Sprite','Sprite'],['Frame2','Frame 2'],['Level','Level'],['Frame1','Frame 1'],['Title','Title'],['LevelSelect','Level Select'],['Misc1','Misc 1'],['Misc2','Misc 2']];
+  let palettePickTarget=null;
+  function refreshPalette(){const sel=$('paletteSet');if(!sel.options.length)PALETTE_KINDS.forEach(([v,n])=>sel.add(new Option(n,v)));const grid=$('paletteGrid');grid.innerHTML='';if(!model)return;const kind=sel.value||'Level',pal=model.getPalette(kind);pal.forEach((v,i)=>{const b=document.createElement('button');b.className='palette-cell';b.style.background=rgbCss(NESPAL[v&0x3F]);b.textContent=`${i.toString().padStart(2,'0')}  $${hex(v&0x3F)}`;b.addEventListener('click',()=>openPalettePicker(kind,i,v));grid.appendChild(b);});}
+  function openPalettePicker(kind,index,current){palettePickTarget={kind,index};$('paletteTitle').textContent=`${kind} Palette[${index}] - 当前 $${hex(current&0x3F)}`;const g=$('palettePickerGrid');g.innerHTML='';for(let i=0;i<64;i++){const b=document.createElement('button');b.className='nes-color';b.style.background=rgbCss(NESPAL[i]);b.textContent=hex(i);b.addEventListener('click',()=>{snapshot();model.setPaletteByte(kind,index,i);hidePalettePicker();clearCaches();markDirty();refreshPalette();renderMap();refreshGameSettings();buildTerrain();refreshTSA();refreshFlagTsa();setStatus(`Palette ${kind}[${index}] = $${hex(i)}`,'ok');});g.appendChild(b);}$('paletteModal').classList.remove('hidden');}
+  function hidePalettePicker(){palettePickTarget=null;$('paletteModal').classList.add('hidden');}
+  function refreshFlagTsa(){for(const fort of [false,true]){const root=$(fort?'fortGrid':'flagGrid');root.innerHTML='';if(!model)continue;const data=model.getFlagTsa(fort);data.forEach((tile,i)=>{const b=document.createElement('button');b.className='flag-tile';const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,0,0,0,4);b.appendChild(cv);b.title=`$${hex(tile)}`;b.addEventListener('click',()=>openFlagChrPicker(fort,Math.floor(i/6),i%6,tile));root.appendChild(b);});}}
+  function openFlagChrPicker(fort,row,col,current){chrPickTarget={flagTsa:true,fort,row,col};$('chrTitle').textContent=`${fort?'Fort':'Flag'} TSA [${row},${col}]`;$('chrHint').textContent=`当前 Tile=$${hex(current)}。`;const grid=$('chrGrid');grid.innerHTML='';for(let tile=0;tile<256;tile++){const b=document.createElement('button');b.className='chr-tile-btn'+(tile===current?' selected':'');const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,0,0,0,4);const sp=document.createElement('span');sp.textContent=hex(tile);b.append(cv,sp);b.addEventListener('click',()=>{snapshot();model.setFlagTsaTile(fort,row,col,tile);hideChrPicker();markDirty();refreshFlagTsa();setStatus(`${fort?'Fort':'Flag'} TSA = $${hex(tile)}`,'ok');});grid.appendChild(b);}$('chrModal').classList.remove('hidden');}
+  const SPAWN_NAMES=[['Enemy1','敌人1'],['Enemy2','敌人2'],['Enemy3','敌人3'],['Player1','玩家1'],['Player2','玩家2']];
+  let selectedSpawn='Player1',spawnDrag=null;
+
+  function renderSpawnEditor(){
+    const cv=$('spawnCanvas');if(!cv)return;const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#181c20';ctx.fillRect(0,0,512,480);if(!model)return;
+    const stage=currentStage();
+    for(let r=0;r<13;r++)for(let c=0;c<13;c++){let id=model.getCell(stage,r,c);if(id>=model.terrainCount)id=0x0D;drawBlock(ctx,id,32+c*32,32+r*32,2);}
+    ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;for(let i=0;i<=13;i++){const v=32+i*32;ctx.beginPath();ctx.moveTo(v+.5,32);ctx.lineTo(v+.5,448);ctx.stroke();ctx.beginPath();ctx.moveTo(32,v+.5);ctx.lineTo(448,v+.5);ctx.stroke();}
+    for(const [k,n] of SPAWN_NAMES){const p=model.getSpawn(k),cx=p.X*2,cy=Math.min(p.Y,239)*2;drawTankSprite(ctx,k,cx,cy,2);ctx.strokeStyle=k===selectedSpawn?'#ffe600':'rgba(255,255,255,.9)';ctx.lineWidth=k===selectedSpawn?3:1;ctx.strokeRect(cx-17,cy-17,34,34);ctx.fillStyle=k===selectedSpawn?'#ffe600':'#fff';ctx.font='bold 12px Segoe UI';ctx.textAlign='center';ctx.fillText(k.startsWith('Player')?(k==='Player1'?'P1':'P2'):k.replace('Enemy','E'),cx,Math.min(477,cy+29));}
+  }
+
+  function makeSpawnIcon(kind){const cv=document.createElement('canvas');cv.className='spawn-icon';cv.width=32;cv.height=32;const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;if(model)drawTankSprite(ctx,kind,16,16,2);return cv;}
+
+  function refreshGameSettings(){
+    if(!model)return;$('startingLives').value=model.startingLives;$('initialLevel').value=String(Math.min(model.initialTankLevel,model.isOriginal?3:4));$('initialLevel').querySelector('option[value="4"]').disabled=model.isOriginal;$('lockInitialSettings').checked=model.lockInitialState;$('lockInitialSettings').disabled=!model.supportsLockInitialState;
+    const tb=$('spawnRows');tb.innerHTML='';
+    for(const [k,n] of SPAWN_NAMES){
+      const p=model.getSpawn(k),tr=document.createElement('tr'),td=document.createElement('td'),wrap=document.createElement('div');wrap.className='spawn-row-object';wrap.append(makeSpawnIcon(k),document.createTextNode(n));td.appendChild(wrap);td.style.cursor='pointer';td.addEventListener('click',()=>{selectedSpawn=k;renderSpawnEditor();});tr.appendChild(td);
+      for(const axis of ['X','Y']){const cell=document.createElement('td'),input=document.createElement('input');input.type='number';input.min='0';input.max='255';input.dataset.spawn=k;input.dataset.axis=axis;input.value=String(p[axis]);input.addEventListener('change',spawnChanged);cell.appendChild(input);tr.appendChild(cell);}tb.appendChild(tr);
+    }
+    renderSpawnEditor();
+  }
+  function spawnChanged(e){if(!model)return;const k=e.target.dataset.spawn,p=model.getSpawn(k),v=Math.max(0,Math.min(255,Number(e.target.value)||0));snapshot();selectedSpawn=k;model.setSpawn(k,e.target.dataset.axis==='X'?v:p.X,e.target.dataset.axis==='Y'?v:p.Y);markDirty();refreshGameSettings();}
+  function spawnEventPoint(e){const cv=$('spawnCanvas'),r=cv.getBoundingClientRect();return {X:Math.max(0,Math.min(255,Math.round((e.clientX-r.left)*256/r.width))),Y:Math.max(0,Math.min(239,Math.round((e.clientY-r.top)*240/r.height)))};}
+  function spawnHit(p){if(!model)return null;let hit=null,best=1e9;for(const [k] of SPAWN_NAMES){const q=model.getSpawn(k),dx=p.X-q.X,dy=p.Y-q.Y,d=dx*dx+dy*dy;if(Math.abs(dx)<=12&&Math.abs(dy)<=12&&d<best){hit=k;best=d;}}return hit;}
+  function setLockFromUi(on){if(!model?.supportsLockInitialState)return;snapshot();try{model.setLockInitialState(on);markDirty();refreshGameSettings();refreshExOptions();refreshInfo();setStatus('锁定初始状态已更新。','ok');}catch(e){setStatus(e.message,'bad');}}
+  function exportConfig(){
+    if(!model)return;
+    try{
+      const cfg=model.exportSharedConfig(),validation=model.validateSharedConfig(cfg);
+      if(validation.errors.length)throw new Error(validation.errors.join('\n'));
+      const blob=new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=u;a.download=(filename.replace(/\.nes$/i,'')||'BattleCity')+'.qexcfg.json';document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(u),1000);
+      setStatus('QuarrelExConfig v3 已导出。','ok');
+      alert('配置导出成功。\n\n已导出 QuarrelExConfig v3，可在 Web / Desktop 间通用。');
+    }catch(e){setStatus('导出配置失败：'+e.message,'bad');alert('导出配置失败：\n'+e.message);}
+  }
+
+  async function importConfigFile(file){
+    if(!model)return;
+    try{
+      if(!file.name.toLowerCase().endsWith('.qexcfg.json'))throw new Error('正式版只接受扩展名为 .qexcfg.json 的 QuarrelExConfig v3 文件。');
+      const cfg=JSON.parse(await file.text());
+      // Transactional import: validate/apply on a temporary ROM first.
+      const staging=new BattleCityRom(model.cloneBytes());
+      const validation=staging.validateSharedConfig(cfg);
+      if(validation.errors.length)throw new Error('配置文件检查失败：\n- '+validation.errors.join('\n- '));
+      const notes=staging.applySharedConfig(cfg);
+
+      snapshot();
+      model=staging;clearCaches();markDirty();refreshAll();
+      const extra=notes.length?'\n\n兼容性提示：\n- '+notes.join('\n- '):'';
+      alert('QuarrelExConfig v3 已检查并导入成功。'+extra);
+      setStatus('QuarrelExConfig v3 已检查并导入。','ok');
+    }catch(e){
+      setStatus('导入配置失败：'+e.message,'bad');
+      alert('导入配置失败：\n'+e.message);
+    }
+  }
+
+  function refreshExOptions() {
+    const hasV2=!!model?.hasExV2Config, supportsPickup=!!model?.supportsEnemyPowerUpPickup;
+    featureBindings.forEach(([id,flag])=>{
+      const el=$(id);el.checked=hasV2&&model.isFeatureEnabled(flag);el.disabled=!hasV2||(flag===ExFeature.PlayerFastMove&&!model.supportsPlayerFastMove)||(flag===ExFeature.EnemyPowerUpPickup&&!supportsPickup)||(flag===ExFeature.NoFriendlyFire&&!model.supportsNoFriendlyFire);
+    });
+    $('fTree').disabled=!hasV2||!$('fPistol').checked;
+    $('fLockInitial').checked=!!model?.lockInitialState;$('fLockInitial').disabled=!model?.supportsLockInitialState;$('lockInitialSettings').checked=!!model?.lockInitialState;$('lockInitialSettings').disabled=!model?.supportsLockInitialState;$('presetOriginal').disabled=!hasV2;$('presetRecommended').disabled=!hasV2;
+    document.querySelectorAll('[data-effect]').forEach(el=>{
+      const flag=Number(el.dataset.effect);el.checked=hasV2&&model.isEnemyItemEffectEnabled(flag);el.disabled=!(hasV2&&supportsPickup&&$('fEnemyPickup').checked);
+    });
+    if(!model)$('exInfo').textContent='打开 ROM 后显示功能状态。';
+    else if(model.isOriginal)$('exInfo').textContent='Battle City 原版 ROM：没有 BCEX v2 配置块，Ex 功能不可用。';
+    else if(!hasV2)$('exInfo').textContent='Legacy Ex ROM：未检测到 BCEX v2 配置块。高级功能不能只写 Flag，必须使用带对应运行程序的 BCEX v2 ROM。';
+    else $('exInfo').textContent=`BCEX v2 / FeatureFlags=$${hex(model.featureFlags)}。${model.supportsBonusReplaceAlways?' 闪光坦克奖励=立即替换当前道具（固定）。':''}${model.supportsPlayerFastMove?' 支持我方坦克加速移动。':''}${supportsPickup?` EnemyItemFlags=$${hex(model.enemyItemFlags)}。`:''}`;
+  }
+
+  function featureChanged(id,flag) {
+    if(!model?.hasExV2Config)return;snapshot();
+    try{model.setFeature(flag,$(id).checked);markDirty();refreshExOptions();refreshInfo();setStatus(`FeatureFlags = $${hex(model.featureFlags)}`,'ok');}
+    catch(err){setStatus(err.message,'bad');refreshExOptions();}
+  }
+
+  function enemyEffectChanged(el,flag) {
+    if(!model?.supportsEnemyPowerUpPickup)return;snapshot();
+    try{model.setEnemyItemEffect(flag,el.checked);markDirty();refreshExOptions();refreshInfo();setStatus(`EnemyItemFlags = $${hex(model.enemyItemFlags)}`,'ok');}
+    catch(err){setStatus(err.message,'bad');refreshExOptions();}
+  }
+
+  function applyPreset(flags,msg) {
+    if(!model?.hasExV2Config)return;snapshot();
+    try{model.setFeatureFlags(flags);markDirty();refreshExOptions();refreshInfo();setStatus(msg,'ok');}
+    catch(err){setStatus(err.message,'bad');}
+  }
+
+  function refreshInfo(){if(model)$('infoBox').textContent=model.describe();}
+  function refreshBadge(){
+    if(!model){$('romBadge').textContent='未打开 ROM';return;}
+    const names={Original16K:'Original 16K',Ex16K:'Ex 16K',Ex32KOverlay:'Ex 32K Overlay',Ex32K70Maps:'BCEX v2 32K / 70 Maps'};
+    $('romBadge').textContent=(names[model.kind]||model.kind)+(model.supportsCustomEnemyTotal?' · Enemy 1~255':'')+` · Terrain ${model.terrainCount}`;
+  }
+  function refreshAll(){if(!model)return;renderMap();buildTerrain();refreshEnemy();refreshTSA();refreshPalette();refreshFlagTsa();refreshGameSettings();refreshExOptions();refreshInfo();refreshBadge();$('convertOverlayBtn').disabled=!model.canConvertToOverlay;$('validateBtn').disabled=false;}
+
+  function mapRC(e){
+    const cv=$('map'),r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*416/r.width,y=(e.clientY-r.top)*416/r.height;
+    return {c:Math.max(0,Math.min(12,Math.floor(x/32))),r:Math.max(0,Math.min(12,Math.floor(y/32)))};
+  }
+  function paintAt(e){
+    if(!model)return;const rc=mapRC(e),key=`${rc.r},${rc.c}`;if(key===lastPaintCell)return;lastPaintCell=key;
+    try{
+      const converted=model.setCell(currentStage(),rc.r,rc.c,selectedTerrain);if(converted){clearCaches();populateStages(currentStage());refreshTSA();refreshExOptions();refreshInfo();refreshBadge();$('convertOverlayBtn').disabled=true;setStatus('已自动转换为32KB Legacy Overlay；请保存新的 ROM。','ok');}
+      markDirty();renderMap();
+    }catch(err){setStatus(err.message,'bad');}
+  }
+
+  async function loadFile(file, handle=null) {
+    setStatus('正在读取 ROM…');
+    try{
+      const bytes=new Uint8Array(await file.arrayBuffer());const next=new BattleCityRom(bytes);
+      // Only detach the previous document after the new ROM has passed validation.
+      resetUiBeforeLoad();
+      model=next;filename=file.name||'Battle_City.nes';fileHandle=handle;history=[];redoHistory=[];savedBytes=model.cloneBytes();dirty=false;selectedTerrain=0x0D;clearCaches();
+      populateStages(1);$('saveBtn').disabled=false;$('saveAsBtn').disabled=false;$('importConfigBtn').disabled=false;$('exportConfigBtn').disabled=false;updateHistoryButtons();refreshAll();refreshTitle();
+      setStatus(`已打开 ${filename}。`,'ok');
+    }catch(err){setStatus('无法打开 ROM：'+err.message,'bad');}
+    finally{$('fileInput').value='';}
+  }
+
+  function validateBeforeSave(){
+    if(!model)return false;
+    try{model.validateAllEnemyTotals();return true;}
+    catch(err){setStatus('无法保存：'+err.message,'bad');alert('无法保存：\n'+err.message);return false;}
+  }
+
+  function downloadRom(downloadName) {
+    if(!model||!validateBeforeSave())return false;
+    const blob=new Blob([model.cloneBytes()],{type:'application/octet-stream'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download=downloadName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+    filename=downloadName;savedBytes=model.cloneBytes();markDirty(false);refreshTitle();setStatus('ROM 已生成并下载。','ok');return true;
+  }
+
+  async function writeRomHandle(handle){
+    const writable=await handle.createWritable();await writable.write(model.cloneBytes());await writable.close();
+    fileHandle=handle;filename=handle.name||filename;savedBytes=model.cloneBytes();markDirty(false);refreshTitle();
+  }
+
+  async function saveAsRom(){
+    if(!model||!validateBeforeSave())return false;
+    if(window.showSaveFilePicker&&window.isSecureContext){
+      try{
+        const handle=await window.showSaveFilePicker({suggestedName:filename,types:[{description:'NES ROM',accept:{'application/octet-stream':['.nes']}}]});
+        await writeRomHandle(handle);setStatus('ROM 已另存为。','ok');return true;
+      }catch(err){if(err?.name==='AbortError')return false;setStatus('另存为失败：'+err.message,'bad');return false;}
+    }
+    const stem=filename.replace(/\.nes$/i,'')||'Battle_City';
+    return downloadRom(stem+'_edited.nes');
+  }
+
+  async function saveRom() {
+    if(!model||!validateBeforeSave())return false;
+    if(fileHandle&&window.isSecureContext){
+      try{await writeRomHandle(fileHandle);setStatus('ROM 已保存。','ok');return true;}
+      catch(err){
+        // Permission may have been revoked. Fall through to Save As.
+        setStatus('原文件无法直接写入，改用“另存为”。','warn');
+      }
+    }
+    return await saveAsRom();
+  }
+
+  async function openRom(){
+    if(dirty&&!confirm('当前 ROM 有未保存修改。仍要切换 ROM 吗？'))return;
+    if(window.showOpenFilePicker&&window.isSecureContext){
+      try{
+        const [handle]=await window.showOpenFilePicker({multiple:false,types:[{description:'NES ROM',accept:{'application/octet-stream':['.nes']}}]});
+        if(!handle)return;
+        const file=await handle.getFile();await loadFile(file,handle);return;
+      }catch(err){if(err?.name==='AbortError')return;}
+    }
+    $('fileInput').click();
+  }
+
+  function convertOverlay() {
+    if(!model?.canConvertToOverlay)return;
+    if(!confirm('将当前16KB Ex在内存中转换为32KB Legacy Overlay。继续吗？'))return;
+    snapshot();
+    try{model.ensureExpandedForExtendedTerrain();clearCaches();markDirty();populateStages(currentStage());refreshAll();setStatus('已转换为32KB Legacy Overlay；请保存新 ROM。','ok');}
+    catch(err){setStatus('转换失败：'+err.message,'bad');}
+  }
+
+  function showHelp(kind) {
+    const titles={zh:'Quarrel Ex Web - 中文帮助',en:'Quarrel Ex Web - English Help',tsaZh:'TSA / 属性说明（中文）',tsaEn:'TSA / Attribute Guide'};
+    $('helpTitle').textContent=titles[kind]||'帮助';$('helpText').textContent=HELP[kind]||'';$('helpModal').classList.remove('hidden');closeMenus();
+  }
+  function hideHelp(){$('helpModal').classList.add('hidden');}
+  function showAbout(){
+    $('helpTitle').textContent='关于 Quarrel Ex Web';
+    $('helpText').textContent='Quarrel Ex Web v1.5.1\n\n本地浏览器版 Battle City / Battle City Ex 编辑器。\n正式版文件操作：仅支持 QuarrelExConfig v3；配置导入先完整校验并事务式应用；加入撤销/重做，以及完善的保存/另存为。Config v3 包含完整关卡地图、Enemy Type/Count/Total、调色板、TSA、Flag TSA、出生位置与全局设置。\n\n支持 Original16K / Ex16K / Legacy 32KB Overlay / BCEX v2 32KB 70-map。\nROM 数据只在本机浏览器内处理。';
+    $('helpModal').classList.remove('hidden');closeMenus();
+  }
+
+
+  $('paletteSet').addEventListener('change',refreshPalette);
+  $('paletteClose').addEventListener('click',hidePalettePicker);$('paletteModal').addEventListener('click',e=>{if(e.target===$('paletteModal'))hidePalettePicker();});
+  $('startingLives').addEventListener('change',()=>{if(!model)return;snapshot();model.setStartingLives($('startingLives').value);markDirty();refreshGameSettings();});
+  $('initialLevel').addEventListener('change',()=>{if(!model)return;snapshot();model.setInitialTankLevel($('initialLevel').value);markDirty();refreshGameSettings();});
+  $('lockInitialSettings').addEventListener('change',()=>setLockFromUi($('lockInitialSettings').checked));
+  $('fLockInitial').addEventListener('change',()=>setLockFromUi($('fLockInitial').checked));
+  $('clearStageBtn').addEventListener('click',()=>{if(!model||!confirm('确定清空当前关卡为 $0D 空白吗？'))return;snapshot();model.clearStage(currentStage());markDirty();renderMap();});
+  $('clearAllBtn').addEventListener('click',()=>{if(!model||!confirm('确定清空全部可编辑关卡吗？'))return;snapshot();model.clearAllStages();markDirty();renderMap();});
+  $('exportConfigBtn').addEventListener('click',exportConfig);$('importConfigBtn').addEventListener('click',()=>$('configInput').click());$('configInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f)importConfigFile(f);e.target.value='';});
+
+  // Build enemy-effect controls once.
+  enemyEffects.forEach(([flag,label])=>{
+    const line=document.createElement('label');line.className='checkline';const cb=document.createElement('input');cb.type='checkbox';cb.dataset.effect=String(flag);cb.disabled=true;cb.addEventListener('change',()=>enemyEffectChanged(cb,flag));line.append(cb,document.createTextNode(label));$('enemyEffects').appendChild(line);
+  });
+
+  featureBindings.forEach(([id,flag])=>$(id).addEventListener('change',()=>featureChanged(id,flag)));
+  $('presetOriginal').addEventListener('click',()=>applyPreset(0x00,'已切换为原版行为预设。'));
+  $('presetRecommended').addEventListener('click',()=>applyPreset(0xA7,'已应用推荐 Ex 预设（$A7；加速移动默认关闭，可单独开启）。'));
+
+  $('openBtn').addEventListener('click',openRom);$('fileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f)loadFile(f,null);e.target.value='';});
+  $('saveBtn').addEventListener('click',saveRom);$('saveAsBtn').addEventListener('click',saveAsRom);$('undoBtn').addEventListener('click',undo);$('redoBtn').addEventListener('click',redo);
+  $('convertOverlayBtn').addEventListener('click',()=>{closeMenus();convertOverlay();});
+  $('validateBtn').addEventListener('click',()=>{closeMenus();if(!model)return;try{model.validate();refreshAll();setStatus('ROM 结构重新检查通过。','ok');}catch(err){setStatus(err.message,'bad');}});
+  $('stageSelect').addEventListener('change',()=>{renderMap();refreshEnemy();refreshGameSettings();});
+  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tabpane').forEach(x=>x.classList.add('hidden'));b.classList.add('active');$(b.dataset.tab).classList.remove('hidden');}));
+  document.querySelectorAll('[data-help]').forEach(b=>b.addEventListener('click',()=>showHelp(b.dataset.help)));
+  document.querySelectorAll('[data-about]').forEach(b=>b.addEventListener('click',showAbout));
+  $('helpClose').addEventListener('click',hideHelp);$('helpModal').addEventListener('click',e=>{if(e.target===$('helpModal'))hideHelp();});
+  $('chrClose').addEventListener('click',hideChrPicker);$('chrModal').addEventListener('click',e=>{if(e.target===$('chrModal'))hideChrPicker();});
+
+  $('spawnCanvas').addEventListener('pointerdown',e=>{if(!model||e.button!==0)return;const p=spawnEventPoint(e),hit=spawnHit(p);if(!hit)return;snapshot();selectedSpawn=hit;spawnDrag=hit;$('spawnCanvas').setPointerCapture(e.pointerId);renderSpawnEditor();});
+  $('spawnCanvas').addEventListener('pointermove',e=>{if(!model||!spawnDrag)return;const p=spawnEventPoint(e);model.setSpawn(spawnDrag,p.X,p.Y);markDirty();const rowInputs=document.querySelectorAll(`[data-spawn="${spawnDrag}"]`);rowInputs.forEach(i=>i.value=String(model.getSpawn(spawnDrag)[i.dataset.axis]));renderSpawnEditor();});
+  $('spawnCanvas').addEventListener('pointerup',()=>{spawnDrag=null;refreshGameSettings();});
+  $('spawnCanvas').addEventListener('pointercancel',()=>{spawnDrag=null;refreshGameSettings();});
+
+  $('map').addEventListener('contextmenu',e=>{e.preventDefault();if(!model)return;const rc=mapRC(e),id=model.getCell(currentStage(),rc.r,rc.c);if(!model.selectableTerrainIds.includes(id)){setStatus(`地形 $${hex(id)} 为内部保留值，未吸取。`,'warn');return;}selectedTerrain=id;buildTerrain();});
+  $('map').addEventListener('pointerdown',e=>{if(!model||e.button!==0)return;snapshot();painting=true;lastPaintCell='';$('map').setPointerCapture(e.pointerId);paintAt(e);});
+  $('map').addEventListener('pointermove',e=>{if(painting)paintAt(e);});
+  $('map').addEventListener('pointerup',()=>{painting=false;lastPaintCell='';});$('map').addEventListener('pointercancel',()=>{painting=false;lastPaintCell='';});
+
+  document.addEventListener('keydown',e=>{
+    const k=e.key.toLowerCase();
+    const mod=e.ctrlKey||e.metaKey;
+    if(mod&&e.shiftKey&&k==='z'){e.preventDefault();redo();}
+    else if(mod&&k==='y'){e.preventDefault();redo();}
+    else if(mod&&k==='z'){e.preventDefault();undo();}
+    else if(mod&&k==='o'){e.preventDefault();openRom();}
+    else if(mod&&e.shiftKey&&k==='s'){e.preventDefault();saveAsRom();}
+    else if(mod&&k==='s'){e.preventDefault();saveRom();}
+    else if(e.key==='F1'&&e.shiftKey){e.preventDefault();showHelp('en');}
+    else if(e.key==='F1'){e.preventDefault();showHelp('zh');}
+    else if(e.key==='Escape'){hideHelp();hideChrPicker();hidePalettePicker();}
+  });
+  window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
+  document.addEventListener('click',e=>{if(!e.target.closest('details.menu'))closeMenus();});
+
+  resetUiBeforeLoad();refreshTitle();
+})();
+
+</script>
+</body>
+</html>

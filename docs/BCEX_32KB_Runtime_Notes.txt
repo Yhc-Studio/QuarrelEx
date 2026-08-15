@@ -1,0 +1,61 @@
+Battle City Ex v2 - Phase 6.4.1 Branch Fix
+=============================================
+
+Base:
+  Battle_City_Ex_v2_32K_70Maps_Phase6_4_EnemyItemFix.nes
+
+Problem
+-------
+Phase 6.4 introduced a helper at CPU $B540 for enemy-Star bullet properties.
+
+The player branch was assembled as:
+
+  $B540: E0 02    CPX #$02
+  $B542: 90 07    BCC $B54B   <-- WRONG
+
+$B54B is the second byte ($D3) of:
+
+  $B54A: 4C D3 E0 JMP $E0D3
+
+Therefore player bullets (X=0/1) branched into the middle of a JMP instruction.
+The CPU then interpreted $D3 $E0 as an undocumented/undefined instruction before
+falling into later code. This could cause crashes or arbitrary RAM/state corruption.
+
+Fix
+---
+ROM offset $3553:
+  07 -> 09
+
+Correct code:
+
+  $B540: E0 02    CPX #$02
+  $B542: 90 09    BCC $B54D
+
+Now player bullets branch to the intended original-property path:
+
+  $B54D: B5 A8    LDA $A8,X
+  $B54F: 29 F0    AND #$F0
+  $B551: 4C C0 E0 JMP $E0C0
+
+Enemy-Star behavior remains:
+
+  enemy X>=2
+  + $A8 bit3 set
+  -> JMP $E0D3
+  -> bullet property $03
+  -> can destroy steel.
+
+Possible screen-scroll symptom
+------------------------------
+The incorrect branch could execute $D3 $E0 as an undocumented instruction. On a
+6502 this opcode can have memory side effects through a zero-page indirect address,
+so the bug could corrupt unrelated game state. A temporary vertical screen offset
+when firing/hitting enemies is therefore plausibly caused by this same defect.
+Phase 6.4.1 removes that stray instruction execution completely.
+
+No format changes:
+- FeatureFlags unchanged
+- EnemyItemFlags unchanged
+- LayoutFlags unchanged
+- QuarrelExConfig v3 unchanged
+- Web/Desktop editor versions do not need a format update

@@ -1,0 +1,277 @@
+Quarrel Ex Desktop v0.8 - TSA / Attribute Guide
+==============================================
+
+This guide explains only the “TSA / Attribute” page.
+
+
+1. What TSA means here
+----------------------
+A Battle City map cell is a 16x16 composite block. The 16x16 block is assembled from four 8x8 background CHR tiles:
+
+        16x16 terrain block
+    +---------+---------+
+    | TL      | TR      |
+    | top-left| top-right|
+    +---------+---------+
+    | BL      | BR      |
+    | bottom-left | bottom-right |
+    +---------+---------+
+
+The TSA / Attribute page edits that assembly.
+
+Example: original terrain ID 0A (full water):
+
+    Attr = 01
+    TL   = 12
+    TR   = 12
+    BL   = 12
+    BR   = 12
+
+This does NOT mean “terrain ID 12”. It means all four 8x8 quadrants use CHR tile $12.
+
+
+2. Terrain ID and CHR tile number are different
+-----------------------------------------------
+ID column:
+- The 16x16 composite terrain definition used by the map.
+- Example: 04 full brick, 09 full steel, 0A water, 0B forest.
+- Ex adds IDs 10-17 for partial-water shapes.
+
+TL/TR/BL/BR columns:
+- 8x8 background CHR tile numbers.
+- Entered as hexadecimal values, normally 00-FF.
+- Four tile numbers make one terrain ID.
+
+Therefore:
+
+    terrain ID $0A != CHR tile $0A
+
+Terrain ID $0A is the full-water definition; its four component tiles are all $12.
+
+
+3. Quadrant positions
+---------------------
+TL = Top Left
+TR = Top Right
+BL = Bottom Left
+BR = Bottom Right
+
+Ex ID 14, upper-left single water:
+
+    Attr = 01
+    TL = 12   TR = 00
+    BL = 00   BR = 00
+
+Ex ID 10, lower-right single water:
+
+    Attr = 01
+    TL = 00   TR = 00
+    BL = 00   BR = 12
+
+Ex ID 16, left vertical water pair:
+
+    Attr = 01
+    TL = 12   TR = 00
+    BL = 12   BR = 00
+
+
+4. What Attr means
+------------------
+Attr selects one of the four background palettes used for this 16x16 terrain block.
+
+Use these values for normal editing:
+
+    00 = background palette 0
+    01 = background palette 1
+    02 = background palette 2
+    03 = background palette 3
+
+Quarrel Ex previews `Attr & 03`; using values outside 00-03 is therefore not recommended.
+
+Typical original values:
+
+    brick  Attr 00
+    water  Attr 01
+    forest Attr 02
+    steel  Attr 03
+    ice    Attr 03
+
+Attr mainly controls color. It does not define whether a tile behaves as water, brick, steel, etc.
+
+
+5. Important original examples
+------------------------------
+ID 04 - full brick
+    Attr = 00
+    0F 0F
+    0F 0F
+
+ID 09 - full steel
+    Attr = 03
+    10 10
+    10 10
+
+ID 0A - full water
+    Attr = 01
+    12 12
+    12 12
+
+ID 0B - forest
+    Attr = 02
+    22 22
+    22 22
+
+ID 0C - ice
+    Attr = 03
+    21 21
+    21 21
+
+ID 0D - blank
+    Attr = 00
+    00 00
+    00 00
+
+Useful 8x8 tile values in Battle City:
+
+    00 = blank
+    0F = brick
+    10 = main steel tile
+    12 = water
+    21 = ice
+    22 = forest
+
+The original half-steel definitions (05-08) also use tile $20 as a matching filler/blank tile. Do not change it casually unless you know the desired result.
+
+
+6. Why partial water works without a new collision system
+---------------------------------------------------------
+Ex does not create a new type of water. It simply rearranges the existing water tile $12.
+
+Full water:
+
+    12 12
+    12 12
+
+Lower-right single water:
+
+    00 00
+    00 12
+
+Left vertical pair:
+
+    12 00
+    12 00
+
+Battle City expands those four 8x8 tiles into map memory. The quadrant containing $12 still behaves as water while $00 remains blank.
+
+This is why TSA is useful for half-brick, half-steel, single-water and double-water composite terrain.
+
+
+7. TSA changes can affect gameplay, not only graphics
+-----------------------------------------------------
+In Battle City, several terrain behaviors inspect the actual expanded 8x8 tile numbers. Changing TL/TR/BL/BR can therefore affect:
+
+- graphics;
+- tank movement/collision;
+- bullet collision;
+- destructibility;
+- water/forest/ice behavior.
+
+For example, changing a quadrant from $00 to $12 normally makes that quadrant an actual water tile, not merely a blue picture.
+
+Attr mainly changes the palette and should not be used to change collision behavior.
+
+Always keep a backup before experimenting with TSA values.
+
+
+8. Editing workflow
+-------------------
+1) Open the “TSA / Attribute Editor” window (F3).
+2) Find the terrain ID you want to change.
+3) Enter Attr, TL, TR, BL and BR in hexadecimal.
+4) Press Enter or leave the cell.
+5) Quarrel Ex refreshes the terrain buttons and map preview automatically.
+6) Save or Save As after checking the result.
+
+Example: upper-right single water:
+
+    Attr = 01
+    TL = 00
+    TR = 12
+    BL = 00
+    BR = 00
+
+Example: lower horizontal pair:
+
+    Attr = 01
+    TL = 00
+    TR = 00
+    BL = 12
+    BR = 12
+
+
+9. Original vs Ex
+-----------------
+Original ROM:
+    terrain definitions 00-0F (16 total).
+
+Legacy Ex ROM:
+    terrain definitions 00-17 (24 total).
+
+Phase 5 16KB:
+    terrain definitions 00-1F (32 total).
+
+Phase 5 32KB Terrain64:
+    terrain definitions 00-3F (64 total), with 20-3F reserved as custom slots.
+
+Ex normally uses IDs 10-17 for the eight partial-water shapes.
+
+A 16KB Ex ROM still uses the old 4-bit stage map format, so IDs 10-17 cannot be stored directly in normal built-in stage data even though their TSA definitions can be edited.
+
+The new 32KB / 70-independent-map format stores IDs 00-17 directly.
+
+
+10. Quick rule to remember
+--------------------------
+Remember only these three points:
+
+1) ID = one 16x16 map terrain definition.
+2) TL/TR/BL/BR = the four 8x8 CHR tiles inside it.
+3) Attr = palette group (normally 00-03), not collision type.
+
+So this row:
+
+    ID 14 | Attr 01 | TL 12 | TR 00 | BL 00 | BR 00
+
+means:
+
+“Terrain ID14 uses background palette 1; the upper-left 8x8 quadrant is water and the other three quadrants are blank.”
+
+
+Desktop v0.8 visual editing
+-----------------------
+Attr is restricted to the only valid palette choices: 0, 1, 2 or 3.
+
+TL/TR/BL/BR are 8x8 background CHR tile IDs. Instead of entering hex manually:
+1. click the quadrant preview;
+2. choose visually from all 256 background CHR tiles ($00-$FF);
+3. the picker renders tiles with the current terrain Attr palette;
+4. the 16x16 terrain preview and map update immediately.
+
+This makes TSA editing correspond directly to how the 16x16 metatile is assembled from four 8x8 CHR tiles.
+
+
+Phase 5 additions:
+- 18-1B are four single-quadrant brick blocks using CHR tile $0F.
+- 1C-1F are four single-quadrant steel blocks using CHR tile $10.
+- The 32KB Terrain64 format provides 32 blank custom slots at 20-3F.
+Each custom slot starts with Attr=0 and TL/TR/BL/BR=$00. Use the CHR picker and Attr 0-3 selector to define it.
+
+
+v0.9: terrain IDs $0E/$0F are hidden/reserved. The TSA list uses stable row sizing with horizontal scrolling, and TL/TR/BL/BR are edited through the 256-tile CHR picker.
+
+
+v0.9.2: the TSA list now uses a true two-axis scrolling viewport. On low-resolution/high-scaling displays TL/TR/BL/BR keep stable sizes and the bottom horizontal scrollbar exposes the right-side columns instead of squeezing controls.
+
+
+v0.9.3: TSA is now a separate modeless tool window (F3). Resize it freely; its horizontal/vertical scrolling behavior is unchanged.

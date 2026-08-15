@@ -1,0 +1,16 @@
+QuarrelEx Web v1.5.1 Static Verification
+===========================================
+
+Fix:
+- Restored refreshExOptions().
+- Fixes: "无法打开 ROM：refreshExOptions is not defined"
+
+Checks:
+- QuarrelEx.html: exactly one refreshExOptions() definition.
+- QuarrelEx_Standalone.html: exactly one refreshExOptions() definition.
+- All DOM IDs referenced by refreshExOptions() exist.
+- All three JavaScript blocks in QuarrelEx.html pass node --check.
+- All three JavaScript blocks in QuarrelEx_Standalone.html pass node --check.
+- Config format remains QuarrelExConfig Version 3.
+- ROM format unchanged.
+- Save / Save As / Undo / Redo logic from v1.5 unchanged.

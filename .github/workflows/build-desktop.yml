@@ -1,0 +1,24 @@
+name: Build Desktop
+
+on:
+  push:
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/build-desktop.yml'
+  pull_request:
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/build-desktop.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore desktop/QuarrelEx.sln
+      - name: Build
+        run: dotnet build desktop/QuarrelEx.sln -c Release --no-restore

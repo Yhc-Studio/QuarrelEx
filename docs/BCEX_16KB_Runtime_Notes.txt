@@ -1,0 +1,58 @@
+Battle City Ex v2 Phase 6.3 - Power State Persistence Fix
+==========================================================
+
+Base:
+  16KB: Phase 6.2 Player Fast Movement
+  32KB: Phase 6.2 70-map Player Fast Movement
+
+Problem
+-------
+Phase 6 introduced Lock Initial Tank State by hooking the generic player spawn path
+at CPU $E375. That path is used both after a real player death and when a new stage
+starts. Therefore, with lock-initial-state enabled, clearing a stage could overwrite
+the current Star/Pistol level with the configured initial level.
+
+Desired behavior
+----------------
+- Clearing a stage preserves the current tank power level, including Pistol/Lv3/Lv4.
+- Collecting Stars/Pistol during a life still upgrades normally.
+- With Lock Initial State OFF:
+    actual death -> Lv0 (original behavior).
+- With Lock Initial State ON:
+    actual death -> configured initial level.
+- Entering the next stage is NOT treated as a death and does not reset power.
+
+Runtime changes
+---------------
+1. CPU $E375:
+   Phase6/6.2: JSR $FEDC / NOP
+   Phase6.3:   restored original LDA #$00 / STA $6F,X
+   This removes the level-reset operation from the generic player-spawn path.
+
+2. CPU $E763-$E76E (actual death reset):
+   keeps the original death sound write to $0307, then JSR $FEDC.
+   The helper now performs only the real-death power reset.
+
+3. CPU $FEDC-$FEEB helper:
+   LDA #$00
+   BIT $EF7B
+   BPL use_level
+   LDA $C2BE
+use_level:
+   STA $0101,X
+   STA $A8,X
+   RTS
+
+   EnemyItemFlags bit7 remains Lock Initial Tank State.
+   $C2BE remains the configured initial tank state byte:
+     00=Lv0, 20=Lv1, 40=Lv2, 60=Lv3, 63=Lv4.
+
+Compatibility
+-------------
+- FeatureFlags unchanged.
+- LayoutFlags unchanged:
+    16KB Phase 6.3: $76
+    32KB Phase 6.3: $7F
+- QuarrelExConfig v3 format unchanged.
+- Web/Desktop editors do not require a format update for this fix.
+

@@ -1,2 +1,10 @@
-# Auto detect text files and perform LF normalization
 * text=auto
+*.cs text eol=crlf
+*.sln text eol=crlf
+*.bat text eol=crlf
+*.md text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.ips binary
+*.ico binary

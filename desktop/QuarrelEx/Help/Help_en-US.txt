@@ -1,0 +1,177 @@
+Quarrel Ex Desktop v0.8 - English Help
+======================================
+
+1. Overview
+-----------
+Quarrel Ex Desktop is a C# WinForms / .NET 8 editor for Battle City and Battle City Ex / BCEX v2.
+
+v0.8 synchronizes the features proven in QuarrelEx Web v1.3 back into the desktop application:
+- Original Battle City 16KB.
+- Legacy Ex 16KB and 32KB Overlay.
+- BCEX v2 Phase 3 / 4 / 5.
+- Stage 1-70 independent maps on the 32KB 70-map profile.
+- Custom enemy totals from 1 to 255 on Phase 4+.
+- Phase 5 terrain through $1F on 16KB and $3F on 32KB Terrain64.
+- Visual TSA editing with Attr 0-3 and a 256-tile CHR picker.
+- BCEX FeatureFlags / EnemyItemFlags.
+- Per-Monitor V2 DPI, complete 13x13 map view and safe ROM switching.
+
+2. Open / Save / Switch ROM
+---------------------------
+Open ROM: File -> Open ROM, or Ctrl+O.
+Save ROM: Ctrl+S.
+Save As: File -> Save As.
+Undo: Ctrl+Z.
+F1: Chinese help.
+Shift+F1: English help.
+
+When switching ROMs, the editor first detaches map, terrain and TSA images, then disposes the old renderer. This prevents the old GDI+ "Parameter is not valid." error when switching between Original / 16KB / 32KB files.
+
+3. Original Battle City
+-----------------------
+Original mode provides Stage 1-35 plus Demo, original terrain IDs $00-$0F and original enemy Type / Count tables. BCEX-only controls are disabled.
+
+4. Ex map formats
+-----------------
+Legacy Ex 16KB:
+- Stage selector 1-70.
+- Stage 36-70 enemy Type / Count are independent.
+- Native map data is still 4-bit, so Stage 36-70 reuse Stage 1-35 maps.
+- Painting an extended terrain ID >= $10 converts the ROM in memory to Legacy 32KB Overlay.
+
+Legacy 32KB Overlay:
+- Extended terrain is stored using nibble marker $0E plus an overlay page.
+- Stage 36-70 maps still reuse Stage 1-35.
+
+BCEX v2 32KB / 70 Independent Maps:
+- All Stage 1-70 maps are separate.
+- Each map cell stores one full-byte terrain ID.
+- Editing Stage 36 does not edit Stage 1.
+- Phase 5 Terrain64 can store IDs $00-$3F directly.
+
+5. Enemy editor
+---------------
+Every stage has four Type bytes and four Count bytes. Type is hexadecimal; Count is decimal.
+
+On ROMs with LayoutFlags bit1 (Custom Enemy Total):
+- each Count is 0-255;
+- the SUM of all four Count values is the real stage enemy total;
+- valid total is 1-255;
+- total 255 is valid; total 256+ is rejected;
+- Save validates all 70 stages.
+
+Older ROMs remain based on the original 20-enemy runtime and the editor warns when the sum differs from 20.
+
+6. Terrain / TSA
+----------------
+Terrain definitions depend on the opened ROM:
+- Original: $00-$0F (16 entries).
+- Legacy Ex: 24 entries, with normal selectable IDs $00-$0D and $10-$17.
+- Phase 5 16KB: 32 entries $00-$1F.
+- Phase 5 32KB Terrain64: 64 entries $00-$3F.
+
+Phase 5 additions:
+- $18-$1B: single-quadrant brick (CHR tile $0F).
+- $1C-$1F: single-quadrant steel (CHR tile $10).
+- $20-$3F on 32KB Terrain64: 32 spare custom terrain slots.
+
+In the TSA / Attribute tool window, Attr is a dropdown restricted to 0,1,2,3. TL/TR/BL/BR are visual buttons. Click a quadrant to open all 256 background CHR tiles and select the actual 8x8 tile visually.
+
+7. BCEX v2 feature options
+--------------------------
+FeatureFlags at CPU $EF7A:
+- bit0 $01 Hold B auto-fire
+- bit1 $02 Pistol / Lv4
+- bit2 $04 Downgrade one level when hit
+- bit3 $08 Player Fast Movement (Phase 6.2; unavailable on older ROMs)
+- bit4 $10 Random enemy spawn order while preserving per-type totals
+- bit5 $20 Lv4 bullets destroy forest
+- bit6 $40 Enemy power-up pickup (supported 32KB profile)
+- bit7 $80 Disable teammate friendly fire (Phase 5+)
+
+The Recommended Ex preset requests $AF. The desktop editor strips unsupported bits according to the actual ROM profile, so old BCEX builds are not falsely treated as having newer runtime code.
+
+EnemyItemFlags at CPU $EF7B control Helmet / Clock / Shovel / Star / Grenade / Tank / Pistol effects for enemy pickup.
+
+8. Pistol / Lv4 rules
+---------------------
+With the feature enabled:
+- Star: Lv0 -> Lv1 -> Lv2 -> Lv3 -> Lv4, capped at Lv4.
+- Pistol: Lv0/Lv1/Lv2 -> Lv3; Lv3 stays Lv3; Lv4 stays Lv4.
+- Downgrade-on-hit: Lv4 -> Lv3 -> Lv2 -> Lv1 -> Lv0 -> next hit explodes.
+- If Lv4 tree destruction is enabled, Lv4 player bullets can remove forest tiles.
+
+9. Friendly fire
+----------------
+Phase 5 adds FeatureFlags bit7. When enabled, player bullets no longer apply the original teammate stun. Enemy bullets against players are unchanged.
+
+10. Backups
+-----------
+Keep a backup of important ROMs. Unknown mapper/layout signatures are rejected to reduce the chance of writing data to incorrect addresses.
+
+
+14. v0.9 / Phase 6
+------------------
+- Bonus rewards triggered while another item is active are preserved in a queue and released immediately after the active item is collected. The original engine has one active bonus display slot, so queued rewards appear sequentially.
+- A non-lethal downgrade now plays the normal bullet-hit-tank sound.
+- Lock Initial State is available on Phase 6 ROMs. Stars and the pistol still upgrade the current life; after an actual death, respawn returns to the configured base level.
+
+15. Palette Editor
+------------------
+Restores the original Quarrel-style palette editor for Sprite, Frame2, Level, Frame1, Title, Level Select, Misc1 and Misc2. Each group contains 16 NES palette indices.
+
+16. Flag TSA Editor
+-------------------
+Restores visual Flag and Fort TSA editing. Each definition is a 6x4 CHR tile grid. The per-row FF terminator is preserved automatically.
+
+17. Shared configuration
+-----------------------
+File -> Export Config / Import Config uses the shared `QuarrelExConfig` v3 JSON (`.qexcfg.json`), and only v3 is accepted by the formal release. v3 includes global settings plus stage maps and per-stage enemy data. Ex exports Stage 1-70; original ROM exports Stage 1-35. Each stage stores a 13x13 Map, four raw EnemyTypes, four EnemyCounts, and EnemyTotal (the count sum, used as an integrity check). Enemy Type bit2 ($04) is the flashing/bonus flag: common bases are $80/$A0/$C0/$E0 and forced-flashing forms are $84/$A4/$C4/$E4. The original game also adds $04 automatically to the 4th, 11th and 18th spawned enemies.
+
+18. Game Settings
+-----------------
+Starting lives (1-255), initial tank level, Phase6 lock setting, three enemy spawn points, P1/P2 spawn points, and clear-current/all-stage commands. Terrain IDs 0E/0F remain hidden/reserved.
+
+
+[Phase 6.1 flashing bonus tanks]
+Every hit immediately generates a new power-up and replaces any currently active one. The Phase 5/6 Pending queue is obsolete.
+
+
+15. v0.9.2 low-resolution UI fix
+
+The desktop layout is retuned for 1366x768 / 1280x720 and Windows 125%/150% scaling. TSA / Attribute now uses a dedicated two-axis scrolling viewport. If TL/TR/BL/BR do not fit horizontally, use the bottom horizontal scrollbar; columns are no longer compressed to a one-pixel sliver. The 4x4 palette cells and 64-color NES picker are also smaller.
+
+
+16. v0.9.3 modeless tool windows
+--------------------------------
+The desktop workflow now follows the original Quarrel style more closely. The main form is dedicated to the 13x13 map and terrain palette. The former right-side tabs are independent modeless windows.
+
+F2 Enemy Editor
+F3 TSA / Attribute Editor
+F4 Palette Editor
+F5 Flag TSA Editor
+F6 Game Settings
+F7 Ex Options
+F8 ROM Information
+
+Open them from the Window menu or the compact toolbar icons. Closing a tool window only hides it, so its editor state and scroll position are preserved. Window -> Show All / Hide All manages the complete set. Each child window uses the original Quarrel application icon.
+
+This layout is particularly useful on 720p/768p monitors because the map is no longer compressed by a permanent right-side tab panel.
+
+
+[v0.9.4 / Phase 6.2]
+- Fixes the 4x4 palette grid stretching its last column; swatches keep a fixed compact size.
+- Game Settings adds a visual spawn editor. P1/P2 use the real player tank CHR with Sprite palettes 0/1; Enemy1-3 use enemy tank CHR. Drag with the mouse or enter exact X/Y values.
+- New optional Player Fast Movement requires Phase 6.2 runtime support and uses FeatureFlags bit3. It is OFF by default.
+- Shared config is now QuarrelExConfig v3. the formal release imports/exports v3 only.
+
+
+[v1.0 formal file operations]
+- Config import/export accepts QuarrelExConfig v3 only (*.qexcfg.json).
+- Export displays an explicit success confirmation.
+- Import runs full preflight validation and is transactional: hard errors do not modify the current ROM.
+- Capability mismatches are reported as warnings.
+- Undo: Ctrl+Z.
+- Redo: Ctrl+Y or Ctrl+Shift+Z.
+- Save: Ctrl+S writes to the current ROM path.
+- Save As: Ctrl+Shift+S; the new file becomes the current ROM path.

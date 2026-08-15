@@ -1,0 +1,73 @@
+QuarrelExConfig v3 - Formal Shared Configuration
+================================================
+
+Required root:
+  Schema  = "QuarrelExConfig"
+  Version = 3
+
+Formal Desktop v1.0 / Web v1.5 import only Version 3.
+Older v1/v2 configs are intentionally rejected.
+
+Gameplay
+--------
+StartingLives       integer 1..255
+InitialTankLevel    integer 0..4 (original target supports 0..3)
+LockInitialState    boolean
+PlayerFastMove      boolean/null; when FeatureFlags is present, must agree with bit3
+FeatureFlags        integer 0..255 or null
+EnemyItemFlags      integer 0..127 or null
+Spawns              Enemy1/Enemy2/Enemy3/Player1/Player2, each X/Y integer 0..255
+
+Palettes
+--------
+Required groups:
+  Sprite, Frame2, Level, Frame1, Title, LevelSelect, Misc1, Misc2
+Each group: exactly 16 integers, each 0..63.
+
+Terrain
+-------
+Array of definitions:
+  Id    integer $00..$3F, unique
+  Attr  integer 0..3
+  Tiles exactly 4 integers 0..255 (TL/TR/BL/BR)
+$0E/$0F are internal/reserved; imports warn and skip them.
+Definitions outside the target ROM's TerrainCount are compatibility warnings and are skipped.
+
+FlagTsa
+-------
+Flag: exactly 24 integers 0..255 (6x4)
+Fort: exactly 24 integers 0..255 (6x4)
+
+Stages
+------
+Exactly 35 stages (original-source config) or exactly 70 stages (Ex-source config).
+Stage numbers must be unique and continuous from 1.
+Each stage contains:
+  Map          exactly 13 rows x 13 columns, IDs $00..$3F
+  EnemyTypes   exactly 4 integers 0..255
+  EnemyCounts  exactly 4 integers 0..255
+  EnemyTotal   integer equal to sum(EnemyCounts)
+EnemyCounts sum must be 1..255.
+
+Hard errors vs compatibility warnings
+-------------------------------------
+Hard error examples:
+- wrong/missing Schema or Version
+- malformed JSON/type mismatch
+- missing required palette/spawn/stage data
+- wrong array lengths
+- out-of-range values
+- duplicate/missing stages
+- EnemyTotal mismatch
+- invalid 13x13 map dimensions
+
+On hard error the config is NOT applied at all.
+
+Compatibility warning examples:
+- Lv4 config imported to original ROM
+- target ROM lacks a requested Ex feature
+- target ROM only supports 20 enemies but a stage total is not 20
+- Stage36~70 independent maps imported to a shared-map target
+- terrain IDs not representable by the target ROM
+
+Warnings may skip or downgrade only the unsupported fields while importing the rest.
