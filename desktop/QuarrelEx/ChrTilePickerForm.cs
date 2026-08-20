@@ -1,3 +1,4 @@
+using QuarrelEx.Core;
 using QuarrelEx.Rendering;
 
 namespace QuarrelEx;
@@ -15,7 +16,7 @@ public sealed class ChrTilePickerForm : Form
 
     public byte SelectedTile { get; private set; }
 
-    public ChrTilePickerForm(NesRenderer renderer, byte attr, byte current, string targetName)
+    public ChrTilePickerForm(NesRenderer renderer, byte attr, byte current, string targetName, PaletteKind paletteKind = PaletteKind.Level, bool allowFF = true)
     {
         Text = $"CHR Tile 选择器 - {targetName}";
         StartPosition = FormStartPosition.CenterParent;
@@ -34,24 +35,25 @@ public sealed class ChrTilePickerForm : Form
         {
             AutoSize = true,
             Padding = new Padding(10),
-            Text = $"Attr = {attr & 3}（背景调色板 {attr & 3}） · 当前 Tile = ${current:X2}。点击任意 8×8 CHR Tile 完成选择。"
+            Text = $"Palette = {paletteKind} · Attr = {attr & 3}（背景调色板 {attr & 3}） · 当前 Tile = ${current:X2}。点击任意 8×8 CHR Tile 完成选择。"
         };
         root.Controls.Add(info, 0, 0);
         root.Controls.Add(_tiles, 0, 1);
         Controls.Add(root);
 
-        BuildTiles(renderer, (byte)(attr & 3), current);
+        BuildTiles(renderer, paletteKind, (byte)(attr & 3), current, allowFF);
         FormClosed += (_, _) => DisposeOwnedImages();
     }
 
-    private void BuildTiles(NesRenderer renderer, byte attr, byte current)
+    private void BuildTiles(NesRenderer renderer, PaletteKind paletteKind, byte attr, byte current, bool allowFF)
     {
         _tiles.SuspendLayout();
         try
         {
             for (var tile = 0; tile <= 0xFF; tile++)
             {
-                var image = new Bitmap(renderer.GetChrTileBitmap((byte)tile, attr, 4));
+                if (!allowFF && tile == 0xFF) continue;
+                var image = new Bitmap(renderer.GetChrTileBitmap((byte)tile, paletteKind, attr, 4));
                 _ownedImages.Add(image);
                 var value = (byte)tile;
                 var b = new Button

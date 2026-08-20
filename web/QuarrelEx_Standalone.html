@@ -27,11 +27,14 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
 @media(max-width:760px){.chr-grid{grid-template-columns:repeat(8,minmax(40px,1fr))}}
 
 .palette-grid{display:grid;grid-template-columns:repeat(4,minmax(58px,78px));gap:4px;margin-top:8px;justify-content:start}.palette-cell{height:34px;padding:2px 4px;border:1px solid #777;border-radius:4px;font:12px Consolas,monospace;text-shadow:0 1px 2px #000;color:#fff}.nes-color-grid{display:grid;grid-template-columns:repeat(16,minmax(26px,1fr));gap:3px}.nes-color{height:30px;padding:1px;font:10px Consolas,monospace;border:1px solid #aaa;border-radius:3px;text-shadow:0 1px 2px #000;color:#fff}@media(max-width:760px){.nes-color-grid{grid-template-columns:repeat(8,minmax(28px,1fr))}}.flag-wrap{display:flex;gap:28px;flex-wrap:wrap}.flag-grid{display:grid;grid-template-columns:repeat(6,54px);gap:5px;margin-top:8px}.flag-tile{width:54px;height:54px;padding:2px}.flag-tile canvas{width:32px;height:32px;image-rendering:pixelated}.settings-grid{display:flex;gap:14px;flex-wrap:wrap}.settings-grid label{display:flex;align-items:center;gap:7px}.settings-grid input,.settings-grid select{padding:5px}.spawn-editor-wrap{max-width:540px;margin:8px 0 10px}.spawn-editor-wrap canvas{display:block;width:100%;max-width:512px;aspect-ratio:256/240;image-rendering:pixelated;background:#181c20;border:1px solid #8c959f;border-radius:5px;touch-action:none;cursor:crosshair}.spawn-row-object{display:flex;align-items:center;gap:7px}.spawn-icon{width:32px;height:32px;image-rendering:pixelated;background:#23272b;border:1px solid #9ba4ae}.tsa-table{min-width:900px}.scroll{overflow:auto}
+
+/* v1.6 Demo + Title/Game Over screen editor */
+.screen-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.screen-viewport{overflow:auto;max-height:68vh;background:#dfe4ea;border:1px solid var(--line);border-radius:6px;padding:8px}.screen-viewport canvas{display:block;width:512px;height:480px;image-rendering:pixelated;background:#000;border:1px solid #7f8791;cursor:pointer}.screen-note{margin-top:8px;max-width:820px}.screen-selection{font:12px Consolas,monospace;color:var(--muted)}
 </style>
 </head>
 <body>
 <header class="appbar">
-  <div class="brand"><img src="data:image/x-icon;base64,AAABAAEAEBAAAAEACABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAo1kIALk7PgCwH3cAjA+jAFUPuQAcHrAAADiMAABZVQAAdBwACIMAAD6FAAB3dQAAAAAAAAAAAAAAAAAAwMDAAM2DMADiZGcA2UigALU4zQB+OOIARUfZABhhtQADgn4ADJ1FADCtGABnrgMAoJ4MADw8PAAAAAAAAAAAAP///wD/y3kA/6uvAP+Q6AD8gP8Axn//AI2P/wBgqvwAS8nGAFTljQB59WAAr/VLAOjmVAB4eHgAAAAAAAAAAAD///8A//ajAP/X2gD/u/8A/6v/APKr/wC4uv8Ai9X/AHf18gCA/7gAo/+LANr/dwD//4AAxcXFAAAAAAAAAAAAYGBgAHtDBgCKLC4AgxdZAGkLewA/C4oAFRaDAAAqaQAAQT8AAFcVAAZjAAAuYwAAWVcAAAAAAAAAAAAAAAAAAJCQkACZYSQAqUtNAKI2eACHKpkAXiqpADM0ogASSYcAAmFeAAl1MwAkgRIATYICAHh2CQAsLCwAAAAAAAAAAAC/v78Av5hZAL+AgwC/bK4AvWC/AJNfvwBpa78ASH+9ADiWkwA/q2kAWbdIAIO3OACurD8AWVlZAAAAAAAAAAAAv7+/AL+4ewC/oaMAv4y/AL+AvwC1gL8Aiou/AGifvwBZt7UAYL+KAHu/aACjv1kAv79gAJOTkwAAAAAAAAAAAAAAAADQ/PwAAAAAAJB0dAAAAL4AM/8zAMgOMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAJxgnGCcYJxgnGCcAAAAAACcYJxgnGCcYJxgnAAAAAAA4GBgYGBgYGBgYGAAAAAAAAAAYGBgYGBgAAAAAAAAAAAAnGCcnJycnGAAAAAAAAAAAJycnGBgYJxgAAAAAAAAAACcnOCcnGCc4ODg4OAAAAAA4Jzg4OCcnGAAAAAAAAAAAODgnJycnOBgAAAAAAAAAAAAnODg4ODgAAAAAAAAAACc4ODg4ODg4ODgnAAAAAAAnGCcYJxgnGCcYJwAAAAAAOBg4GDgYOBg4GDgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////AB///wAf//8AH///wP///4B///+Af///gAf//4B///+Af///wP///wAf//8AH///AB/////////////8=" alt=""><div><strong id="titleText">Quarrel Ex Web</strong><div class="version">v1.5.1 · Formal release · Config v3 only</div></div></div>
+  <div class="brand"><img src="data:image/x-icon;base64,AAABAAEAEBAAAAEACABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAo1kIALk7PgCwH3cAjA+jAFUPuQAcHrAAADiMAABZVQAAdBwACIMAAD6FAAB3dQAAAAAAAAAAAAAAAAAAwMDAAM2DMADiZGcA2UigALU4zQB+OOIARUfZABhhtQADgn4ADJ1FADCtGABnrgMAoJ4MADw8PAAAAAAAAAAAAP///wD/y3kA/6uvAP+Q6AD8gP8Axn//AI2P/wBgqvwAS8nGAFTljQB59WAAr/VLAOjmVAB4eHgAAAAAAAAAAAD///8A//ajAP/X2gD/u/8A/6v/APKr/wC4uv8Ai9X/AHf18gCA/7gAo/+LANr/dwD//4AAxcXFAAAAAAAAAAAAYGBgAHtDBgCKLC4AgxdZAGkLewA/C4oAFRaDAAAqaQAAQT8AAFcVAAZjAAAuYwAAWVcAAAAAAAAAAAAAAAAAAJCQkACZYSQAqUtNAKI2eACHKpkAXiqpADM0ogASSYcAAmFeAAl1MwAkgRIATYICAHh2CQAsLCwAAAAAAAAAAAC/v78Av5hZAL+AgwC/bK4AvWC/AJNfvwBpa78ASH+9ADiWkwA/q2kAWbdIAIO3OACurD8AWVlZAAAAAAAAAAAAv7+/AL+4ewC/oaMAv4y/AL+AvwC1gL8Aiou/AGifvwBZt7UAYL+KAHu/aACjv1kAv79gAJOTkwAAAAAAAAAAAAAAAADQ/PwAAAAAAJB0dAAAAL4AM/8zAMgOMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAJxgnGCcYJxgnGCcAAAAAACcYJxgnGCcYJxgnAAAAAAA4GBgYGBgYGBgYGAAAAAAAAAAYGBgYGBgAAAAAAAAAAAAnGCcnJycnGAAAAAAAAAAAJycnGBgYJxgAAAAAAAAAACcnOCcnGCc4ODg4OAAAAAA4Jzg4OCcnGAAAAAAAAAAAODgnJycnOBgAAAAAAAAAAAAnODg4ODgAAAAAAAAAACc4ODg4ODg4ODgnAAAAAAAnGCcYJxgnGCcYJwAAAAAAOBg4GDgYOBg4GDgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////AB///wAf//8AH///wP///4B///+Af///gAf//4B///+Af///wP///wAf//8AH///AB/////////////8=" alt=""><div><strong id="titleText">Quarrel Ex Web</strong><div class="version">v1.6.0 · Demo + Screen Editor · Config v3 only</div></div></div>
   <button id="openBtn" class="btn">打开 ROM</button><input id="fileInput" type="file" accept=".nes" hidden>
   <button id="saveBtn" class="primary" disabled>保存</button>
   <button id="saveAsBtn" disabled>另存 ROM</button>
@@ -74,6 +77,7 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
       <button class="tab" data-tab="settingsPane">游戏设置</button>
       <button class="tab" data-tab="exPane">Ex 选项</button>
       <button class="tab" data-tab="infoPane">ROM 信息</button>
+      <button class="tab" data-tab="screenPane">画面 / Screen</button>
     </div>
 
     <div id="enemyPane" class="tabpane">
@@ -139,6 +143,17 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
     <div id="infoPane" class="tabpane hidden">
       <h3>ROM 信息</h3>
       <div id="infoBox" class="info-box">打开 ROM 后显示格式信息。</div>
+    </div>
+
+    <div id="screenPane" class="tabpane hidden">
+      <h3>Title + Game Over Screen Editor</h3>
+      <div class="screen-tools">
+        <label>画面 <select id="screenKind"><option value="Title">Title Screen / 标题画面</option><option value="GameOver">Game Over</option></select></label>
+        <label>预览 Attr <select id="screenAttr"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+        <span id="screenSelection" class="screen-selection">点击蓝框选择图块</span>
+      </div>
+      <div class="screen-viewport"><canvas id="screenCanvas" width="512" height="480"></canvas></div>
+      <p class="muted screen-note">1 格 = 1 个 NES 8×8 背景 CHR Tile。BATTLE / CITY / GAME / OVER 在原游戏中由 32×32 放大字形程序绘制，因此每个大蓝框是一个完整的源字形槽，而不是四个可独立修改的 8×8 格。编辑器只改原 ROM 已有字符串内容，不改变坐标、长度或 $FF 终止符；预览 Attr 只影响显示颜色，不写入 ROM。</p>
     </div>
   </section>
 </main>
@@ -281,6 +296,26 @@ window.QuarrelExCore = (() => {
     return true;
   }
 
+  const SCREEN_LAYOUTS = Object.freeze({
+    Title: Object.freeze([
+      {key:'Title.Battle',name:'BATTLE 大字',offset:0x12A9,length:6,x:0x1A,y:0x2E,kind:'large',palette:'Title'},
+      {key:'Title.City',name:'CITY 大字',offset:0x12B0,length:4,x:0x3C,y:0x56,kind:'large',palette:'Title'},
+      {key:'Title.TopLeft',name:'顶部左侧',offset:0x12B5,length:2,x:2,y:3,kind:'tile',palette:'Title'},
+      {key:'Title.TopCenter',name:'顶部中央',offset:0x12C1,length:3,x:11,y:3,kind:'tile',palette:'Title'},
+      {key:'Title.TopRight',name:'顶部右侧',offset:0x12B8,length:2,x:21,y:3,kind:'tile',palette:'Title'},
+      {key:'Title.OnePlayer',name:'1 PLAYER',offset:0x12D6,length:8,x:11,y:17,kind:'tile',palette:'Title'},
+      {key:'Title.TwoPlayers',name:'2 PLAYERS',offset:0x12DF,length:9,x:11,y:19,kind:'tile',palette:'Title'},
+      {key:'Title.Construction',name:'CONSTRUCTION',offset:0x12FB,length:12,x:11,y:21,kind:'tile',palette:'Title'},
+      {key:'Title.SymbolRow',name:'菜单符号行',offset:0x129F,length:9,x:11,y:23,kind:'tile',palette:'Title'},
+      {key:'Title.Copyright',name:'版权行',offset:0x1308,length:22,x:4,y:25,kind:'tile',palette:'Title'},
+      {key:'Title.Rights',name:'ALL RIGHTS RESERVED',offset:0x1330,length:19,x:6,y:27,kind:'tile',palette:'Title'}
+    ]),
+    GameOver: Object.freeze([
+      {key:'GameOver.Game',name:'GAME 大字',offset:0x1353,length:4,x:0x3C,y:0x46,kind:'large',palette:'Level'},
+      {key:'GameOver.Over',name:'OVER 大字',offset:0x1358,length:4,x:0x3C,y:0x78,kind:'large',palette:'Level'}
+    ])
+  });
+
   class BattleCityRom {
     constructor(bytes) {
       this.data = bytes instanceof Uint8Array ? bytes.slice() : new Uint8Array(bytes);
@@ -305,7 +340,9 @@ window.QuarrelExCore = (() => {
     get supportsNoFriendlyFire() { return this.hasExV2Config && this.supportsTerrain1F; }
     get lockInitialState() { return this.supportsLockInitialState && (this.enemyItemFlags & 0x80)!==0; }
     get canConvertToOverlay() { return this.kind === RomKind.Ex16K; }
-    get maxEditableStage() { return this.isOriginal ? 36 : 70; }
+    get maxNormalStage() { return this.isOriginal ? 35 : 70; }
+    get demoStageNumber() { return this.maxNormalStage + 1; }
+    get maxEditableStage() { return this.demoStageNumber; }
     get terrainCount() {
       if (this.isOriginal) return 16;
       if (this.supportsTerrain64) return 64;
@@ -367,7 +404,7 @@ window.QuarrelExCore = (() => {
       if (d.length < expected) throw new Error('ROM 长度小于 Header 声明的 PRG+CHR 大小。');
 
       this.kind = this.detectKind();
-      this.ensureRange(this.offset(CFG.stageMapStart), CFG.stageSize * (this.isOriginal ? 36 : 35));
+      this.ensureRange(this.offset(CFG.stageMapStart), CFG.stageSize * 36);
       this.ensureRange(this.offset(CFG.enemyType1To35), 35*4);
       this.ensureRange(this.offset(CFG.enemyCount1To35), 35*4);
       this.ensureRange(this.levelPaletteOffset, 16);
@@ -440,12 +477,12 @@ window.QuarrelExCore = (() => {
       return found>=8;
     }
 
-    isDemoStage(stage) { return this.isOriginal && stage===36; }
+    isDemoStage(stage) { return stage===this.demoStageNumber; }
     validateStage(stage) { if (stage<1 || stage>this.maxEditableStage) throw new Error('关卡编号超出范围。'); }
     validateCell(row,col) { if (row<0||row>=13||col<0||col>=13) throw new Error('地图坐标超出13×13范围。'); }
     validateTerrainId(id) { if (id<0||id>=this.terrainCount) throw new Error('地形ID超出范围。'); }
 
-    getPhysicalMapStage(stage) { return this.isOriginal ? stage : (stage<=35 ? stage : stage-35); }
+    getPhysicalMapStage(stage) { return this.isDemoStage(stage) ? 36 : (this.isOriginal ? stage : (stage<=35 ? stage : stage-35)); }
     stageMapOffset(physicalStage) { return this.offset(CFG.stageMapStart + (physicalStage-1)*CFG.stageSize); }
     getNibble(base,index) { const b=this.data[base+(index>>1)]; return (index&1)?(b&0x0F):(b>>4); }
     setNibble(base,index,value) { const p=base+(index>>1),b=this.data[p]; this.data[p]=(index&1)?((b&0xF0)|(value&0x0F)):(((value&0x0F)<<4)|(b&0x0F)); }
@@ -454,10 +491,10 @@ window.QuarrelExCore = (() => {
 
     getCell(stage,row,col) {
       this.validateStage(stage); this.validateCell(row,col);
-      if (this.hasIndependentMaps) return this.data[this.independentMapOffset(stage,row,col)];
+      if (this.hasIndependentMaps && !this.isDemoStage(stage)) return this.data[this.independentMapOffset(stage,row,col)];
       const physical=this.getPhysicalMapStage(stage), idx=row*CFG.storageStride+col;
       const raw=this.getNibble(this.stageMapOffset(physical),idx);
-      if (this.hasOverlay && raw===0x0E) {
+      if (this.hasOverlay && !this.isDemoStage(stage) && raw===0x0E) {
         const ext=this.data[this.overlayOffset(physical,idx)];
         if (ext>=0x10&&ext<this.terrainCount) return ext;
       }
@@ -468,23 +505,26 @@ window.QuarrelExCore = (() => {
       this.validateStage(stage); this.validateCell(row,col); this.validateTerrainId(terrainId);
       if (terrainId===0x0E || terrainId===0x0F) throw new Error('地形 ID $0E/$0F 为内部保留值，编辑器禁止写入。');
       if (this.isOriginal && terrainId>0x0F) throw new Error('原版 Battle City 只能保存地形 ID 00~0F。');
-      if (this.hasIndependentMaps) { this.data[this.independentMapOffset(stage,row,col)] = terrainId; return false; }
+      if (this.isDemoStage(stage) && terrainId>0x0D) throw new Error('Demo 地图使用原版4-bit地图格式，只能保存可编辑地形 $00~$0D。');
+      if (this.hasIndependentMaps && !this.isDemoStage(stage)) { this.data[this.independentMapOffset(stage,row,col)] = terrainId; return false; }
       let converted=false;
-      if (terrainId>=0x10) converted=this.ensureExpandedForExtendedTerrain();
+      if (terrainId>=0x10 && !this.isDemoStage(stage)) converted=this.ensureExpandedForExtendedTerrain();
       const physical=this.getPhysicalMapStage(stage),idx=row*CFG.storageStride+col,map=this.stageMapOffset(physical);
       if (terrainId>=0x10) {
         this.setNibble(map,idx,0x0E); this.data[this.overlayOffset(physical,idx)]=terrainId;
       } else {
-        this.setNibble(map,idx,terrainId&0x0F); if (this.hasOverlay) this.data[this.overlayOffset(physical,idx)]=0;
+        this.setNibble(map,idx,terrainId&0x0F); if (this.hasOverlay && !this.isDemoStage(stage)) this.data[this.overlayOffset(physical,idx)]=0;
       }
       return converted;
     }
 
     enemyTypeOffset(stage) {
+      if (this.isDemoStage(stage)) return this.offset(CFG.enemyType1To35+34*4);
       if (this.isOriginal) return this.offset(CFG.enemyType1To35+(Math.min(stage,35)-1)*4);
       return stage<=35 ? this.offset(CFG.enemyType1To35+(stage-1)*4) : this.offset(CFG.enemyType36To70+(stage-36)*4);
     }
     enemyCountOffset(stage) {
+      if (this.isDemoStage(stage)) return this.offset(CFG.enemyCount1To35+34*4);
       if (this.isOriginal) return this.offset(CFG.enemyCount1To35+(Math.min(stage,35)-1)*4);
       return stage<=35 ? this.offset(CFG.enemyCount1To35+(stage-1)*4) : this.offset(CFG.enemyCount36To70+(stage-36)*4);
     }
@@ -571,8 +611,13 @@ window.QuarrelExCore = (() => {
     getFlagTsa(fort=false){const base=this.offset(fort?CFG.fortTsa:CFG.flagTsa),a=[];for(let r=0;r<4;r++)for(let c=0;c<6;c++)a.push(this.data[base+r*7+c]);return a;}
     setFlagTsaTile(fort,row,col,tile){const base=this.offset(fort?CFG.fortTsa:CFG.flagTsa);this.data[base+row*7+col]=Number(tile)&0xFF;this.data[base+row*7+6]=0xFF;}
     setLockInitialState(on){if(!this.supportsLockInitialState)throw new Error('锁定初始状态需要 Phase 6 或更新 ROM。');this.data[this.exV2ConfigOffset+6]=on?(this.enemyItemFlags|0x80):(this.enemyItemFlags&0x7F);}
+    selectableTerrainIdsForStage(stage){return this.isDemoStage(stage)?Array.from({length:14},(_,i)=>i):this.selectableTerrainIds;}
+    getScreenElements(kind){return SCREEN_LAYOUTS[kind]||[];}
+    getScreenElementTile(def,index){if(index<0||index>=def.length)throw new Error('Screen element index 超出范围。');return this.data[this.offset(def.offset)+index];}
+    getScreenElementTiles(def){return Array.from({length:def.length},(_,i)=>this.getScreenElementTile(def,i));}
+    setScreenElementTile(def,index,tile){if(index<0||index>=def.length)throw new Error('Screen element index 超出范围。');tile=Number(tile);if(!Number.isInteger(tile)||tile<0||tile>0xFE)throw new Error('$FF 是字符串终止符；画面图块必须在 $00~$FE。');this.data[this.offset(def.offset)+index]=tile;}
     clearStage(stage){for(let r=0;r<13;r++)for(let c=0;c<13;c++)this.setCell(stage,r,c,0x0D);}
-    clearAllStages(){const max=this.isOriginal?36:(this.hasIndependentMaps?70:35);for(let st=1;st<=max;st++)this.clearStage(st);}
+    clearAllStages(){for(let st=1;st<=this.maxNormalStage;st++)this.clearStage(st);this.clearStage(this.demoStageNumber);}
     exportSharedConfig(){
       const Palettes={};for(const k of ['Sprite','Frame2','Level','Frame1','Title','LevelSelect','Misc1','Misc2'])Palettes[k]=this.getPalette(k);
       const Spawns={};for(const k of ['Enemy1','Enemy2','Enemy3','Player1','Player2'])Spawns[k]=this.getSpawn(k);
@@ -583,7 +628,10 @@ window.QuarrelExCore = (() => {
         const Map=Array.from({length:13},(_,r)=>Array.from({length:13},(_,c)=>this.getCell(stage,r,c)));
         Stages.push({Stage:stage,Map,EnemyTypes:Array.from(ed.types),EnemyCounts:Array.from(ed.counts),EnemyTotal:Array.from(ed.counts).reduce((a,b)=>a+b,0)});
       }
-      return {Schema:'QuarrelExConfig',Version:3,Gameplay:{StartingLives:this.startingLives,InitialTankLevel:this.initialTankLevel,LockInitialState:this.lockInitialState,PlayerFastMove:this.supportsPlayerFastMove&&this.isFeatureEnabled(ExFeature.PlayerFastMove),FeatureFlags:this.hasExV2Config?this.featureFlags:null,EnemyItemFlags:this.supportsEnemyPowerUpPickup?(this.enemyItemFlags&0x7F):null,Spawns},Palettes,Terrain:this.selectableTerrainIds.map(Id=>({Id,Attr:this.getTerrainAttribute(Id)&3,Tiles:this.getTerrainTiles(Id)})),FlagTsa:{Flag:this.getFlagTsa(false),Fort:this.getFlagTsa(true)},Stages};
+      const Demo={Map:Array.from({length:13},(_,r)=>Array.from({length:13},(_,c)=>this.getCell(this.demoStageNumber,r,c)))};
+      const Screens={};
+      for(const kind of ['Title','GameOver']){const Elements={};for(const def of this.getScreenElements(kind))Elements[def.key]=this.getScreenElementTiles(def);Screens[kind]={Elements};}
+      return {Schema:'QuarrelExConfig',Version:3,Gameplay:{StartingLives:this.startingLives,InitialTankLevel:this.initialTankLevel,LockInitialState:this.lockInitialState,PlayerFastMove:this.supportsPlayerFastMove&&this.isFeatureEnabled(ExFeature.PlayerFastMove),FeatureFlags:this.hasExV2Config?this.featureFlags:null,EnemyItemFlags:this.supportsEnemyPowerUpPickup?(this.enemyItemFlags&0x7F):null,Spawns},Palettes,Terrain:this.selectableTerrainIds.map(Id=>({Id,Attr:this.getTerrainAttribute(Id)&3,Tiles:this.getTerrainTiles(Id)})),FlagTsa:{Flag:this.getFlagTsa(false),Fort:this.getFlagTsa(true)},Stages,Demo,Screens};
     }
     validateSharedConfig(cfg){
       const errors=[],warnings=[];
@@ -708,6 +756,23 @@ window.QuarrelExCore = (() => {
           }
         }
       }
+
+      if(cfg.Demo==null)warn('Config v3 未包含 Demo.Map；目标 ROM 的 Demo 地图将保持原值。');
+      else if(!Array.isArray(cfg.Demo.Map)||cfg.Demo.Map.length!==13||cfg.Demo.Map.some(row=>!Array.isArray(row)||row.length!==13))err('Demo.Map 必须是完整 13×13。');
+      else for(let r=0;r<13;r++)for(let c=0;c<13;c++){const id=cfg.Demo.Map[r][c];if(!isInt(id)||id<0||id>0x0F)err(`Demo.Map[${r},${c}]=${id}，Demo 使用原版4-bit地图格式，必须在 $00~$0F。`);else if(id===0x0E||id===0x0F)warn('Demo.Map 含内部保留地形 $0E/$0F；这些格子导入时保持目标 ROM 原值。');}
+
+      if(cfg.Screens==null)warn('Config v3 未包含 Screens；Title / Game Over 将保持目标 ROM 原值。');
+      else for(const kind of ['Title','GameOver']){
+        const layout=cfg.Screens[kind];
+        if(layout==null){warn(`Screens.${kind} 缺失；对应画面保持目标 ROM 原值。`);continue;}
+        if(!layout.Elements||typeof layout.Elements!=='object'){err(`Screens.${kind}.Elements 缺失。`);continue;}
+        for(const def of this.getScreenElements(kind)){
+          const a=layout.Elements[def.key];
+          if(!Array.isArray(a)){warn(`Screens.${kind}.Elements 缺少 ${def.key}；该元素保持目标 ROM 原值。`);continue;}
+          if(a.length!==def.length){err(`Screens.${kind}.Elements.${def.key} 必须正好包含 ${def.length} 个值。`);continue;}
+          a.forEach((v,i)=>{if(!isInt(v)||v<0||v>0xFE)err(`Screens.${kind}.Elements.${def.key}[${i}]=${v}，必须在 $00~$FE；$FF 为终止符。`);});
+        }
+      }
       return {errors,warnings};
     }
 
@@ -748,6 +813,8 @@ window.QuarrelExCore = (() => {
           this.setCell(stage,r,c,id);
         }
       }
+      if(cfg.Demo?.Map){for(let r=0;r<13;r++)for(let c=0;c<13;c++){const id=cfg.Demo.Map[r][c];if(id===0x0E||id===0x0F||id<0||id>0x0D)continue;this.setCell(this.demoStageNumber,r,c,id);}}
+      if(cfg.Screens){for(const kind of ['Title','GameOver']){const layout=cfg.Screens[kind];if(!layout?.Elements)continue;for(const def of this.getScreenElements(kind)){const a=layout.Elements[def.key];if(!Array.isArray(a)||a.length!==def.length)continue;for(let i=0;i<def.length;i++)this.setScreenElementTile(def,i,a[i]);}}}
       return notes;
     }
 
@@ -772,6 +839,7 @@ window.QuarrelExCore = (() => {
       if(this.isOriginal){
         lines.push('关卡: Stage 1~35 + Demo','地形: 00~0F（原版16项）','Ex 10~17 / 36~70独立敌人: 不适用');
       }else{
+        lines.push('关卡: Stage 1~70 + Demo');
         lines.push(this.hasIndependentMaps?'Stage 1~70 地图: 全部独立（1 byte terrain ID）':'Stage 36~70 地图: 复用 Stage 1~35');
         lines.push(`36~70 Type: $${hex(this.offset(CFG.enemyType36To70),4)}`,`36~70 Count: $${hex(this.offset(CFG.enemyCount36To70),4)}`);
         if(this.supportsTerrain64) lines.push('地形定义: 00~3F 共64项；20~3F为预留自定义槽。');
@@ -799,7 +867,7 @@ window.QuarrelExCore = (() => {
 <script>
 'use strict';
 window.QuarrelExHelp = {
-  zh: `Quarrel Ex Web v1.5.1 中文帮助
+  zh: `Quarrel Ex Web v1.6.0 中文帮助
 ============================
 
 1. 支持的 ROM
@@ -870,7 +938,7 @@ Phase 6 的 EnemyItemFlags bit7 另外用于“锁定初始状态”；bits0~6 �
 10. 通用配置文件
 ----------------
 “导出配置”与“导入配置”只使用 QuarrelExConfig v3 JSON（\`.qexcfg.json\`）。正式版不再导入 v1/v2。
-Web v1.5 与 C# Desktop v1.0 完全通用。
+Web v1.6 与 C# Desktop v1.1 完全通用。
 
 配置包含：
 - 起始命数、初始等级、锁定选项
@@ -880,6 +948,8 @@ Web v1.5 与 C# Desktop v1.0 完全通用。
 - 可编辑 TSA（自动排除 $0E/$0F）
 - Flag / Fort TSA
 - Ex Stage 1~70（原版 Stage 1~35）的完整关卡数据
+- Demo 13×13 地图（可选 v3 扩展）
+- Title / Game Over 原生画面字符串（可选 v3 扩展）
   · 13×13 Map
   · 4 个 EnemyTypes
   · 4 个 EnemyCounts
@@ -898,8 +968,13 @@ Ctrl+Z：撤销。Ctrl+Y 或 Ctrl+Shift+Z：重做。历史最多保留 50 个�
 ----------------
 正式版只接受 QuarrelExConfig v3。导入前检查 Schema/Version、字段类型与范围、出生点、8组调色板、TSA、Flag/Fort TSA、Stage 数量/编号、13×13 地图、Enemy Type/Count、EnemyTotal 和目标 ROM 能力兼容性。
 有硬错误时不会修改当前 ROM；只有可兼容降级项才会以警告形式继续。
+
+13. Demo 与画面编辑
+-------------------
+所有支持的 ROM 都会在关卡列表末尾显示 Demo。Demo 使用原版物理地图槽36和4-bit存储，只允许 $00~$0D；Enemy Type/Count 与 Stage 35 共用。
+“画面 / Screen”页签可编辑 Title 与 Game Over。普通字符串按 8×8 CHR Tile 编辑；BATTLE/CITY/GAME/OVER 是原版32×32放大字形，每个大框对应一个完整源字形。
 `,
-  en: `Quarrel Ex Web v1.5.1 English Help
+  en: `Quarrel Ex Web v1.6.0 English Help
 ================================
 
 Supported ROMs include the original 16KB Battle City, legacy Ex ROMs, BCEX v2 16KB, and BCEX v2 32KB/70-map ROMs.
@@ -920,11 +995,13 @@ BCEX FeatureFlags: bit0 auto fire, bit1 pistol/Lv4, bit2 downgrade on hit, bit3 
 
 Phase6.1+ bonus handling: every hit on a flashing bonus tank immediately respawns the bonus; any active bonus is replaced at once. The old Pending queue is retired. Non-lethal player downgrade also plays the normal bullet-hit-tank sound.
 
-Import/Export Config accepts QuarrelExConfig v3 JSON (\`.qexcfg.json\`) only and is shared with Desktop v1.0. v3 also transfers Ex Stage 1-70 (original Stage 1-35), with a 13x13 Map, four raw EnemyTypes, four EnemyCounts and EnemyTotal per stage. Enemy Type bit2 ($04) is the flashing/bonus flag; common bases are $80/$A0/$C0/$E0, and forced-flashing forms are $84/$A4/$C4/$E4. The original game also adds $04 to the 4th, 11th and 18th spawned enemies.
+Import/Export Config accepts QuarrelExConfig v3 JSON (\`.qexcfg.json\`) only and is shared with Desktop v1.1. v3 also transfers Ex Stage 1-70 (original Stage 1-35), with a 13x13 Map, four raw EnemyTypes, four EnemyCounts and EnemyTotal per stage. Enemy Type bit2 ($04) is the flashing/bonus flag; common bases are $80/$A0/$C0/$E0, and forced-flashing forms are $84/$A4/$C4/$E4. The original game also adds $04 to the 4th, 11th and 18th spawned enemies.
 
 Save uses the current writable file handle when available; Save As uses Ctrl+Shift+S. Config v3 import runs full preflight validation and is transactional: hard errors leave the ROM untouched.
+
+Demo is exposed after the normal stage list in every supported ROM format. It uses original 4-bit storage and only allows $00-$0D; its Enemy Type/Count shares Stage 35. The Screen tab edits native Title/Game Over sources: ordinary strings are 8x8 tiles, while BATTLE/CITY/GAME/OVER are whole 32x32 magnified-glyph source slots. Config v3 remains Version 3 and adds optional Demo/Screens fields.
 `,
-  tsaZh: `Quarrel Ex Web v1.5.1 - TSA / 属性说明
+  tsaZh: `Quarrel Ex Web v1.6.0 - TSA / 属性说明
 ====================================
 
 一个地图“地形 ID”代表一个 16×16 复合块。它由：
@@ -942,11 +1019,11 @@ Attr 只有 2 bit，因此有效值就是 0、1、2、3。编辑器用下拉框�
 
 点击 TL/TR/BL/BR 后会显示 256 个背景 CHR Tile，并使用当前 Attr 的关卡调色板预览。选择后 16×16 预览、地形栏和地图会同步更新。
 
-$0E/$0F 为 Battle City 内部/保留地形 ID，Web v1.5 与 Desktop v1.0 都将它们屏蔽，不允许在地图或 TSA 编辑器中选择。
+$0E/$0F 为 Battle City 内部/保留地形 ID，Web v1.6 与 Desktop v1.1 都将它们屏蔽，不允许在地图或 TSA 编辑器中选择。
 
 修改 TSA 不只可能改变外观。Battle City 的砖、钢、水、树林、冰等碰撞/破坏行为与展开后的 8×8 Tile 类型有关，因此请保留 ROM 备份。
 `,
-  tsaEn: `Quarrel Ex Web v1.5.1 - TSA / Attribute Guide
+  tsaEn: `Quarrel Ex Web v1.6.0 - TSA / Attribute Guide
 ===========================================
 
 A terrain ID is a 16x16 composite block made from Attr (background palette 0-3) and four 8x8 CHR tiles: TL, TR, BL and BR.
@@ -955,7 +1032,7 @@ Terrain IDs are not CHR tile IDs. For example, terrain $0A may represent full wa
 
 Attr is a 2-bit value, so only 0, 1, 2 and 3 are valid. Click TL/TR/BL/BR to open the visual 256-tile CHR picker. The picker previews tiles using the terrain's current Attr palette.
 
-Terrain IDs $0E/$0F are internal/reserved and are hidden from map/TSA editing in Web v1.5 and Desktop v1.0.
+Terrain IDs $0E/$0F are internal/reserved and are hidden from map/TSA editing in Web v1.6 and Desktop v1.1.
 
 Changing TSA can affect more than appearance: Battle City collision and destruction behavior depends on the expanded 8x8 tile types used for brick, steel, water, forest, ice, etc. Keep ROM backups.
 `
@@ -1030,11 +1107,11 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   function clearCaches(){tileCache=new Map();}
 
   function resetUiBeforeLoad() {
-    painting=false; lastPaintCell=''; chrPickTarget=null; history=[]; redoHistory=[]; savedBytes=null; fileHandle=null; model=null; clearCaches();
+    painting=false; lastPaintCell=''; chrPickTarget=null; screenSelected=null; history=[]; redoHistory=[]; savedBytes=null; fileHandle=null; model=null; clearCaches();
     $('stageSelect').innerHTML=''; $('stageSelect').disabled=true;
     $('terrain').innerHTML=''; $('enemyRows').innerHTML=''; $('tsaRows').innerHTML=''; $('paletteGrid').innerHTML=''; $('flagGrid').innerHTML=''; $('fortGrid').innerHTML=''; $('spawnRows').innerHTML='';
     $('enemySum').textContent=''; $('mapNote').textContent=''; $('infoBox').textContent='打开 ROM 后显示格式信息。';
-    $('romBadge').textContent='未打开 ROM';
+    $('romBadge').textContent='未打开 ROM'; $('screenSelection').textContent='未打开 ROM'; const sctx=$('screenCanvas').getContext('2d');sctx.fillStyle='#000';sctx.fillRect(0,0,512,480);
     $('saveBtn').disabled=true; $('saveAsBtn').disabled=true; $('importConfigBtn').disabled=true; $('exportConfigBtn').disabled=true; $('undoBtn').disabled=true; $('redoBtn').disabled=true;
     $('convertOverlayBtn').disabled=true; $('validateBtn').disabled=true;
     const ctx=$('map').getContext('2d'); ctx.fillStyle='#111';ctx.fillRect(0,0,416,416);
@@ -1092,12 +1169,8 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   function populateStages(preferred=1) {
     const s=$('stageSelect'); s.innerHTML='';
     if(!model){s.disabled=true;return;}
-    if(model.isOriginal){
-      for(let i=1;i<=35;i++){const o=new Option('Stage '+i,i);s.add(o);}
-      s.add(new Option('Demo',36));
-    } else {
-      for(let i=1;i<=70;i++)s.add(new Option('Stage '+i,i));
-    }
+    for(let i=1;i<=model.maxNormalStage;i++)s.add(new Option('Stage '+i,i));
+    s.add(new Option('Demo',model.demoStageNumber));
     s.value=String(Math.min(Math.max(preferred,1),model.maxEditableStage)); s.disabled=false;
   }
 
@@ -1154,14 +1227,15 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     }
   }
 
-  function drawChrTile(ctx,tile,attr,dx=0,dy=0,scale=4) {
-    const pix=tilePixels(tile&0xFF);
+  function drawChrTilePalette(ctx,tile,paletteKind,attr,dx=0,dy=0,scale=4) {
+    const pix=tilePixels(tile&0xFF),pal=model.getPalette(paletteKind);
     for(let y=0;y<8;y++)for(let x=0;x<8;x++){
-      const ci=pix[y*8+x],pi=model.getLevelPaletteByte((attr&3)*4+(ci?ci:0))&0x3F,rgb=NESPAL[pi];
+      const ci=pix[y*8+x],pi=pal[(attr&3)*4+(ci?ci:0)]&0x3F,rgb=NESPAL[pi];
       ctx.fillStyle=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
       ctx.fillRect(dx+x*scale,dy+y*scale,scale,scale);
     }
   }
+  function drawChrTile(ctx,tile,attr,dx=0,dy=0,scale=4){drawChrTilePalette(ctx,tile,'Level',attr,dx,dy,scale);}
 
   function renderMap() {
     const cv=$('map'),ctx=cv.getContext('2d'); ctx.imageSmoothingEnabled=false;ctx.fillStyle='#111';ctx.fillRect(0,0,416,416);
@@ -1173,7 +1247,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     }
     ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;
     for(let i=0;i<=13;i++){ctx.beginPath();ctx.moveTo(i*32+.5,0);ctx.lineTo(i*32+.5,416);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*32+.5);ctx.lineTo(416,i*32+.5);ctx.stroke();}
-    if(model.isOriginal&&stage===36)$('mapNote').textContent='原版 Demo 地图；敌人 Type/Count 与 Stage 35 共用。';
+    if(model.isDemoStage(stage))$('mapNote').textContent='Demo 地图使用原版4-bit地图槽：可编辑地形仅 $00~$0D；Enemy Type/Count 与 Stage 35 共用。';
     else if(model.isOriginal)$('mapNote').textContent='Battle City 原版：Stage 1~35 使用独立地图。';
     else if(model.hasIndependentMaps)$('mapNote').textContent=`BCEX v2 32KB：Stage 1~70 地图全部独立，00~${hex(model.terrainCount-1)} 直接保存。`;
     else if(stage>35)$('mapNote').textContent=`Stage ${stage} 地图与 Stage ${stage-35} 共用；敌人配置独立。`;
@@ -1182,7 +1256,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
 
   function buildTerrain() {
     const box=$('terrain');box.innerHTML='';if(!model)return;
-    const ids=model.selectableTerrainIds;
+    const ids=model.selectableTerrainIdsForStage(currentStage());
     if(!ids.includes(selectedTerrain)) selectedTerrain=ids.includes(0x0D)?0x0D:ids[0];
     ids.forEach(id=>{
       const b=document.createElement('button');b.type='button';b.className='tilebtn'+(id===selectedTerrain?' sel':'');b.title=`ID $${hex(id)} ${TERRAIN_NAMES[id]||''}`;
@@ -1212,7 +1286,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
       $('enemySum').className=sum===20?'ok':'warn';
       $('enemyCountHelp').innerHTML='当前 ROM 没有“自定义总敌人数”运行支持。建议四个 Count 合计保持 <b>20</b>。';
     }
-    $('enemyHint').textContent=model.isOriginal?(stage===36?'Demo 与 Stage35 共用敌人数据。':'原版 Stage1~35 敌人表。'):(stage<=35?'Stage1~35 原敌人表。':'Stage36~70 Ex 独立敌人表。');
+    $('enemyHint').textContent=model.isDemoStage(stage)?'Demo 与 Stage35 共用敌人数据。':(model.isOriginal?'原版 Stage1~35 敌人表。':(stage<=35?'Stage1~35 原敌人表。':'Stage36~70 Ex 独立敌人表。'));
   }
 
   function enemyChanged(e) {
@@ -1290,6 +1364,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
 
   function chooseChrTile(tile) {
     if(!model||!chrPickTarget)return;
+    if(chrPickTarget.screen){try{snapshot();const {def,index}=chrPickTarget;model.setScreenElementTile(def,index,tile);screenSelected={key:def.key,index};hideChrPicker();clearCaches();markDirty();renderScreenEditor();setStatus(`${def.name} [${index+1}] = $${hex(tile)}。`,'ok');}catch(err){setStatus(err.message,'bad');}return;}
     if(chrPickTarget.flagTsa){model.setFlagTsaTile(chrPickTarget.fort,chrPickTarget.row,chrPickTarget.col,tile);hideChrPicker();markDirty();refreshFlagTsa();return;}
     try{
       snapshot();model.setTerrainTile(chrPickTarget.id,chrPickTarget.q,tile);
@@ -1302,10 +1377,28 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   function hideChrPicker(){chrPickTarget=null;$('chrModal').classList.add('hidden');}
 
 
+  let screenSelected=null;
+  function currentScreenKind(){return $('screenKind')?.value||'Title';}
+  function renderScreenEditor(){
+    const cv=$('screenCanvas');if(!cv)return;const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#000';ctx.fillRect(0,0,512,480);
+    if(!model){$('screenSelection').textContent='未打开 ROM';return;}
+    const kind=currentScreenKind(),attr=Number($('screenAttr').value||0)&3;
+    ctx.strokeStyle='rgba(255,255,255,.10)';ctx.lineWidth=1;for(let x=0;x<=256;x+=8){ctx.beginPath();ctx.moveTo(x*2+.5,0);ctx.lineTo(x*2+.5,480);ctx.stroke();}for(let y=0;y<=240;y+=8){ctx.beginPath();ctx.moveTo(0,y*2+.5);ctx.lineTo(512,y*2+.5);ctx.stroke();}
+    for(const def of model.getScreenElements(kind)){for(let i=0;i<def.length;i++){const tile=model.getScreenElementTile(def,i);let x,y,w,h,scale;if(def.kind==='tile'){x=(def.x+i)*16;y=def.y*16;w=h=16;scale=2;}else{x=(def.x+i*32)*2;y=def.y*2;w=h=64;scale=8;}drawChrTilePalette(ctx,tile,def.palette,attr,x,y,scale);const sel=screenSelected&&screenSelected.key===def.key&&screenSelected.index===i;ctx.strokeStyle=sel?'#ffe600':(def.kind==='large'?'#00bfff':'#87ceeb');ctx.lineWidth=sel?3:1;ctx.strokeRect(x+.5,y+.5,w-1,h-1);}}
+    if(screenSelected){const def=model.getScreenElements(kind).find(d=>d.key===screenSelected.key);if(def){const tile=model.getScreenElementTile(def,screenSelected.index);$('screenSelection').textContent=`${def.name} [${screenSelected.index+1}/${def.length}] = $${hex(tile)}`;return;}}
+    $('screenSelection').textContent='点击蓝框选择图块';
+  }
+  function screenHit(px,py,kindWanted){const defs=model?.getScreenElements(currentScreenKind())||[];for(const def of defs.filter(d=>d.kind===kindWanted)){for(let i=0;i<def.length;i++){const x=def.kind==='tile'?(def.x+i)*8:def.x+i*32,y=def.kind==='tile'?def.y*8:def.y,w=def.kind==='tile'?8:32,h=w;if(px>=x&&px<x+w&&py>=y&&py<y+h)return {def,index:i};}}return null;}
+  function openScreenChrPicker(def,index){
+    if(!model)return;const current=model.getScreenElementTile(def,index),attr=Number($('screenAttr').value||0)&3;chrPickTarget={screen:true,def,index};$('chrTitle').textContent=`Screen - ${def.name} [${index+1}/${def.length}]`;$('chrHint').textContent=`Palette=${def.palette}, Attr=${attr}, 当前 Tile=$${hex(current)}；$FF 为终止符，不能选择。`;const grid=$('chrGrid');grid.innerHTML='';for(let tile=0;tile<0xFF;tile++){const b=document.createElement('button');b.type='button';b.className='chr-tile-btn'+(tile===current?' selected':'');const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTilePalette(cv.getContext('2d'),tile,def.palette,attr,0,0,4);const sp=document.createElement('span');sp.textContent=hex(tile);b.append(cv,sp);b.addEventListener('click',()=>chooseChrTile(tile));grid.appendChild(b);}$('chrModal').classList.remove('hidden');requestAnimationFrame(()=>grid.querySelector('.selected')?.scrollIntoView({block:'center',inline:'center'}));
+  }
+  function screenCanvasClick(e){if(!model)return;const r=$('screenCanvas').getBoundingClientRect(),px=(e.clientX-r.left)*(256/r.width),py=(e.clientY-r.top)*(240/r.height),hit=screenHit(px,py,'large')||screenHit(px,py,'tile');if(!hit){screenSelected=null;renderScreenEditor();return;}screenSelected={key:hit.def.key,index:hit.index};renderScreenEditor();openScreenChrPicker(hit.def,hit.index);}
+
+
   const PALETTE_KINDS=[['Sprite','Sprite'],['Frame2','Frame 2'],['Level','Level'],['Frame1','Frame 1'],['Title','Title'],['LevelSelect','Level Select'],['Misc1','Misc 1'],['Misc2','Misc 2']];
   let palettePickTarget=null;
   function refreshPalette(){const sel=$('paletteSet');if(!sel.options.length)PALETTE_KINDS.forEach(([v,n])=>sel.add(new Option(n,v)));const grid=$('paletteGrid');grid.innerHTML='';if(!model)return;const kind=sel.value||'Level',pal=model.getPalette(kind);pal.forEach((v,i)=>{const b=document.createElement('button');b.className='palette-cell';b.style.background=rgbCss(NESPAL[v&0x3F]);b.textContent=`${i.toString().padStart(2,'0')}  $${hex(v&0x3F)}`;b.addEventListener('click',()=>openPalettePicker(kind,i,v));grid.appendChild(b);});}
-  function openPalettePicker(kind,index,current){palettePickTarget={kind,index};$('paletteTitle').textContent=`${kind} Palette[${index}] - 当前 $${hex(current&0x3F)}`;const g=$('palettePickerGrid');g.innerHTML='';for(let i=0;i<64;i++){const b=document.createElement('button');b.className='nes-color';b.style.background=rgbCss(NESPAL[i]);b.textContent=hex(i);b.addEventListener('click',()=>{snapshot();model.setPaletteByte(kind,index,i);hidePalettePicker();clearCaches();markDirty();refreshPalette();renderMap();refreshGameSettings();buildTerrain();refreshTSA();refreshFlagTsa();setStatus(`Palette ${kind}[${index}] = $${hex(i)}`,'ok');});g.appendChild(b);}$('paletteModal').classList.remove('hidden');}
+  function openPalettePicker(kind,index,current){palettePickTarget={kind,index};$('paletteTitle').textContent=`${kind} Palette[${index}] - 当前 $${hex(current&0x3F)}`;const g=$('palettePickerGrid');g.innerHTML='';for(let i=0;i<64;i++){const b=document.createElement('button');b.className='nes-color';b.style.background=rgbCss(NESPAL[i]);b.textContent=hex(i);b.addEventListener('click',()=>{snapshot();model.setPaletteByte(kind,index,i);hidePalettePicker();clearCaches();markDirty();refreshPalette();renderMap();refreshGameSettings();buildTerrain();refreshTSA();refreshFlagTsa();renderScreenEditor();setStatus(`Palette ${kind}[${index}] = $${hex(i)}`,'ok');});g.appendChild(b);}$('paletteModal').classList.remove('hidden');}
   function hidePalettePicker(){palettePickTarget=null;$('paletteModal').classList.add('hidden');}
   function refreshFlagTsa(){for(const fort of [false,true]){const root=$(fort?'fortGrid':'flagGrid');root.innerHTML='';if(!model)continue;const data=model.getFlagTsa(fort);data.forEach((tile,i)=>{const b=document.createElement('button');b.className='flag-tile';const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,0,0,0,4);b.appendChild(cv);b.title=`$${hex(tile)}`;b.addEventListener('click',()=>openFlagChrPicker(fort,Math.floor(i/6),i%6,tile));root.appendChild(b);});}}
   function openFlagChrPicker(fort,row,col,current){chrPickTarget={flagTsa:true,fort,row,col};$('chrTitle').textContent=`${fort?'Fort':'Flag'} TSA [${row},${col}]`;$('chrHint').textContent=`当前 Tile=$${hex(current)}。`;const grid=$('chrGrid');grid.innerHTML='';for(let tile=0;tile<256;tile++){const b=document.createElement('button');b.className='chr-tile-btn'+(tile===current?' selected':'');const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,0,0,0,4);const sp=document.createElement('span');sp.textContent=hex(tile);b.append(cv,sp);b.addEventListener('click',()=>{snapshot();model.setFlagTsaTile(fort,row,col,tile);hideChrPicker();markDirty();refreshFlagTsa();setStatus(`${fort?'Fort':'Flag'} TSA = $${hex(tile)}`,'ok');});grid.appendChild(b);}$('chrModal').classList.remove('hidden');}
@@ -1406,11 +1499,11 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
 
   function refreshInfo(){if(model)$('infoBox').textContent=model.describe();}
   function refreshBadge(){
-    if(!model){$('romBadge').textContent='未打开 ROM';return;}
+    if(!model){$('romBadge').textContent='未打开 ROM'; $('screenSelection').textContent='未打开 ROM'; const sctx=$('screenCanvas').getContext('2d');sctx.fillStyle='#000';sctx.fillRect(0,0,512,480);return;}
     const names={Original16K:'Original 16K',Ex16K:'Ex 16K',Ex32KOverlay:'Ex 32K Overlay',Ex32K70Maps:'BCEX v2 32K / 70 Maps'};
     $('romBadge').textContent=(names[model.kind]||model.kind)+(model.supportsCustomEnemyTotal?' · Enemy 1~255':'')+` · Terrain ${model.terrainCount}`;
   }
-  function refreshAll(){if(!model)return;renderMap();buildTerrain();refreshEnemy();refreshTSA();refreshPalette();refreshFlagTsa();refreshGameSettings();refreshExOptions();refreshInfo();refreshBadge();$('convertOverlayBtn').disabled=!model.canConvertToOverlay;$('validateBtn').disabled=false;}
+  function refreshAll(){if(!model)return;renderMap();buildTerrain();refreshEnemy();refreshTSA();refreshPalette();refreshFlagTsa();refreshGameSettings();refreshExOptions();refreshInfo();refreshBadge();renderScreenEditor();$('convertOverlayBtn').disabled=!model.canConvertToOverlay;$('validateBtn').disabled=false;}
 
   function mapRC(e){
     const cv=$('map'),r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*416/r.width,y=(e.clientY-r.top)*416/r.height;
@@ -1506,11 +1599,12 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   function hideHelp(){$('helpModal').classList.add('hidden');}
   function showAbout(){
     $('helpTitle').textContent='关于 Quarrel Ex Web';
-    $('helpText').textContent='Quarrel Ex Web v1.5.1\n\n本地浏览器版 Battle City / Battle City Ex 编辑器。\n正式版文件操作：仅支持 QuarrelExConfig v3；配置导入先完整校验并事务式应用；加入撤销/重做，以及完善的保存/另存为。Config v3 包含完整关卡地图、Enemy Type/Count/Total、调色板、TSA、Flag TSA、出生位置与全局设置。\n\n支持 Original16K / Ex16K / Legacy 32KB Overlay / BCEX v2 32KB 70-map。\nROM 数据只在本机浏览器内处理。';
+    $('helpText').textContent='Quarrel Ex Web v1.6.0\n\n本地浏览器版 Battle City / Battle City Ex 编辑器。\n新增：Original / Ex 均可编辑 Demo 地图；统一 Title + Game Over Screen Editor，可编辑原生 8×8 字符串与 32×32 放大字形源。\n正式版文件操作：仅支持 QuarrelExConfig v3；配置导入先完整校验并事务式应用；加入撤销/重做，以及完善的保存/另存为。Config v3 包含完整关卡地图、Demo、Title/Game Over 画面元素、Enemy Type/Count/Total、调色板、TSA、Flag TSA、出生位置与全局设置。\n\n支持 Original16K / Ex16K / Legacy 32KB Overlay / BCEX v2 32KB 70-map。\nROM 数据只在本机浏览器内处理。';
     $('helpModal').classList.remove('hidden');closeMenus();
   }
 
 
+  $('screenKind').addEventListener('change',()=>{screenSelected=null;renderScreenEditor();});$('screenAttr').addEventListener('change',renderScreenEditor);$('screenCanvas').addEventListener('click',screenCanvasClick);
   $('paletteSet').addEventListener('change',refreshPalette);
   $('paletteClose').addEventListener('click',hidePalettePicker);$('paletteModal').addEventListener('click',e=>{if(e.target===$('paletteModal'))hidePalettePicker();});
   $('startingLives').addEventListener('change',()=>{if(!model)return;snapshot();model.setStartingLives($('startingLives').value);markDirty();refreshGameSettings();});
@@ -1534,7 +1628,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   $('saveBtn').addEventListener('click',saveRom);$('saveAsBtn').addEventListener('click',saveAsRom);$('undoBtn').addEventListener('click',undo);$('redoBtn').addEventListener('click',redo);
   $('convertOverlayBtn').addEventListener('click',()=>{closeMenus();convertOverlay();});
   $('validateBtn').addEventListener('click',()=>{closeMenus();if(!model)return;try{model.validate();refreshAll();setStatus('ROM 结构重新检查通过。','ok');}catch(err){setStatus(err.message,'bad');}});
-  $('stageSelect').addEventListener('change',()=>{renderMap();refreshEnemy();refreshGameSettings();});
+  $('stageSelect').addEventListener('change',()=>{renderMap();buildTerrain();refreshEnemy();refreshGameSettings();});
   document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tabpane').forEach(x=>x.classList.add('hidden'));b.classList.add('active');$(b.dataset.tab).classList.remove('hidden');}));
   document.querySelectorAll('[data-help]').forEach(b=>b.addEventListener('click',()=>showHelp(b.dataset.help)));
   document.querySelectorAll('[data-about]').forEach(b=>b.addEventListener('click',showAbout));
@@ -1546,7 +1640,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   $('spawnCanvas').addEventListener('pointerup',()=>{spawnDrag=null;refreshGameSettings();});
   $('spawnCanvas').addEventListener('pointercancel',()=>{spawnDrag=null;refreshGameSettings();});
 
-  $('map').addEventListener('contextmenu',e=>{e.preventDefault();if(!model)return;const rc=mapRC(e),id=model.getCell(currentStage(),rc.r,rc.c);if(!model.selectableTerrainIds.includes(id)){setStatus(`地形 $${hex(id)} 为内部保留值，未吸取。`,'warn');return;}selectedTerrain=id;buildTerrain();});
+  $('map').addEventListener('contextmenu',e=>{e.preventDefault();if(!model)return;const rc=mapRC(e),id=model.getCell(currentStage(),rc.r,rc.c);if(!model.selectableTerrainIdsForStage(currentStage()).includes(id)){setStatus(`地形 $${hex(id)} 为内部保留值，未吸取。`,'warn');return;}selectedTerrain=id;buildTerrain();});
   $('map').addEventListener('pointerdown',e=>{if(!model||e.button!==0)return;snapshot();painting=true;lastPaintCell='';$('map').setPointerCapture(e.pointerId);paintAt(e);});
   $('map').addEventListener('pointermove',e=>{if(painting)paintAt(e);});
   $('map').addEventListener('pointerup',()=>{painting=false;lastPaintCell='';});$('map').addEventListener('pointercancel',()=>{painting=false;lastPaintCell='';});

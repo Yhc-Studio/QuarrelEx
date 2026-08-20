@@ -88,6 +88,13 @@ public static class EditorToolIcons
                     g.FillRectangle(white, R(9, 5, 2, 2));
                 }
                 break;
+            case EditorToolKind.Screen:
+                g.FillRectangle(fill, R(2, 3, 16, 13));
+                g.DrawRectangle(dark, Rectangle.Round(R(2, 3, 16, 13)));
+                g.FillRectangle(blue, R(5, 6, 4, 4));
+                g.FillRectangle(accent, R(11, 6, 4, 4));
+                g.DrawLine(dark, 5 * s, 13 * s, 15 * s, 13 * s);
+                break;
         }
         return bmp;
     }

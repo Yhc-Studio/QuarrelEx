@@ -11,6 +11,9 @@ public sealed class QuarrelExSharedConfig
     public List<TerrainDefinitionConfig> Terrain { get; set; } = new();
     public FlagTsaConfig FlagTsa { get; set; } = new();
     public List<StageConfig> Stages { get; set; } = new();
+    // Optional v3 extensions. Older v3 files without these fields remain valid.
+    public DemoConfig? Demo { get; set; }
+    public ScreensConfig? Screens { get; set; }
 }
 
 public sealed class GameplayConfig
@@ -66,4 +69,22 @@ public sealed class ConfigValidationResult
         => Errors.Count == 0
             ? string.Empty
             : "配置文件检查失败：" + Environment.NewLine + "- " + string.Join(Environment.NewLine + "- ", Errors);
+}
+
+
+public sealed class DemoConfig
+{
+    public int[][] Map { get; set; } = Enumerable.Range(0, 13).Select(_ => new int[13]).ToArray();
+}
+
+public sealed class ScreensConfig
+{
+    public ScreenLayoutConfig? Title { get; set; }
+    public ScreenLayoutConfig? GameOver { get; set; }
+}
+
+public sealed class ScreenLayoutConfig
+{
+    // Keys are stable ROM-native element names, not absolute addresses.
+    public Dictionary<string, int[]> Elements { get; set; } = new();
 }

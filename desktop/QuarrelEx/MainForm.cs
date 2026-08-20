@@ -41,6 +41,7 @@ public sealed class MainForm : Form
     private readonly PaletteEditorControl _paletteEditor = new();
     private readonly FlagTsaEditorControl _flagTsaEditor = new();
     private readonly GameSettingsControl _gameSettings = new();
+    private readonly ScreenEditorControl _screenEditor = new();
     private readonly TextBox _infoBox = new() { Dock = DockStyle.Fill, Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical, Font = new Font("Consolas", 10f) };
     private readonly ToolStripStatusLabel _status = new() { Text = "打开 Battle City / Battle City Ex ROM 后开始编辑。" };
     private readonly ToolStripMenuItem _saveMenu = new("保存(&S)") { ShortcutKeys = Keys.Control | Keys.S, Enabled = false };
@@ -255,6 +256,7 @@ public sealed class MainForm : Form
         AddToolButton(tool, EditorToolKind.GameSettings, "游戏设置", Keys.F6);
         AddToolButton(tool, EditorToolKind.ExOptions, "Ex 选项", Keys.F7);
         AddToolButton(tool, EditorToolKind.RomInfo, "ROM 信息", Keys.F8);
+        AddToolButton(tool, EditorToolKind.Screen, "Title / Game Over Screen Editor", Keys.F9);
         return tool;
     }
 
@@ -322,6 +324,7 @@ public sealed class MainForm : Form
         AddToolWindowMenuItem(menu, EditorToolKind.GameSettings, "游戏设置(&G)", Keys.F6);
         AddToolWindowMenuItem(menu, EditorToolKind.ExOptions, "Ex 选项(&X)", Keys.F7);
         AddToolWindowMenuItem(menu, EditorToolKind.RomInfo, "ROM 信息(&I)", Keys.F8);
+        AddToolWindowMenuItem(menu, EditorToolKind.Screen, "Title / Game Over Screen Editor(&S)", Keys.F9);
         menu.DropDownItems.Add(new ToolStripSeparator());
         var showAll = new ToolStripMenuItem("显示全部工具窗口(&A)");
         showAll.Click += (_, _) => ShowAllToolWindows();
@@ -389,6 +392,7 @@ public sealed class MainForm : Form
             EditorToolKind.FlagTsa => ("Quarrel Ex - Flag TSA Editor", new Size(600, 500)),
             EditorToolKind.GameSettings => ("Quarrel Ex - 游戏设置", new Size(620, 690)),
             EditorToolKind.ExOptions => ("Quarrel Ex - Ex 选项", new Size(580, 600)),
+            EditorToolKind.Screen => ("Quarrel Ex - Title / Game Over Screen Editor", new Size(820, 660)),
             _ => ("Quarrel Ex - ROM 信息", new Size(600, 500))
         };
         return new ToolWindowForm(kind, title, BuildToolWindowContent(kind), size, Icon);
@@ -439,6 +443,8 @@ public sealed class MainForm : Form
                 return _gameSettings;
             case EditorToolKind.ExOptions:
                 return BuildExOptionsPanel();
+            case EditorToolKind.Screen:
+                return _screenEditor;
             default:
                 return _infoBox;
         }
@@ -527,7 +533,7 @@ public sealed class MainForm : Form
     private void ShowAbout()
     {
         MessageBox.Show(this,
-            "Quarrel Ex v1.0\r\nBattle City / Battle City Ex Editor\r\n\r\n" +
+            "Quarrel Ex v1.1\r\nBattle City / Battle City Ex Editor\r\n\r\n" +
             "配置文件升级为 QuarrelExConfig v3：除全局设置外，现在还包含关卡地图与每关 Enemy Type / Count / Total，并继续与 Web 版通用。\r\n" +
             "敌人、TSA、调色板、Flag TSA、游戏设置、Ex选项与ROM信息继续使用独立工具窗口。",
             "关于 Quarrel Ex", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -752,6 +758,8 @@ public sealed class MainForm : Form
             _gameSettings.RefreshValues();
             RefreshExOptions();
         };
+        _screenEditor.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
+        _screenEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange("Title / Game Over 画面已更新。");
     }
 
     private void RefreshAfterDataEditorChange(string message)
@@ -762,6 +770,7 @@ public sealed class MainForm : Form
         BuildTerrainButtons();
         _stageCanvas.Invalidate();
         _gameSettings.RefreshValues();
+        _screenEditor.RefreshView();
         _infoBox.Text = _rom.Describe();
         SetStatus(message, false);
     }
@@ -788,7 +797,7 @@ public sealed class MainForm : Form
     {
         _stageCanvas.Renderer = null; _stageCanvas.Rom = null; _stageCanvas.Invalidate();
         ClearTerrainButtonImages();
-        _enemyGrid.Rows.Clear(); _tsaEditor.Bind(null, null); _paletteEditor.Bind(null, null); _flagTsaEditor.Bind(null, null); _gameSettings.Bind(null, null, null); _infoBox.Clear();
+        _enemyGrid.Rows.Clear(); _tsaEditor.Bind(null, null); _paletteEditor.Bind(null, null); _flagTsaEditor.Bind(null, null); _gameSettings.Bind(null, null, null); _screenEditor.Bind(null, null); _infoBox.Clear();
         _renderer?.Dispose(); _renderer = null; _rom = null;
     }
 
@@ -1014,6 +1023,7 @@ public sealed class MainForm : Form
             _paletteEditor.Bind(_rom, _renderer);
             _flagTsaEditor.Bind(_rom, _renderer);
             _gameSettings.Bind(_rom, _renderer, () => CurrentStage);
+            _screenEditor.Bind(_rom, _renderer);
             RefreshExOptions();
             _infoBox.Text = _rom.Describe();
             RefreshStageNote();
@@ -1027,6 +1037,7 @@ public sealed class MainForm : Form
         if (_rom is null) return;
         _stageCanvas.Stage = CurrentStage;
         _stageCanvas.Invalidate();
+        BuildTerrainButtons();
         RefreshEnemyGrid();
         _gameSettings.RefreshValues();
         RefreshStageNote();
@@ -1036,7 +1047,7 @@ public sealed class MainForm : Form
     {
         if (_rom is null) return;
         if (_rom.IsDemoStage(CurrentStage))
-            _mapNote.Text = "原版 Demo 地图；敌人 Type/Count 与 Stage 35 共用。";
+            _mapNote.Text = "Demo 地图使用原版 4-bit 地图槽：可编辑地形仅 $00~$0D；Enemy Type/Count 与 Stage 35 共用。";
         else if (_rom.IsOriginal)
             _mapNote.Text = "Battle City 原版模式：Stage 1~35 使用独立地图。";
         else if (_rom.HasIndependentMaps)
@@ -1054,7 +1065,7 @@ public sealed class MainForm : Form
         try
         {
             ClearTerrainButtonImages();
-            foreach (var id in _rom.SelectableTerrainIds)
+            foreach (var id in _rom.SelectableTerrainIdsForStage(CurrentStage))
             {
                 var dpi = Math.Max(96, _terrainPanel.DeviceDpi);
                 var previewScale = 2;
@@ -1183,7 +1194,7 @@ public sealed class MainForm : Form
     {
         if (_rom is null) return;
         var picked = _rom.GetCell(CurrentStage, e.Row, e.Column);
-        if (!_rom.SelectableTerrainIds.Contains(picked))
+        if (!_rom.SelectableTerrainIdsForStage(CurrentStage).Contains(picked))
         {
             SetStatus($"地形 ${picked:X2} 为内部保留值，未吸取。", true);
             return;

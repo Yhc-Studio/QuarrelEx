@@ -1,0 +1,25 @@
+QuarrelEx Desktop v1.1 Static Verification
+===========================================
+
+Environment limitation
+----------------------
+The current build environment does not provide the Windows .NET 8 SDK / WinForms compiler, so the Desktop project could not be executed or compiled here. The repository includes a Windows GitHub Actions build workflow for compiler verification after push.
+
+Static checks completed
+-----------------------
+- All 28 C# source files were lexically scanned with comments/strings excluded; (), [] and {} delimiters are balanced.
+- ScreenEditorControl.cs is included automatically by the SDK-style project.
+- EditorToolKind.Screen, toolbar/menu launcher and F9 shortcut are wired in MainForm.
+- ScreenEditor BeforeEdit/DataChanged events are wired into the existing undo/dirty-state flow.
+- BattleCityRom exposes Demo through the same 13x13 map APIs while preserving physical slot 36 and Stage 35 enemy-data sharing.
+- Demo bypasses 32KB independent-map and legacy overlay storage paths, so it remains the original native 4-bit slot in every supported ROM mode.
+- Demo selectable terrain is restricted to $00-$0D.
+- Title/Game Over source definitions match the verified Web/native ROM definitions (11 Title elements, 2 Game Over elements).
+- $FF is rejected by SetScreenElementTile to protect native terminators.
+- Config v3 keeps Version=3 and adds optional Demo/Screens fields.
+- Missing Demo/Screens in an older v3 file produces compatibility warnings rather than hard errors.
+- Project Version/FileVersion updated to 1.1.0 / 1.1.0.0.
+
+Native data was cross-checked against actual Original 16KB, BCEX 16KB Runtime 6.3 and BCEX 32KB Runtime 6.4.1 ROMs via the shared Web-core functional test. Screen offsets/terminators and Demo slot addresses match all three layouts.
+
+No BCEX runtime / IPS change is required for this editor release.

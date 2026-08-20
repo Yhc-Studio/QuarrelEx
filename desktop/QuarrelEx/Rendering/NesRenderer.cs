@@ -7,7 +7,7 @@ public sealed class NesRenderer : IDisposable
 {
     private readonly BattleCityRom _rom;
     private readonly Dictionary<(int Id, int Scale), Bitmap> _blockCache = new();
-    private readonly Dictionary<(byte Tile, byte Attr, int Scale), Bitmap> _tileCache = new();
+    private readonly Dictionary<(byte Tile, PaletteKind Palette, byte Attr, int Scale), Bitmap> _tileCache = new();
     private readonly Dictionary<(SpawnKind Kind, int Scale), Bitmap> _tankCache = new();
     private static readonly Color[] NesPalette = BuildPalette();
 
@@ -25,11 +25,14 @@ public sealed class NesRenderer : IDisposable
     }
 
     public Bitmap GetChrTileBitmap(byte tile, byte attr, int scale = 4)
+        => GetChrTileBitmap(tile, PaletteKind.Level, attr, scale);
+
+    public Bitmap GetChrTileBitmap(byte tile, PaletteKind paletteKind, byte attr, int scale = 4)
     {
         attr &= 3;
-        var key = (tile, attr, scale);
+        var key = (tile, paletteKind, attr, scale);
         if (_tileCache.TryGetValue(key, out var cached)) return cached;
-        var bmp = RenderChrTile(tile, attr, scale);
+        var bmp = RenderChrTile(tile, paletteKind, attr, scale);
         _tileCache[key] = bmp;
         return bmp;
     }
@@ -87,13 +90,13 @@ public sealed class NesRenderer : IDisposable
         g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
         for (var q = 0; q < 4; q++)
         {
-            using var tile = new Bitmap(GetChrTileBitmap(tiles[q], attr, scale));
+            using var tile = new Bitmap(GetChrTileBitmap(tiles[q], PaletteKind.Level, attr, scale));
             g.DrawImageUnscaled(tile, (q & 1) * 8 * scale, (q >> 1) * 8 * scale);
         }
         return bmp;
     }
 
-    private Bitmap RenderChrTile(byte tile, byte attr, int scale)
+    private Bitmap RenderChrTile(byte tile, PaletteKind paletteKind, byte attr, int scale)
     {
         var pixels = DecodeTile(tile);
         var bmp = new Bitmap(8 * scale, 8 * scale, PixelFormat.Format32bppArgb);
@@ -101,7 +104,7 @@ public sealed class NesRenderer : IDisposable
         for (var x = 0; x < 8; x++)
         {
             var colorIndex = pixels[y * 8 + x];
-            var paletteByte = _rom.GetLevelPaletteByte(attr * 4 + colorIndex) & 0x3F;
+            var paletteByte = _rom.GetPaletteByte(paletteKind, attr * 4 + colorIndex) & 0x3F;
             var color = NesPalette[paletteByte];
             for (var sy = 0; sy < scale; sy++)
             for (var sx = 0; sx < scale; sx++)

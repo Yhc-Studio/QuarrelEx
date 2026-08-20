@@ -1,5 +1,18 @@
 # Changelog
 
+## QuarrelEx v1.1
+
+### Desktop 1.1 / Web 1.6.0
+- Demo map is now editable in Original and every supported Ex format. It remains a separate special map after the normal stage list and is not treated as Stage 71 by the UI.
+- Demo uses the original 4-bit map storage and therefore exposes only writable terrain IDs `$00-$0D`; Enemy Type/Count shares Stage 35, matching the original game.
+- Added a unified Title + Game Over Screen Editor.
+- Native 8x8 title strings can be edited one CHR tile at a time.
+- BATTLE / CITY / GAME / OVER use Battle City's original 32x32 magnified-glyph routine and are edited as whole source glyph slots.
+- Screen editing writes only the existing ROM-native string bytes; coordinates, fixed lengths and `$FF` terminators are preserved.
+- Config v3 remains Version 3 and now exports optional `Demo` and `Screens` extensions. Older v3 configs without them remain importable and preserve target-ROM data.
+- Desktop adds the Screen Editor as the `F9` modeless tool window.
+- No BCEX runtime/IPS change is required for this editor update.
+
 ## QuarrelEx v1.0
 
 ### Desktop 1.0 / Web 1.5.1

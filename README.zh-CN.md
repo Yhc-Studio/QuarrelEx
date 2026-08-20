@@ -1,6 +1,6 @@
 # QuarrelEx
 
-![Version](https://img.shields.io/badge/release-v1.0-blue)
+![Version](https://img.shields.io/badge/release-v1.1-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Web-0aa0c0)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -15,25 +15,26 @@
 
 | 组件 | 版本 |
 |---|---:|
-| Desktop 桌面端 | 1.0 |
-| Web 网页端 | 1.5.1 |
+| Desktop 桌面端 | 1.1 |
+| Web 网页端 | 1.6.0 |
 | 通用配置格式 | QuarrelExConfig v3 |
 | 16KB BCEX Runtime | 内部修订 6.3 |
 | 32KB BCEX Runtime | 内部修订 6.4.1 |
 
-Phase/Runtime 修订号只用于开发追踪；对外正式发布统一称为 **QuarrelEx v1.0**。
+当前编辑器正式版本为 **QuarrelEx v1.1**；BCEX Runtime 本身相对 v1.0 没有改动。
 
 ## 主要功能
 
 - 支持原版 Battle City，以及 BCEX 16KB / 32KB 格式。
-- Stage 1~70；32KB 版本为 70 张真正独立地图。
+- Stage 1~70；32KB 版本为 70 张真正独立地图；所有支持的 ROM 模式现在都额外显示并可编辑 Demo 地图。
 - 每关 4 组 Enemy Type / Count；支持的 BCEX ROM 可将敌人总数设为 **1~255**。
 - TSA/属性可视化编辑：Attr 只能选择 `0~3`，TL/TR/BL/BR 直接从 `$00~$FF` CHR Tile 中选择。
 - 扩展地形：16KB 到 `$00~$1F`；32KB 到 `$00~$3F`，包含额外自定义槽。
 - 调色板编辑器、Flag/Fort TSA Editor。
+- 统一 Title + Game Over Screen Editor：普通字符串按原生 8×8 CHR Tile 编辑；BATTLE/CITY/GAME/OVER 的原版 32×32 放大字形按完整源字形槽编辑。
 - 玩家1/2与敌人1/2/3出生点支持数值输入和鼠标拖拽。
 - Ex 功能：按住 B 连发、手枪/Lv4、受击降级、我方加速、随机敌人顺序、取消队友互伤、敌人拾取道具、锁定初始状态等。
-- Web/Desktop 共用 Config v3，包含游戏设置、Palette、TSA、Flag/Fort TSA、Stage 1~70地图、Enemy Type/Count/Total。
+- Web/Desktop 共用 Config v3，包含游戏设置、Palette、TSA、Flag/Fort TSA、Stage地图、Demo地图、Title/Game Over 画面元素、Enemy Type/Count/Total。
 - 撤销/重做：`Ctrl+Z`、`Ctrl+Y`、`Ctrl+Shift+Z`。
 - 完整的保存 / 另存为。
 - Config v3 导入前完整校验，硬错误不会写入一半 ROM。
@@ -97,6 +98,7 @@ desktop/QuarrelEx.sln
 | `F6` | 游戏设置 |
 | `F7` | Ex 选项 |
 | `F8` | ROM 信息 |
+| `F9` | Title / Game Over Screen Editor |
 
 右侧编辑功能采用独立工具窗口，可移动、缩放、最大化或放到第二显示器。
 
@@ -132,7 +134,7 @@ Web 和 Desktop 只接受/导出 `QuarrelExConfig Version 3`，扩展名建议�
 *.qexcfg.json
 ```
 
-正式版会在导入前完整检查 Schema、版本、Palette、TSA、地图13×13、关卡连续性、EnemyTotal/Count、ROM能力等；只有全部硬错误检查通过后才正式写入当前 ROM。
+正式版会在导入前完整检查 Schema、版本、Palette、TSA、地图13×13、关卡连续性、EnemyTotal/Count、ROM能力等；只有全部硬错误检查通过后才正式写入当前 ROM。Demo 与 Screens 是 Config v3 的可选扩展字段，因此旧的合法 v3 文件仍然可以导入，缺失时保留目标 ROM 原值。
 
 规范见 [docs/QuarrelExConfig_v3_Spec.txt](docs/QuarrelExConfig_v3_Spec.txt)。
 

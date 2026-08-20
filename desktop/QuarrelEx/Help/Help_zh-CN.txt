@@ -312,3 +312,11 @@ F8  ROM 信息
 - 重做：Ctrl+Y 或 Ctrl+Shift+Z。
 - 保存：Ctrl+S，写回当前 ROM 路径。
 - 另存为：Ctrl+Shift+S，成功后新文件成为当前 ROM 路径。
+
+【v1.1 Demo + Screen Editor】
+- 原版与所有支持的 Ex ROM 都会在正常关卡列表末尾显示 Demo。Demo 不是 Stage 71；它使用原游戏物理地图槽36。
+- Demo 继续使用 13×13 地图编辑器，但底层是原版4-bit地图，所以只允许 $00~$0D；Enemy Type/Count 与 Stage 35 共用。
+- F9 打开 Title / Game Over Screen Editor。
+- 普通标题字符串按 8×8 CHR Tile 编辑；BATTLE/CITY/GAME/OVER 是原版32×32放大字形，每个大框编辑一个完整源字形。
+- Screen Editor 不改坐标、字符串长度或 $FF 终止符。
+- Config v3 版本号仍为3；新增 Demo 与 Screens 可选字段，旧v3缺失时保留目标ROM原值。

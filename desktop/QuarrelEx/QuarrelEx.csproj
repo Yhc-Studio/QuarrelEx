@@ -10,8 +10,8 @@
     <RootNamespace>QuarrelEx</RootNamespace>
     <AssemblyName>QuarrelEx</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-<Version>1.0.0</Version>
-    <FileVersion>1.0.0.0</FileVersion>
+<Version>1.1.0</Version>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

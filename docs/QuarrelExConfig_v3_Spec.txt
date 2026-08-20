@@ -5,7 +5,7 @@ Required root:
   Schema  = "QuarrelExConfig"
   Version = 3
 
-Formal Desktop v1.0 / Web v1.5 import only Version 3.
+Formal Desktop v1.1 / Web v1.6 import only Version 3.
 Older v1/v2 configs are intentionally rejected.
 
 Gameplay
@@ -48,6 +48,36 @@ Each stage contains:
   EnemyCounts  exactly 4 integers 0..255
   EnemyTotal   integer equal to sum(EnemyCounts)
 EnemyCounts sum must be 1..255.
+
+Demo (optional v3 extension)
+----------------------------
+Demo.Map: exactly 13 rows x 13 columns.
+The Demo map is ROM-native and remains in the original 4-bit map format, therefore writable terrain IDs are $00..$0D. $0E/$0F are reserved and are preserved rather than written.
+Older Config v3 files without Demo remain valid; the target ROM keeps its current Demo map.
+
+Screens (optional v3 extension)
+-------------------------------
+Screens.Title.Elements and Screens.GameOver.Elements store the ROM-native screen string sources.
+Known keys have fixed lengths and every value must be integer $00..$FE; $FF is reserved as the original string terminator and cannot be written into an element.
+
+Title native elements:
+  Title.Battle       6  (32x32 magnified glyph source)
+  Title.City         4  (32x32 magnified glyph source)
+  Title.TopLeft      2  (8x8 tile string)
+  Title.TopCenter    3  (8x8 tile string)
+  Title.TopRight     2  (8x8 tile string)
+  Title.OnePlayer    8  (8x8 tile string)
+  Title.TwoPlayers   9  (8x8 tile string)
+  Title.Construction 12 (8x8 tile string)
+  Title.SymbolRow    9  (8x8 tile string)
+  Title.Copyright    22 (8x8 tile string)
+  Title.Rights       19 (8x8 tile string)
+
+Game Over native elements:
+  GameOver.Game      4  (32x32 magnified glyph source)
+  GameOver.Over      4  (32x32 magnified glyph source)
+
+Older Config v3 files without Screens remain valid; the target ROM keeps its current Title/Game Over data.
 
 Hard errors vs compatibility warnings
 -------------------------------------

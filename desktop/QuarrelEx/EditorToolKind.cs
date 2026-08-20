@@ -8,5 +8,6 @@ public enum EditorToolKind
     FlagTsa,
     GameSettings,
     ExOptions,
-    RomInfo
+    RomInfo,
+    Screen
 }

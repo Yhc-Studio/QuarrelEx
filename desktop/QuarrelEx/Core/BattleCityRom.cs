@@ -28,6 +28,31 @@ public sealed class BattleCityRom
     private static readonly byte[] Terrain64TsaReference = [0xBD,0x40,0xB4];
     private static readonly byte[] ExV2Magic = [(byte)'B',(byte)'C',(byte)'E',(byte)'X'];
 
+
+    private static readonly IReadOnlyList<ScreenElementDefinition> TitleScreenElements =
+    [
+        // Large text uses the game's 32x32 magnified-glyph routine. X/Y are pixel coordinates.
+        new("Title.Battle", "BATTLE 大字", 0x12A9, 6, 0x1A, 0x2E, ScreenElementKind.LargeGlyphString, PaletteKind.Title),
+        new("Title.City", "CITY 大字", 0x12B0, 4, 0x3C, 0x56, ScreenElementKind.LargeGlyphString, PaletteKind.Title),
+
+        // D6B3 strings are ordinary 8x8 background tiles. X/Y are tile coordinates.
+        new("Title.TopLeft", "顶部左侧", 0x12B5, 2, 2, 3, ScreenElementKind.TileString, PaletteKind.Title),
+        new("Title.TopCenter", "顶部中央", 0x12C1, 3, 11, 3, ScreenElementKind.TileString, PaletteKind.Title),
+        new("Title.TopRight", "顶部右侧", 0x12B8, 2, 21, 3, ScreenElementKind.TileString, PaletteKind.Title),
+        new("Title.OnePlayer", "1 PLAYER", 0x12D6, 8, 11, 17, ScreenElementKind.TileString, PaletteKind.Title),
+        new("Title.TwoPlayers", "2 PLAYERS", 0x12DF, 9, 11, 19, ScreenElementKind.TileString, PaletteKind.Title),
+        new("Title.Construction", "CONSTRUCTION", 0x12FB, 12, 11, 21, ScreenElementKind.TileString, PaletteKind.Title),
+        new("Title.SymbolRow", "菜单符号行", 0x129F, 9, 11, 23, ScreenElementKind.TileString, PaletteKind.Title),
+        new("Title.Copyright", "版权行", 0x1308, 22, 4, 25, ScreenElementKind.TileString, PaletteKind.Title),
+        new("Title.Rights", "ALL RIGHTS RESERVED", 0x1330, 19, 6, 27, ScreenElementKind.TileString, PaletteKind.Title),
+    ];
+
+    private static readonly IReadOnlyList<ScreenElementDefinition> GameOverScreenElements =
+    [
+        new("GameOver.Game", "GAME 大字", 0x1353, 4, 0x3C, 0x46, ScreenElementKind.LargeGlyphString, PaletteKind.Level),
+        new("GameOver.Over", "OVER 大字", 0x1358, 4, 0x3C, 0x78, ScreenElementKind.LargeGlyphString, PaletteKind.Level),
+    ];
+
     public BattleCityRom(byte[] data, EditorConfig cfg)
     {
         _data = data.ToArray();
@@ -50,7 +75,11 @@ public sealed class BattleCityRom
     public bool HasIndependentMaps => Kind == BattleCityRomKind.Ex32K70Maps;
     public bool SupportsEnemyPowerUpPickup => HasIndependentMaps;
     public bool CanConvertToOverlay => Kind == BattleCityRomKind.Ex16K;
-    public int MaxEditableStage => IsOriginal ? 36 : 70; // original Stage 36 = Demo
+    public int MaxNormalStage => IsOriginal ? 35 : 70;
+    // Demo is a real ROM-native map stored after the original 35 map slots.
+    // In Ex mode we expose it as logical stage 71 so Stage 1~70 remain untouched.
+    public int DemoStageNumber => MaxNormalStage + 1;
+    public int MaxEditableStage => DemoStageNumber;
 
     public bool HasExV2Config => !IsOriginal && SpanEquals(ExV2ConfigOffset, ExV2Magic) && _data[ExV2ConfigOffset + 4] == 0x02;
     public byte ExV2ConfigVersion => HasExV2Config ? _data[ExV2ConfigOffset + 4] : (byte)0;
@@ -90,7 +119,7 @@ public sealed class BattleCityRom
             BattleCityRomKind.Ex32KOverlay => HasExV2Config ? "BCEX v2 32KB Overlay" : "Quarrel Ex 32KB Overlay (Legacy)",
             _ => "BCEX v2 32KB / 70 Independent Maps"
         },
-        MaxEditableStage,
+        MaxNormalStage,
         TerrainCount,
         SupportsCustomEnemyTotal,
         HasIndependentMaps,
@@ -99,7 +128,7 @@ public sealed class BattleCityRom
         SupportsTerrain64,
         HasOverlay);
 
-    public bool IsDemoStage(int stage) => IsOriginal && stage == 36;
+    public bool IsDemoStage(int stage) => stage == DemoStageNumber;
     public bool HasLayout(ExLayout layout) => HasExV2Config && (LayoutFlags & (byte)layout) != 0;
     public bool IsFeatureEnabled(ExFeature feature) => HasExV2Config && (FeatureFlags & (byte)feature) != 0;
 
@@ -192,7 +221,7 @@ public sealed class BattleCityRom
         if (_data.Length < expected) throw new InvalidDataException("ROM 长度小于 Header 声明的 PRG+CHR 大小。");
 
         _kind = DetectKind();
-        EnsureRange(Offset(_cfg.StageMapStart), _cfg.StageSize * (IsOriginal ? 36 : 35));
+        EnsureRange(Offset(_cfg.StageMapStart), _cfg.StageSize * 36);
         EnsureRange(Offset(_cfg.EnemyType1To35), 35 * 4);
         EnsureRange(Offset(_cfg.EnemyCount1To35), 35 * 4);
         EnsureRange(LevelPaletteOffset, 16);
@@ -308,12 +337,12 @@ public sealed class BattleCityRom
     {
         ValidateStage(stage);
         ValidateCell(row, column);
-        if (HasIndependentMaps) return _data[IndependentMapOffset(stage, row, column)];
+        if (HasIndependentMaps && !IsDemoStage(stage)) return _data[IndependentMapOffset(stage, row, column)];
 
         var physicalStage = GetPhysicalMapStage(stage);
         var nibbleIndex = row * _cfg.StorageStrideNibbles + column;
         var raw = GetNibble(StageMapOffset(physicalStage), nibbleIndex);
-        if (HasOverlay && raw == 0x0E)
+        if (HasOverlay && !IsDemoStage(stage) && raw == 0x0E)
         {
             var ext = _data[OverlayOffset(physicalStage, nibbleIndex)];
             if (ext >= 0x10 && ext < TerrainCount) return ext;
@@ -331,15 +360,17 @@ public sealed class BattleCityRom
             throw new InvalidOperationException("地形 ID $0E/$0F 为内部保留值，编辑器禁止写入。");
         if (IsOriginal && terrainId > 0x0F)
             throw new InvalidOperationException("原版 Battle City 只能保存地形 ID 00~0F。");
+        if (IsDemoStage(stage) && terrainId > 0x0D)
+            throw new InvalidOperationException("Demo 地图仍使用原版4-bit地图格式，只能保存可编辑地形 $00~$0D。");
 
-        if (HasIndependentMaps)
+        if (HasIndependentMaps && !IsDemoStage(stage))
         {
             _data[IndependentMapOffset(stage, row, column)] = (byte)terrainId;
             return false;
         }
 
         var converted = false;
-        if (terrainId >= 0x10) converted = EnsureExpandedForExtendedTerrain();
+        if (terrainId >= 0x10 && !IsDemoStage(stage)) converted = EnsureExpandedForExtendedTerrain();
 
         var physicalStage = GetPhysicalMapStage(stage);
         var nibbleIndex = row * _cfg.StorageStrideNibbles + column;
@@ -352,7 +383,7 @@ public sealed class BattleCityRom
         else
         {
             SetNibble(map, nibbleIndex, terrainId & 0x0F);
-            if (HasOverlay) _data[OverlayOffset(physicalStage, nibbleIndex)] = 0;
+            if (HasOverlay && !IsDemoStage(stage)) _data[OverlayOffset(physicalStage, nibbleIndex)] = 0;
         }
         return converted;
     }
@@ -460,8 +491,8 @@ public sealed class BattleCityRom
 
     public void ClearAllStages(byte terrainId = 0x0D)
     {
-        var max = IsOriginal ? 36 : HasIndependentMaps ? 70 : 35;
-        for (var stage = 1; stage <= max; stage++) ClearStage(stage, terrainId);
+        for (var stage = 1; stage <= MaxNormalStage; stage++) ClearStage(stage, terrainId);
+        ClearStage(DemoStageNumber, terrainId);
     }
 
     public byte[] GetPalette(PaletteKind kind)
@@ -534,6 +565,32 @@ public sealed class BattleCityRom
         for (var r = 0; r < 4; r++) for (var c = 0; c < 6; c++) SetFlagTsaTile(fort, r, c, (byte)a[r * 6 + c]);
     }
 
+
+    public IReadOnlyList<ScreenElementDefinition> GetScreenElements(ScreenKind kind)
+        => kind == ScreenKind.Title ? TitleScreenElements : GameOverScreenElements;
+
+    public byte GetScreenElementTile(ScreenElementDefinition element, int index)
+    {
+        if (index < 0 || index >= element.Length) throw new ArgumentOutOfRangeException(nameof(index));
+        return _data[Offset(element.FileOffset16K) + index];
+    }
+
+    public int[] GetScreenElementTiles(ScreenElementDefinition element)
+        => Enumerable.Range(0, element.Length).Select(i => (int)GetScreenElementTile(element, i)).ToArray();
+
+    public void SetScreenElementTile(ScreenElementDefinition element, int index, byte tile)
+    {
+        if (index < 0 || index >= element.Length) throw new ArgumentOutOfRangeException(nameof(index));
+        if (tile == 0xFF) throw new InvalidOperationException("$FF 是屏幕字符串终止符，不能作为普通图块写入固定长度元素。");
+        _data[Offset(element.FileOffset16K) + index] = tile;
+    }
+
+    public ScreenElementDefinition? FindScreenElement(ScreenKind kind, string key)
+        => GetScreenElements(kind).FirstOrDefault(x => string.Equals(x.Key, key, StringComparison.Ordinal));
+
+    public IReadOnlyList<int> SelectableTerrainIdsForStage(int stage)
+        => IsDemoStage(stage) ? Enumerable.Range(0, 14).ToArray() : SelectableTerrainIds;
+
     public QuarrelExSharedConfig ExportSharedConfig()
     {
         var cfg = new QuarrelExSharedConfig();
@@ -576,7 +633,27 @@ public sealed class BattleCityRom
             };
             cfg.Stages.Add(sc);
         }
+
+        cfg.Demo = new DemoConfig
+        {
+            Map = Enumerable.Range(0, 13)
+                .Select(r => Enumerable.Range(0, 13).Select(c => GetCell(DemoStageNumber, r, c)).ToArray())
+                .ToArray()
+        };
+        cfg.Screens = new ScreensConfig
+        {
+            Title = ExportScreenLayout(ScreenKind.Title),
+            GameOver = ExportScreenLayout(ScreenKind.GameOver)
+        };
         return cfg;
+    }
+
+    private ScreenLayoutConfig ExportScreenLayout(ScreenKind kind)
+    {
+        var layout = new ScreenLayoutConfig();
+        foreach (var element in GetScreenElements(kind))
+            layout.Elements[element.Key] = GetScreenElementTiles(element);
+        return layout;
     }
 
     public ConfigValidationResult ValidateSharedConfig(QuarrelExSharedConfig? cfg)
@@ -867,6 +944,68 @@ public sealed class BattleCityRom
             }
         }
 
+
+        if (cfg.Demo is null)
+        {
+            Warn("Config v3 未包含 Demo.Map；目标 ROM 的 Demo 地图将保持原值。");
+        }
+        else if (cfg.Demo.Map is null || cfg.Demo.Map.Length != 13 || cfg.Demo.Map.Any(row => row is null || row.Length != 13))
+        {
+            Error("Demo.Map 必须是完整 13×13。");
+        }
+        else
+        {
+            for (var r = 0; r < 13; r++)
+            for (var c = 0; c < 13; c++)
+            {
+                var id = cfg.Demo.Map[r][c];
+                if (id is < 0 or > 0x0F)
+                    Error($"Demo.Map[{r},{c}]={id}，Demo 使用原版4-bit地图格式，必须在 $00~$0F。");
+                else if (id is 0x0E or 0x0F)
+                    Warn("Demo.Map 含内部保留地形 $0E/$0F；这些格子导入时保持目标 ROM 原值。");
+            }
+        }
+
+        if (cfg.Screens is null)
+        {
+            Warn("Config v3 未包含 Screens；Title / Game Over 将保持目标 ROM 原值。");
+        }
+        else
+        {
+            ValidateScreenLayout(ScreenKind.Title, cfg.Screens.Title, "Screens.Title");
+            ValidateScreenLayout(ScreenKind.GameOver, cfg.Screens.GameOver, "Screens.GameOver");
+        }
+
+        void ValidateScreenLayout(ScreenKind kind, ScreenLayoutConfig? layout, string name)
+        {
+            if (layout is null)
+            {
+                Warn($"{name} 缺失；对应画面保持目标 ROM 原值。");
+                return;
+            }
+            if (layout.Elements is null)
+            {
+                Error($"{name}.Elements 缺失。");
+                return;
+            }
+            foreach (var def in GetScreenElements(kind))
+            {
+                if (!layout.Elements.TryGetValue(def.Key, out var values) || values is null)
+                {
+                    Warn($"{name}.Elements 缺少 {def.Key}；该元素保持目标 ROM 原值。");
+                    continue;
+                }
+                if (values.Length != def.Length)
+                {
+                    Error($"{name}.Elements.{def.Key} 必须正好包含 {def.Length} 个值。");
+                    continue;
+                }
+                for (var i = 0; i < values.Length; i++)
+                    if (values[i] is < 0 or > 0xFE)
+                        Error($"{name}.Elements.{def.Key}[{i}]={values[i]}，必须在 $00~$FE；$FF 为终止符。");
+            }
+        }
+
         return result;
     }
 
@@ -936,7 +1075,32 @@ public sealed class BattleCityRom
             }
         }
 
+
+        if (cfg.Demo?.Map is { Length: 13 } demoMap)
+        {
+            for (var r = 0; r < 13; r++)
+            for (var c = 0; c < 13; c++)
+            {
+                var id = demoMap[r][c];
+                if (id is 0x0E or 0x0F || id < 0 || id > 0x0D) continue;
+                SetCell(DemoStageNumber, r, c, id);
+            }
+        }
+
+        ApplyScreenLayout(ScreenKind.Title, cfg.Screens?.Title);
+        ApplyScreenLayout(ScreenKind.GameOver, cfg.Screens?.GameOver);
+
         return notes;
+    }
+
+    private void ApplyScreenLayout(ScreenKind kind, ScreenLayoutConfig? layout)
+    {
+        if (layout?.Elements is null) return;
+        foreach (var def in GetScreenElements(kind))
+        {
+            if (!layout.Elements.TryGetValue(def.Key, out var values) || values is null || values.Length != def.Length) continue;
+            for (var i = 0; i < def.Length; i++) SetScreenElementTile(def, i, (byte)values[i]);
+        }
     }
 
     public byte GetTerrainAttribute(int id)
@@ -1010,7 +1174,7 @@ public sealed class BattleCityRom
             $"ROM 类型: {p.DisplayName}",
             $"PRG: {PrgSizeBytes / 1024} KiB",
             $"CHR: {ChrSizeBytes / 1024} KiB",
-            $"关卡: {(IsOriginal ? "1~35 + Demo" : "1~70")}",
+            $"关卡: {(IsOriginal ? "1~35 + Demo" : "1~70 + Demo")}",
             $"地形定义数: {TerrainCount} (${TerrainCount - 1:X2} 最大ID)",
             $"Terrain Attr: ${TerrainAttributesOffset:X4}",
             $"Terrain TSA: ${TerrainBlocksOffset:X4}",
@@ -1081,11 +1245,12 @@ public sealed class BattleCityRom
         }
     }
 
-    private int GetPhysicalMapStage(int stage) => IsOriginal ? stage : stage <= 35 ? stage : stage - 35;
+    private int GetPhysicalMapStage(int stage) => IsDemoStage(stage) ? 36 : IsOriginal ? stage : stage <= 35 ? stage : stage - 35;
     private int StageMapOffset(int physicalStage) => Offset(_cfg.StageMapStart + (physicalStage - 1) * _cfg.StageSize);
 
     private int EnemyTypeOffset(int stage)
     {
+        if (IsDemoStage(stage)) return Offset(_cfg.EnemyType1To35 + 34 * 4);
         if (IsOriginal) return Offset(_cfg.EnemyType1To35 + (Math.Min(stage, 35) - 1) * 4);
         return stage <= 35
             ? Offset(_cfg.EnemyType1To35 + (stage - 1) * 4)
@@ -1094,6 +1259,7 @@ public sealed class BattleCityRom
 
     private int EnemyCountOffset(int stage)
     {
+        if (IsDemoStage(stage)) return Offset(_cfg.EnemyCount1To35 + 34 * 4);
         if (IsOriginal) return Offset(_cfg.EnemyCount1To35 + (Math.Min(stage, 35) - 1) * 4);
         return stage <= 35
             ? Offset(_cfg.EnemyCount1To35 + (stage - 1) * 4)

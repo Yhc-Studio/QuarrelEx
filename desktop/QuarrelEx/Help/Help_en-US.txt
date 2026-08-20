@@ -175,3 +175,11 @@ This layout is particularly useful on 720p/768p monitors because the map is no l
 - Redo: Ctrl+Y or Ctrl+Shift+Z.
 - Save: Ctrl+S writes to the current ROM path.
 - Save As: Ctrl+Shift+S; the new file becomes the current ROM path.
+
+[v1.1 Demo + Screen Editor]
+- Original and all supported Ex ROM modes now expose Demo after the normal stage list. Demo is not Stage 71; it uses the original physical map slot 36.
+- Demo uses the normal 13x13 editor, but its native storage is still 4-bit, so only $00-$0D are writable. Enemy Type/Count shares Stage 35.
+- F9 opens the Title / Game Over Screen Editor.
+- Ordinary title strings are edited as 8x8 CHR tiles. BATTLE/CITY/GAME/OVER are original 32x32 magnified glyphs, so each large box edits one whole source glyph.
+- Screen Editor preserves coordinates, fixed string lengths and $FF terminators.
+- Config remains Version 3; Demo and Screens are optional v3 extensions. Older v3 files preserve target-ROM values when those fields are absent.

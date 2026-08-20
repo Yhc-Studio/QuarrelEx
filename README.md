@@ -1,6 +1,6 @@
 # QuarrelEx
 
-![Version](https://img.shields.io/badge/release-v1.0-blue)
+![Version](https://img.shields.io/badge/release-v1.1-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Web-0aa0c0)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -15,25 +15,26 @@
 
 | Component | Version |
 |---|---:|
-| Desktop editor | 1.0 |
-| Web editor | 1.5.1 |
+| Desktop editor | 1.1 |
+| Web editor | 1.6.0 |
 | Shared config format | QuarrelExConfig v3 |
 | 16KB BCEX runtime | internal revision 6.3 |
 | 32KB BCEX runtime | internal revision 6.4.1 |
 
-The different internal/runtime revision numbers are development identifiers. Public releases are distributed as **QuarrelEx v1.0**.
+The different internal/runtime revision numbers are development identifiers. The current editor release is **QuarrelEx v1.1**; BCEX runtime revisions are unchanged from v1.0.
 
 ## Highlights
 
 - Original Battle City support plus BCEX 16KB/32KB formats.
-- Stage 1-70 editing; 32KB BCEX provides 70 independent maps.
+- Stage 1-70 editing; 32KB BCEX provides 70 independent maps. The original Demo map is also exposed in every supported ROM mode.
 - Four enemy type/count entries per stage; supported BCEX ROMs allow **1-255 total enemies**.
 - Visual 16x16 TSA editor with `Attr 0-3` and direct `$00-$FF` CHR tile selection.
 - Extended terrain: 16KB up to `$00-$1F`; 32KB up to `$00-$3F` with custom slots.
 - Palette editor and Flag/Fort TSA editor.
+- Unified Title + Game Over Screen Editor: ordinary strings are edited as native 8x8 CHR tiles; the original 32x32 magnified BATTLE/CITY/GAME/OVER glyph sources are edited as whole glyph slots.
 - Player/enemy spawn position editing with numeric input and drag editing.
 - Gameplay options such as auto-fire, Pistol/Lv4, level-down on hit, faster player movement, random enemy order, no friendly fire, enemy power-up pickup, and locked initial player state.
-- Config v3 is shared between Desktop and Web and includes gameplay, palettes, TSA, Flag/Fort TSA, stage maps, enemy types/counts and enemy totals.
+- Config v3 is shared between Desktop and Web and includes gameplay, palettes, TSA, Flag/Fort TSA, stage maps, Demo map, Title/Game Over screen elements, enemy types/counts and enemy totals.
 - Undo/redo (`Ctrl+Z`, `Ctrl+Y`, `Ctrl+Shift+Z`).
 - Save / Save As support.
 - Strict Config v3 preflight validation before import.
@@ -101,6 +102,7 @@ Common shortcuts:
 | `F6` | Game settings |
 | `F7` | Ex options |
 | `F8` | ROM information |
+| `F9` | Title / Game Over Screen Editor |
 
 The tool windows can be moved, resized, maximized, or placed on a second monitor.
 
@@ -130,7 +132,7 @@ See [docs/Enemy_Types.md](docs/Enemy_Types.md).
 
 ## Config v3
 
-Desktop and Web use the same `*.qexcfg.json` format. Current releases only import/export **Version 3**. The importer validates the entire file before committing changes to the ROM.
+Desktop and Web use the same `*.qexcfg.json` format. Current releases only import/export **Version 3**. Demo and Screens are optional v3 extensions, so older valid v3 files remain importable and preserve those target-ROM areas when absent. The importer validates the entire file before committing changes to the ROM.
 
 See [docs/QuarrelExConfig_v3_Spec.txt](docs/QuarrelExConfig_v3_Spec.txt).
 
