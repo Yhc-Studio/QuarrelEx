@@ -1,61 +1,31 @@
-Battle City Ex v2 - Phase 6.4.1 Branch Fix
-=============================================
+Battle City Ex v2 - Runtime 6.8 Final Rules v4
+================================================
 
-Base:
-  Battle_City_Ex_v2_32K_70Maps_Phase6_4_EnemyItemFix.nes
+Runtime 6.8 is the current 32KB / 70-independent-map build used by QuarrelEx v1.1.4. QXR1 remains v4; Runtime 6.8 fixes automatic bonus-tank ordinal handling and removes the legacy item-clear side effect.
 
-Problem
--------
-Phase 6.4 introduced a helper at CPU $B540 for enemy-Star bullet properties.
+QXR1 v4 additions
+------------------
+- Armored One Hit is now spawn-time: normal E0 armored tanks stay E0 (white 1HP) when enabled.
+- Flashing/item armored tanks remain E4 and keep original four-hit durability + item behavior.
+- Stage 1~70 BaseExists table at CPU $BF78-$BFBD, default 01 for all stages.
+- Normal stage HQ drawing and shovel-protected HQ drawing are routed through v4 wrappers. BaseExists=00 leaves the underlying stage map/collision cells untouched.
+- Demo and Construction keep original HQ behavior.
 
-The player branch was assembled as:
+Compatibility
+-------------
+- QXR1 v2/v3 data and all Runtime 6.5/6.6 features remain compatible.
+- Config remains QuarrelExConfig v3; BaseExists is an optional per-stage field.
 
-  $B540: E0 02    CPX #$02
-  $B542: 90 07    BCC $B54B   <-- WRONG
+Runtime 6.8 expected ROM
+------------------------
+Size:    40976 bytes
+CRC32:   102CBDD2
+MD5:     f89a77aa6630ca69913b63dc4ce88aecf
+SHA-1:   ab7c5b116836ecc8a24c05d8d505833d5ada03b4
+SHA-256: 4a8e0bf2864a112500b316daed6c8b3dbc7a339bb923505e2c57bf389d35c085
 
-$B54B is the second byte ($D3) of:
-
-  $B54A: 4C D3 E0 JMP $E0D3
-
-Therefore player bullets (X=0/1) branched into the middle of a JMP instruction.
-The CPU then interpreted $D3 $E0 as an undocumented/undefined instruction before
-falling into later code. This could cause crashes or arbitrary RAM/state corruption.
-
-Fix
----
-ROM offset $3553:
-  07 -> 09
-
-Correct code:
-
-  $B540: E0 02    CPX #$02
-  $B542: 90 09    BCC $B54D
-
-Now player bullets branch to the intended original-property path:
-
-  $B54D: B5 A8    LDA $A8,X
-  $B54F: 29 F0    AND #$F0
-  $B551: 4C C0 E0 JMP $E0C0
-
-Enemy-Star behavior remains:
-
-  enemy X>=2
-  + $A8 bit3 set
-  -> JMP $E0D3
-  -> bullet property $03
-  -> can destroy steel.
-
-Possible screen-scroll symptom
-------------------------------
-The incorrect branch could execute $D3 $E0 as an undocumented instruction. On a
-6502 this opcode can have memory side effects through a zero-page indirect address,
-so the bug could corrupt unrelated game state. A temporary vertical screen offset
-when firing/hitting enemies is therefore plausibly caused by this same defect.
-Phase 6.4.1 removes that stray instruction execution completely.
-
-No format changes:
-- FeatureFlags unchanged
-- EnemyItemFlags unchanged
-- LayoutFlags unchanged
-- QuarrelExConfig v3 unchanged
-- Web/Desktop editor versions do not need a format update
+Runtime 6.8 bonus-tank fix
+--------------------------
+- QXR1 data layout remains v4.
+- Automatic flashing tanks are selected by spawned-enemy ordinal #4/#11/#18, so EnemyTotal > 20 no longer shifts them into enemy #21+.
+- The automatic flashing-tank spawn path no longer forcibly writes 00 to the active-item X byte, so a visible item is not deleted merely because the next automatic bonus tank appears.

@@ -21,6 +21,7 @@ v0.8 synchronizes the features proven in QuarrelEx Web v1.3 back into the deskto
 Open ROM: File -> Open ROM, or Ctrl+O.
 Save ROM: Ctrl+S.
 Save As: File -> Save As.
+You can also drag a .nes ROM onto the editor window. If the current ROM has unsaved changes, Yes saves (or Save As) before opening, No opens without saving, and Cancel keeps the current ROM.
 Undo: Ctrl+Z.
 F1: Chinese help.
 Shift+F1: English help.
@@ -183,3 +184,21 @@ This layout is particularly useful on 720p/768p monitors because the map is no l
 - Ordinary title strings are edited as 8x8 CHR tiles. BATTLE/CITY/GAME/OVER are original 32x32 magnified glyphs, so each large box edits one whole source glyph.
 - Screen Editor preserves coordinates, fixed string lengths and $FF terminators.
 - Config remains Version 3; Demo and Screens are optional v3 extensions. Older v3 files preserve target-ROM values when those fields are absent.
+
+
+[v1.1.2 / Runtime 6.5-6.6 Final Rules]
+- Game Settings adds Stage 1-70 custom enemy spawns. 1P/2P independently choose Original or 1-8 and share S1-S8 coordinates; actual-map preview, drag editing, 16px snap and $18-$D8 safe bounds are provided.
+- Final GAME OVER Skip defaults to OFF.
+- Extra Life: Original / Custom Once / Repeat / Disabled, value unit = 10,000 points.
+- 2P Bonus: Original or Win Streak.
+- 400-point armored tank: Original or One Hit.
+- Runtime 6.5 / QXR1 v2 provides the Final Rules and custom-spawn controls above. Runtime 6.6 / QXR1 v3 additionally provides:
+  - Title A+B+Start cheat lives, independently configurable for P1/P2 and defaulting to 10/10. Normal Start is unchanged.
+  - Per-stage 1P/2P enemy spawn interval (1-255 frames; lower is faster) and maximum simultaneous enemies (1-6) for Stage 1-70.
+  - A Stage 35 pacing preset and per-stage original-pacing restore.
+- Editing the main map immediately refreshes both map-backed spawn visualizers in Game Settings.
+
+
+[Runtime 6.7 / QXR1 v4]
+- Armored Tank One Hit affects only normal 400-point armored tanks, using the white 1-HP form. Flashing/item armored tanks retain original multi-hit durability and item behavior.
+- Flag TSA Editor adds a per-stage HQ/Base Exists switch for Stage 1-70. When disabled, default/protected HQ drawing is skipped and underlying map terrain remains active.

@@ -1,0 +1,9 @@
+QuarrelEx Desktop v1.1.6 static verification
+
+- Project version is 1.1.6.
+- Math.Clamp CS0121 direct-byte ambiguity calls are not present.
+- Runtime user-facing summary is updated to 6.9.2 / QXR1 v5.
+- Config $FF Screen-byte compatibility code is retained.
+- Drag-and-drop source remains present.
+
+A final Windows build should be run with Visual Studio 2022 or the included GitHub Actions workflow.

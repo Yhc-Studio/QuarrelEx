@@ -9,6 +9,7 @@
 :root{font-family:"Segoe UI","Microsoft YaHei",Arial,sans-serif;color:#202124;background:#eef1f4;--line:#d8dde4;--blue:#1a73e8;--panel:#fff;--muted:#66717f}*{box-sizing:border-box}body{margin:0;min-height:100vh}.appbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:8px;margin-right:8px}.brand img{width:30px;height:30px}.brand strong{font-size:18px}.version{font-size:12px;color:var(--muted)}button,.btn,select,input{font:inherit}.btn,button{border:1px solid #aeb6c1;background:#fff;border-radius:6px;padding:6px 10px;cursor:pointer}.btn:hover,button:hover:not(:disabled){background:#f1f4f8}.primary{background:var(--blue);border-color:var(--blue);color:#fff}.primary:hover:not(:disabled){background:#155fc0}button:disabled,input:disabled{opacity:.48;cursor:not-allowed}.status{font-size:13px;color:var(--muted);min-width:160px;flex:1}.status.ok{color:#14733c}.status.bad{color:#b3261e}.status.warn{color:#946200}.dirty{color:#b3261e;font-weight:600}
 .menu{position:relative}.menu>summary{list-style:none;border:1px solid #aeb6c1;border-radius:6px;padding:6px 10px;cursor:pointer;background:#fff}.menu>summary::-webkit-details-marker{display:none}.menu[open]>summary{background:#f1f4f8}.menupop{position:absolute;right:0;top:calc(100% + 4px);min-width:250px;background:#fff;border:1px solid var(--line);box-shadow:0 6px 20px #0002;border-radius:7px;padding:5px;z-index:30}.menupop button{width:100%;border:0;text-align:left;background:transparent}.menupop .sep{height:1px;background:var(--line);margin:4px}
 main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(480px,650px) minmax(420px,1fr);gap:12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;min-width:0}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.muted{color:var(--muted);font-size:13px}.ok{color:#14733c}.warn{color:#946200}.bad{color:#b3261e}.mono{font-family:Consolas,"SFMono-Regular",monospace}.kbd{font-family:Consolas,monospace;border:1px solid #bbb;border-bottom-width:2px;border-radius:4px;padding:1px 4px;background:#fafafa}.mapwrap{margin-top:8px;background:#e3e7ec;border-radius:6px;padding:8px;display:flex;justify-content:center;align-items:center;overflow:hidden}.mapframe{width:min(100%,416px);aspect-ratio:1/1}#map{display:block;width:100%;height:100%;image-rendering:pixelated;background:#111;border:1px solid #8c959f;cursor:crosshair;touch-action:none}.terrain-title{margin:12px 0 4px}.terrain{display:grid;grid-template-columns:repeat(6,minmax(72px,1fr));gap:6px}.tilebtn{min-width:0;border:2px solid transparent;background:#f7f8fa;border-radius:6px;padding:4px;cursor:pointer;text-align:center}.tilebtn:hover{background:#eef2f7}.tilebtn.sel{border-color:var(--blue);background:#e8f0fe}.tilebtn canvas{width:32px;height:32px;image-rendering:pixelated;display:block;margin:0 auto}.tilebtn span{display:block;font:12px Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tabs{display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:8px}.tab.active{background:#e8f0fe;border-color:#7aa7e8}.tabpane.hidden{display:none}.tabpane{min-height:480px}.scroll{overflow:auto;max-height:70vh}table{width:100%;border-collapse:collapse}th,td{padding:6px;border-bottom:1px solid #e5e8ec;text-align:left;vertical-align:middle}th{position:sticky;top:0;background:#fafbfc;z-index:1}td input{width:76px;padding:4px 5px;border:1px solid #bbc2cb;border-radius:4px}.tsa-table input{width:58px}.feature-group{border:1px solid var(--line);border-radius:7px;padding:10px;margin:10px 0}.feature-group legend{font-weight:600;padding:0 5px}.checkline{display:flex;align-items:center;gap:7px;margin:8px 0}.subcheck{margin-left:25px}.feature-meta{background:#f7f8fa;border-radius:6px;padding:8px;font:13px Consolas,monospace;white-space:pre-wrap}.info-box{white-space:pre-wrap;font:13px Consolas,monospace;background:#f7f8fa;border-radius:6px;padding:10px;min-height:250px}.help-inline{margin-left:auto}.modal{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:100;padding:18px}.modal.hidden{display:none}.modalbox{width:min(980px,96vw);height:min(82vh,820px);background:#fff;border-radius:9px;box-shadow:0 14px 40px #0005;display:grid;grid-template-rows:auto 1fr}.modalhead{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}.modalhead h2{font-size:17px;margin:0;flex:1}.modalbody{padding:12px;overflow:auto}.modalbody pre{margin:0;white-space:pre-wrap;font:14px/1.55 Consolas,"Microsoft YaHei",monospace}.rom-badge{font-size:12px;background:#eef2f7;border:1px solid #d3d8df;border-radius:999px;padding:2px 7px}.footer-note{font-size:12px;color:var(--muted);margin-top:8px}
+.drop-overlay{position:fixed;inset:0;z-index:140;background:#1a73e81c;border:4px dashed #1a73e8;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s ease,visibility .12s ease}.drop-overlay.show{opacity:1;visibility:visible}.drop-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 24px;box-shadow:0 12px 36px #0003;text-align:center;max-width:min(90vw,520px)}.drop-card b{display:block;font-size:18px;margin-bottom:5px}.confirmbox{width:min(520px,94vw);background:#fff;border-radius:9px;box-shadow:0 14px 40px #0005;padding:16px}.confirmbox h2{font-size:18px;margin:0 0 8px}.confirmbox p{margin:0 0 16px;line-height:1.55}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}.confirm-actions button{min-width:92px}
 @media(max-width:1050px){main{grid-template-columns:1fr}.tabpane{min-height:0}.scroll{max-height:none}}@media(max-width:620px){.terrain{grid-template-columns:repeat(4,minmax(65px,1fr))}.appbar{padding:6px}.brand strong{font-size:16px}.panel{padding:8px}}
 
 /* v1.2 TSA / CHR visual editor */
@@ -26,7 +27,7 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
 .chr-tile-btn.selected{border-color:var(--blue);background:#dbe9ff}
 @media(max-width:760px){.chr-grid{grid-template-columns:repeat(8,minmax(40px,1fr))}}
 
-.palette-grid{display:grid;grid-template-columns:repeat(4,minmax(58px,78px));gap:4px;margin-top:8px;justify-content:start}.palette-cell{height:34px;padding:2px 4px;border:1px solid #777;border-radius:4px;font:12px Consolas,monospace;text-shadow:0 1px 2px #000;color:#fff}.nes-color-grid{display:grid;grid-template-columns:repeat(16,minmax(26px,1fr));gap:3px}.nes-color{height:30px;padding:1px;font:10px Consolas,monospace;border:1px solid #aaa;border-radius:3px;text-shadow:0 1px 2px #000;color:#fff}@media(max-width:760px){.nes-color-grid{grid-template-columns:repeat(8,minmax(28px,1fr))}}.flag-wrap{display:flex;gap:28px;flex-wrap:wrap}.flag-grid{display:grid;grid-template-columns:repeat(6,54px);gap:5px;margin-top:8px}.flag-tile{width:54px;height:54px;padding:2px}.flag-tile canvas{width:32px;height:32px;image-rendering:pixelated}.settings-grid{display:flex;gap:14px;flex-wrap:wrap}.settings-grid label{display:flex;align-items:center;gap:7px}.settings-grid input,.settings-grid select{padding:5px}.spawn-editor-wrap{max-width:540px;margin:8px 0 10px}.spawn-editor-wrap canvas{display:block;width:100%;max-width:512px;aspect-ratio:256/240;image-rendering:pixelated;background:#181c20;border:1px solid #8c959f;border-radius:5px;touch-action:none;cursor:crosshair}.spawn-row-object{display:flex;align-items:center;gap:7px}.spawn-icon{width:32px;height:32px;image-rendering:pixelated;background:#23272b;border:1px solid #9ba4ae}.tsa-table{min-width:900px}.scroll{overflow:auto}
+.palette-grid{display:grid;grid-template-columns:repeat(4,minmax(58px,78px));gap:4px;margin-top:8px;justify-content:start}.palette-cell{height:34px;padding:2px 4px;border:1px solid #777;border-radius:4px;font:12px Consolas,monospace;text-shadow:0 1px 2px #000;color:#fff}.nes-color-grid{display:grid;grid-template-columns:repeat(16,minmax(26px,1fr));gap:3px}.nes-color{height:30px;padding:1px;font:10px Consolas,monospace;border:1px solid #aaa;border-radius:3px;text-shadow:0 1px 2px #000;color:#fff}@media(max-width:760px){.nes-color-grid{grid-template-columns:repeat(8,minmax(28px,1fr))}}.flag-wrap{display:flex;gap:28px;flex-wrap:wrap}.flag-grid{display:grid;grid-template-columns:repeat(6,54px);gap:5px;margin-top:8px}.flag-tile{width:54px;height:54px;padding:2px}.flag-tile canvas{width:32px;height:32px;image-rendering:pixelated}.settings-grid{display:flex;gap:14px;flex-wrap:wrap}.settings-grid label{display:flex;align-items:center;gap:7px}.settings-grid input,.settings-grid select{padding:5px}.spawn-editor-wrap{max-width:540px;margin:8px 0 10px}.spawn-editor-wrap canvas{display:block;width:100%;max-width:512px;aspect-ratio:256/240;image-rendering:pixelated;background:#181c20;border:1px solid #8c959f;border-radius:5px;touch-action:none;cursor:crosshair}.spawn-row-object{display:flex;align-items:center;gap:7px}.spawn-icon{width:32px;height:32px;image-rendering:pixelated;background:#23272b;border:1px solid #9ba4ae}.tsa-table{min-width:900px}.scroll{overflow:auto}.custom-spawn-wrap{max-width:540px;margin:8px 0 10px}.custom-spawn-wrap canvas{display:block;width:100%;max-width:520px;aspect-ratio:1/1;image-rendering:pixelated;background:#181c20;border:1px solid #8c959f;border-radius:5px;touch-action:none;cursor:crosshair}.custom-spawn-table td input{width:72px}.custom-spawn-active{background:#eef5ff}.custom-spawn-warning{background:#fff6df}.rule-grid{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.rule-grid label{display:flex;align-items:center;gap:7px}.rule-grid input,.rule-grid select{padding:5px}.rule-note{font-size:12px;color:var(--muted);background:#f7f8fa;border-radius:6px;padding:8px;margin:8px 0}
 
 /* v1.6 Demo + Title/Game Over screen editor */
 .screen-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.screen-viewport{overflow:auto;max-height:68vh;background:#dfe4ea;border:1px solid var(--line);border-radius:6px;padding:8px}.screen-viewport canvas{display:block;width:512px;height:480px;image-rendering:pixelated;background:#000;border:1px solid #7f8791;cursor:pointer}.screen-note{margin-top:8px;max-width:820px}.screen-selection{font:12px Consolas,monospace;color:var(--muted)}
@@ -34,7 +35,7 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
 </head>
 <body>
 <header class="appbar">
-  <div class="brand"><img src="data:image/x-icon;base64,AAABAAEAEBAAAAEACABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAo1kIALk7PgCwH3cAjA+jAFUPuQAcHrAAADiMAABZVQAAdBwACIMAAD6FAAB3dQAAAAAAAAAAAAAAAAAAwMDAAM2DMADiZGcA2UigALU4zQB+OOIARUfZABhhtQADgn4ADJ1FADCtGABnrgMAoJ4MADw8PAAAAAAAAAAAAP///wD/y3kA/6uvAP+Q6AD8gP8Axn//AI2P/wBgqvwAS8nGAFTljQB59WAAr/VLAOjmVAB4eHgAAAAAAAAAAAD///8A//ajAP/X2gD/u/8A/6v/APKr/wC4uv8Ai9X/AHf18gCA/7gAo/+LANr/dwD//4AAxcXFAAAAAAAAAAAAYGBgAHtDBgCKLC4AgxdZAGkLewA/C4oAFRaDAAAqaQAAQT8AAFcVAAZjAAAuYwAAWVcAAAAAAAAAAAAAAAAAAJCQkACZYSQAqUtNAKI2eACHKpkAXiqpADM0ogASSYcAAmFeAAl1MwAkgRIATYICAHh2CQAsLCwAAAAAAAAAAAC/v78Av5hZAL+AgwC/bK4AvWC/AJNfvwBpa78ASH+9ADiWkwA/q2kAWbdIAIO3OACurD8AWVlZAAAAAAAAAAAAv7+/AL+4ewC/oaMAv4y/AL+AvwC1gL8Aiou/AGifvwBZt7UAYL+KAHu/aACjv1kAv79gAJOTkwAAAAAAAAAAAAAAAADQ/PwAAAAAAJB0dAAAAL4AM/8zAMgOMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAJxgnGCcYJxgnGCcAAAAAACcYJxgnGCcYJxgnAAAAAAA4GBgYGBgYGBgYGAAAAAAAAAAYGBgYGBgAAAAAAAAAAAAnGCcnJycnGAAAAAAAAAAAJycnGBgYJxgAAAAAAAAAACcnOCcnGCc4ODg4OAAAAAA4Jzg4OCcnGAAAAAAAAAAAODgnJycnOBgAAAAAAAAAAAAnODg4ODgAAAAAAAAAACc4ODg4ODg4ODgnAAAAAAAnGCcYJxgnGCcYJwAAAAAAOBg4GDgYOBg4GDgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////AB///wAf//8AH///wP///4B///+Af///gAf//4B///+Af///wP///wAf//8AH///AB/////////////8=" alt=""><div><strong id="titleText">Quarrel Ex Web</strong><div class="version">v1.6.0 · Demo + Screen Editor · Config v3 only</div></div></div>
+  <div class="brand"><img src="data:image/x-icon;base64,AAABAAEAEBAAAAEACABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAo1kIALk7PgCwH3cAjA+jAFUPuQAcHrAAADiMAABZVQAAdBwACIMAAD6FAAB3dQAAAAAAAAAAAAAAAAAAwMDAAM2DMADiZGcA2UigALU4zQB+OOIARUfZABhhtQADgn4ADJ1FADCtGABnrgMAoJ4MADw8PAAAAAAAAAAAAP///wD/y3kA/6uvAP+Q6AD8gP8Axn//AI2P/wBgqvwAS8nGAFTljQB59WAAr/VLAOjmVAB4eHgAAAAAAAAAAAD///8A//ajAP/X2gD/u/8A/6v/APKr/wC4uv8Ai9X/AHf18gCA/7gAo/+LANr/dwD//4AAxcXFAAAAAAAAAAAAYGBgAHtDBgCKLC4AgxdZAGkLewA/C4oAFRaDAAAqaQAAQT8AAFcVAAZjAAAuYwAAWVcAAAAAAAAAAAAAAAAAAJCQkACZYSQAqUtNAKI2eACHKpkAXiqpADM0ogASSYcAAmFeAAl1MwAkgRIATYICAHh2CQAsLCwAAAAAAAAAAAC/v78Av5hZAL+AgwC/bK4AvWC/AJNfvwBpa78ASH+9ADiWkwA/q2kAWbdIAIO3OACurD8AWVlZAAAAAAAAAAAAv7+/AL+4ewC/oaMAv4y/AL+AvwC1gL8Aiou/AGifvwBZt7UAYL+KAHu/aACjv1kAv79gAJOTkwAAAAAAAAAAAAAAAADQ/PwAAAAAAJB0dAAAAL4AM/8zAMgOMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAJxgnGCcYJxgnGCcAAAAAACcYJxgnGCcYJxgnAAAAAAA4GBgYGBgYGBgYGAAAAAAAAAAYGBgYGBgAAAAAAAAAAAAnGCcnJycnGAAAAAAAAAAAJycnGBgYJxgAAAAAAAAAACcnOCcnGCc4ODg4OAAAAAA4Jzg4OCcnGAAAAAAAAAAAODgnJycnOBgAAAAAAAAAAAAnODg4ODgAAAAAAAAAACc4ODg4ODg4ODgnAAAAAAAnGCcYJxgnGCcYJwAAAAAAOBg4GDgYOBg4GDgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////AB///wAf//8AH///wP///4B///+Af///gAf//4B///+Af///wP///wAf//8AH///AB/////////////8=" alt=""><div><strong id="titleText">Quarrel Ex Web</strong><div class="version">v1.6.6 · Runtime 6.9.2 · Drag & Drop ROM · Config v3</div></div></div>
   <button id="openBtn" class="btn">打开 ROM</button><input id="fileInput" type="file" accept=".nes" hidden>
   <button id="saveBtn" class="primary" disabled>保存</button>
   <button id="saveAsBtn" disabled>另存 ROM</button>
@@ -59,6 +60,7 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
   <span id="romBadge" class="rom-badge">未打开 ROM</span>
   <span id="status" class="status">请打开 Battle City / Battle City Ex ROM。</span>
 </header>
+<div id="dropOverlay" class="drop-overlay" aria-hidden="true"><div class="drop-card"><b>拖放 NES ROM 到这里打开</b><span class="muted">支持 .nes；如果当前 ROM 有未保存修改，会先询问是否保存。</span></div></div>
 <main>
   <section class="panel">
     <div class="row"><b>关卡</b><select id="stageSelect" disabled></select><span id="mapNote" class="muted"></span></div>
@@ -102,6 +104,10 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
     <div id="flagPane" class="tabpane hidden">
       <h3>Flag TSA Editor</h3>
       <p class="muted">原 Quarrel 功能回归：Flag / Fort 各为 6×4 个背景 CHR Tile；每行的 $FF 终止字节由编辑器自动保留。</p>
+      <fieldset class="feature-group"><legend>当前关卡老巢 / HQ（Runtime 6.7+ / QXR1 v4）</legend>
+        <label class="checkline"><input id="stageBaseExists" type="checkbox" disabled><span id="stageBaseExistsLabel">当前关卡存在老巢</span></label>
+        <div id="stageBaseInfo" class="muted">旧 Runtime 始终按原版绘制老巢。</div>
+      </fieldset>
       <div class="flag-wrap"><div><b>Flag</b><div id="flagGrid" class="flag-grid"></div></div><div><b>Fort</b><div id="fortGrid" class="flag-grid"></div></div></div>
     </div>
 
@@ -116,6 +122,47 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
       <p class="muted">拖拽坦克即可修改位置，也可以在下方直接输入 X/Y。P1/P2 使用各自玩家坦克调色板，E1/E2/E3 使用敌坦克 CHR。</p>
       <div class="spawn-editor-wrap"><canvas id="spawnCanvas" width="512" height="480"></canvas></div>
       <table><thead><tr><th>对象 / 实际贴图</th><th>X</th><th>Y</th></tr></thead><tbody id="spawnRows"></tbody></table>
+
+      <fieldset class="feature-group" id="stagePlayerSpawnGroup"><legend>Stage 1~70 玩家出生点（Runtime 6.9.2 / QXR1 v5）</legend>
+        <div id="stagePlayerSpawnInfo" class="muted">每关 P1/P2 可分别使用 Original/global 或独立 Custom 位置。</div>
+        <div class="rule-grid" style="margin-top:8px">
+          <label>P1 模式 <select id="stagePlayerMode1" disabled><option value="0">Original / 全局</option><option value="1">Custom / 本关</option></select></label>
+          <label>P1 X <input id="stagePlayerX1" type="number" min="24" max="216" step="16" disabled></label>
+          <label>P1 Y <input id="stagePlayerY1" type="number" min="24" max="216" step="16" disabled></label>
+          <label>P2 模式 <select id="stagePlayerMode2" disabled><option value="0">Original / 全局</option><option value="1">Custom / 本关</option></select></label>
+          <label>P2 X <input id="stagePlayerX2" type="number" min="24" max="216" step="16" disabled></label>
+          <label>P2 Y <input id="stagePlayerY2" type="number" min="24" max="216" step="16" disabled></label>
+        </div>
+        <div class="custom-spawn-wrap"><canvas id="stagePlayerSpawnCanvas" width="520" height="520"></canvas></div>
+        <div id="stagePlayerSpawnCoord" class="muted" style="min-height:20px;margin-top:6px"></div>
+      </fieldset>
+
+      <fieldset class="feature-group" id="customSpawnGroup"><legend>Stage 1~70 自定义敌人出生点（Runtime 6.5~6.9）</legend>
+        <div id="customSpawnInfo" class="muted">需要 QXR1 v2~v5 / BCEX 32KB Runtime 6.5~6.9。</div>
+        <div class="rule-grid" style="margin-top:8px">
+          <label>1P 数量 <select id="customSpawnCount1" disabled></select></label>
+          <label>2P 数量 <select id="customSpawnCount2" disabled></select></label>
+          <label><input id="customSpawnSnap" type="checkbox" checked disabled>16px 网格吸附</label>
+          <label><input id="customSpawnShowUnused" type="checkbox" checked disabled>显示未使用点</label>
+        </div>
+        <div class="row" style="margin-top:8px"><button id="customSpawnPreset8" disabled>当前关设为 8 / 8</button><button id="customSpawnOriginal" disabled>恢复 Original</button></div>
+        <div class="custom-spawn-wrap"><canvas id="customSpawnCanvas" width="520" height="520"></canvas></div>
+        <table class="custom-spawn-table"><thead><tr><th>点</th><th>X</th><th>Y</th><th>状态</th><th>地形</th></tr></thead><tbody id="customSpawnRows"></tbody></table>
+        <div id="customSpawnCoord" class="muted" style="min-height:20px;margin-top:6px"></div>
+      </fieldset>
+
+      <fieldset class="feature-group" id="stagePacingGroup"><legend>Stage 1~70 敌人出现节奏（Runtime 6.6 / QXR1 v3）</legend>
+        <div id="stagePacingInfo" class="muted">每关可独立设置 1P/2P 出现间隔和最大同时在场敌人数。间隔越小越快。</div>
+        <div class="rule-grid" style="margin-top:8px">
+          <label>1P 出现间隔（帧） <input id="pacing1Interval" type="number" min="1" max="255" disabled></label>
+          <label>1P 最大同时在场 <input id="pacing1Active" type="number" min="1" max="6" disabled></label>
+          <label>2P 出现间隔（帧） <input id="pacing2Interval" type="number" min="1" max="255" disabled></label>
+          <label>2P 最大同时在场 <input id="pacing2Active" type="number" min="1" max="6" disabled></label>
+        </div>
+        <div class="row" style="margin-top:8px"><button id="pacingStage35" disabled>复制 Stage 35 节奏</button><button id="pacingOriginal" disabled>恢复本关原版节奏</button></div>
+        <div class="rule-note">Stage 35 原版参考：1P 间隔 50 帧，2P 间隔 30 帧；原版最大同时在场为 1P=4、2P=6。四种敌人的总数量仍在“敌人编辑”中独立设置。</div>
+      </fieldset>
+
       <div class="row" style="margin-top:12px"><button id="clearStageBtn">清空当前关卡</button><button id="clearAllBtn">清空全部关卡</button><span class="muted">清空为地形 $0D。</span></div>
     </div>
 
@@ -135,6 +182,24 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
       </fieldset>
       <fieldset class="feature-group"><legend>敌人拾取后的效果（32KB）</legend>
         <div id="enemyEffects"></div>
+      </fieldset>
+      <fieldset class="feature-group" id="finalRulesGroup"><legend>Final Rules（QXR1 v2~v5 · Runtime 6.5~6.9）</legend>
+        <div id="finalRulesInfo" class="feature-meta">需要更新后的 32KB Runtime 6.5~6.9 ROM。</div>
+        <label class="checkline"><input id="ruleSkipGameOver" type="checkbox" disabled>Skip Final GAME OVER（默认 OFF；Hi-Score 保留）</label>
+        <div class="rule-grid">
+          <label>2P 通关奖励 <select id="ruleBonus2P" disabled><option value="0">Original：本关击杀较多者 +1000</option><option value="1">Win Streak：连续胜场递增奖励</option></select></label>
+          <label>装甲坦克耐久 <select id="ruleArmor" disabled><option value="0">Original：4 发耐久</option><option value="1">One Hit：普通装甲白色1HP；闪光奖励装甲保持原版</option></select></label>
+        </div>
+        <div class="rule-grid" style="margin-top:8px">
+          <label>加命规则 <select id="ruleLifeMode" disabled><option value="0">Original：20,000 分仅 +1 次</option><option value="1">Custom Once：自定义门槛仅 +1 次</option><option value="2">Repeat：固定间隔反复 +1</option><option value="3">Disabled：关闭分数加命</option></select></label>
+          <label>数值 <input id="ruleLifeValue" type="number" min="1" max="99" value="2" disabled> × 10,000 分</label>
+        </div>
+        <div class="rule-note">Win Streak 固定规则：1胜=1000，2胜=2000，3胜=4000，4胜=6000，5胜=8000，6胜=10000，7胜及以上=+1命。平局中断连续胜场；胜者改变时从1胜重新计算。</div>
+        <div class="rule-grid" style="margin-top:8px">
+          <label>A+B+Start 秘籍 1P 命数 <input id="ruleCheatLives1" type="number" min="1" max="99" value="10" disabled></label>
+          <label>A+B+Start 秘籍 2P 命数 <input id="ruleCheatLives2" type="number" min="1" max="99" value="10" disabled></label>
+        </div>
+        <div id="ruleCheatInfo" class="rule-note">Runtime 6.6：标题画面按住 A+B 再按 Start 启动秘籍命数；默认 1P/2P 均为 10。普通 Start 仍使用“游戏设置”的普通起始命数。</div>
       </fieldset>
       <div class="row"><button id="presetOriginal" disabled>原版行为</button><button id="presetRecommended" disabled>推荐 Ex</button></div>
       <div class="footer-note">功能开关只修改 BCEX v2 配置字节，不通过 NOP/JMP 改写程序代码。</div>
@@ -157,6 +222,18 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
     </div>
   </section>
 </main>
+
+<div id="unsavedModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="unsavedTitle">
+  <div class="confirmbox">
+    <h2 id="unsavedTitle">当前 ROM 有未保存修改</h2>
+    <p>打开新的 ROM 前是否保存当前修改？选择“保存”时会执行保存/另存为，成功后再打开新 ROM；选择“不保存”会直接打开新 ROM。</p>
+    <div class="confirm-actions">
+      <button id="unsavedCancel">取消</button>
+      <button id="unsavedDiscard">不保存</button>
+      <button id="unsavedSave" class="primary">保存</button>
+    </div>
+  </div>
+</div>
 
 <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true">
   <div class="modalbox"><div class="modalhead"><h2 id="helpTitle">帮助</h2><button id="helpClose">关闭</button></div><div class="modalbody"><pre id="helpText"></pre></div></div>
@@ -215,6 +292,25 @@ window.QuarrelExCore = (() => {
     exV2MapStart: 0x0010,
     exV2MapStageStride: 0x00B6,
     exV2MapStageCount: 70,
+    finalRulesConfig: 0x356F,
+    finalRulesFlags: 0x3574,
+    finalRulesExtraLifeMode: 0x3575,
+    finalRulesExtraLifeValue: 0x3576,
+    finalRulesBonus2P: 0x3577,
+    finalRulesArmor: 0x3578,
+    finalRulesCheatP1: 0x3579,
+    finalRulesCheatP2: 0x357A,
+    finalRulesSpawnStart: 0x3580,
+    finalRulesSpawnRecordSize: 18,
+    finalRulesNormalStartingLives: 0x3BDE,
+    finalRulesPacing1PInterval: 0x3E70,
+    finalRulesPacing2PInterval: 0x3EB6,
+    finalRulesPacing1PMaxActiveLegacy: 0x3EFC,
+    finalRulesPacing2PMaxActiveLegacy: 0x3F42,
+    finalRulesBaseExistsLegacy: 0x3F88,
+    finalRulesPackedStageRules: 0x3EFC,
+    finalRulesStageP1Spawn: 0x3F42,
+    finalRulesStageP2Spawn: 0x3F88,
   });
 
   const RomKind = Object.freeze({
@@ -280,6 +376,8 @@ window.QuarrelExCore = (() => {
   const EX64_ATTR_REFERENCE = Uint8Array.from([0xB9,0x00,0xB4]);
   const EX64_TSA_REFERENCE = Uint8Array.from([0xBD,0x40,0xB4]);
   const EX_V2_MAGIC = Uint8Array.from([0x42,0x43,0x45,0x58]); // BCEX
+  const FINAL_RULES_MAGIC = Uint8Array.from([0x51,0x58,0x52,0x31]); // QXR1
+  const FINAL_SPAWN_MIN=0x18, FINAL_SPAWN_MAX=0xD8, FINAL_SPAWN_POINTS=8;
   const OVERLAY_HELPER = Uint8Array.from([
     201,14,208,43,165,70,201,2,240,35,165,133,201,36,144,3,56,233,35,56,233,1,
     24,105,128,133,18,165,90,133,17,160,0,177,17,201,16,144,6,201,32,176,2,208,2,
@@ -339,6 +437,25 @@ window.QuarrelExCore = (() => {
     get supportsPlayerFastMove() { return this.hasExV2Config && (this.layoutFlags & ExLayout.PlayerFastMove)!==0; }
     get supportsNoFriendlyFire() { return this.hasExV2Config && this.supportsTerrain1F; }
     get lockInitialState() { return this.supportsLockInitialState && (this.enemyItemFlags & 0x80)!==0; }
+    get hasFinalRules() { const v=this.hasIndependentMaps&&spanEquals(this.data,CFG.finalRulesConfig,FINAL_RULES_MAGIC)?this.data[CFG.finalRulesConfig+4]:0;return v>=2&&v<=5; }
+    get finalRulesVersion() { return this.hasFinalRules?this.data[CFG.finalRulesConfig+4]:0; }
+    get supportsFinalRulesV3(){return this.hasFinalRules&&this.finalRulesVersion>=3;}
+    get supportsFinalRulesV4(){return this.hasFinalRules&&this.finalRulesVersion>=4;}
+    get supportsFinalRulesV5(){return this.hasFinalRules&&this.finalRulesVersion>=5;}
+    get skipFinalGameOver() { return this.hasFinalRules && (this.data[CFG.finalRulesFlags]&1)!==0; }
+    setSkipFinalGameOver(on){this.ensureFinalRules();this.data[CFG.finalRulesFlags]=(this.data[CFG.finalRulesFlags]&0xFE)|(on?1:0);}
+    get extraLifeMode(){if(!this.hasFinalRules)return 0;const v=this.data[CFG.finalRulesExtraLifeMode];return v>=0&&v<=3?v:0;}
+    setExtraLifeMode(v){this.ensureFinalRules();v=Number(v);if(!Number.isInteger(v)||v<0||v>3)throw new Error('Extra Life Mode 必须是 0~3。');this.data[CFG.finalRulesExtraLifeMode]=v;}
+    get extraLifeValue(){return this.hasFinalRules?Math.max(1,Math.min(99,this.data[CFG.finalRulesExtraLifeValue]||2)):2;}
+    setExtraLifeValue(v){this.ensureFinalRules();v=Math.max(1,Math.min(99,Number(v)||2));this.data[CFG.finalRulesExtraLifeValue]=v;}
+    get twoPlayerBonusMode(){if(!this.hasFinalRules)return 0;const v=this.data[CFG.finalRulesBonus2P];return v===0||v===1?v:0;}
+    setTwoPlayerBonusMode(v){this.ensureFinalRules();v=Number(v);if(!Number.isInteger(v)||v<0||v>1)throw new Error('2P Bonus Mode 必须是 0 或 1。');this.data[CFG.finalRulesBonus2P]=v;}
+    get armoredTankMode(){if(!this.hasFinalRules)return 0;const v=this.data[CFG.finalRulesArmor];return v===0||v===1?v:0;}
+    setArmoredTankMode(v){this.ensureFinalRules();v=Number(v);if(!Number.isInteger(v)||v<0||v>1)throw new Error('Armored Tank Mode 必须是 0 或 1。');this.data[CFG.finalRulesArmor]=v;}
+    get cheatPlayer1Lives(){return this.supportsFinalRulesV3?Math.max(1,Math.min(99,this.data[CFG.finalRulesCheatP1]||10)):10;}
+    setCheatPlayer1Lives(v){this.ensureFinalRulesV3();this.data[CFG.finalRulesCheatP1]=Math.max(1,Math.min(99,Number(v)||10));}
+    get cheatPlayer2Lives(){return this.supportsFinalRulesV3?Math.max(1,Math.min(99,this.data[CFG.finalRulesCheatP2]||10)):10;}
+    setCheatPlayer2Lives(v){this.ensureFinalRulesV3();this.data[CFG.finalRulesCheatP2]=Math.max(1,Math.min(99,Number(v)||10));}
     get canConvertToOverlay() { return this.kind === RomKind.Ex16K; }
     get maxNormalStage() { return this.isOriginal ? 35 : 70; }
     get demoStageNumber() { return this.maxNormalStage + 1; }
@@ -598,13 +715,39 @@ window.QuarrelExCore = (() => {
       this.data=newr; this.validate(); return true;
     }
 
-    get startingLives(){ return this.data[this.offset(CFG.startingLives)]; }
-    setStartingLives(v){v=Math.max(1,Math.min(255,Number(v)||1));this.data[this.offset(CFG.startingLives)]=v;}
+    get startingLives(){ return this.data[this.hasFinalRules?CFG.finalRulesNormalStartingLives:this.offset(CFG.startingLives)]; }
+    setStartingLives(v){v=Math.max(1,Math.min(255,Number(v)||1));this.data[this.hasFinalRules?CFG.finalRulesNormalStartingLives:this.offset(CFG.startingLives)]=v;}
     get initialTankLevel(){const raw=this.data[this.offset(CFG.initialTankStatus)],a=[0,0x20,0x40,0x60,0x63];let i=a.indexOf(raw);if(i>=0)return i;return raw>=0x63?4:raw>=0x60?3:raw>=0x40?2:raw>=0x20?1:0;}
     setInitialTankLevel(level){const max=this.isOriginal?3:4;level=Math.max(0,Math.min(max,Number(level)||0));this.data[this.offset(CFG.initialTankStatus)]=[0,0x20,0x40,0x60,0x63][level];}
     spawnOffsets(kind){return {Enemy1:[CFG.enemy1X,CFG.enemy1Y],Enemy2:[CFG.enemy2X,CFG.enemy2Y],Enemy3:[CFG.enemy3X,CFG.enemy3Y],Player1:[CFG.player1X,CFG.player1Y],Player2:[CFG.player2X,CFG.player2Y]}[kind];}
     getSpawn(kind){const o=this.spawnOffsets(kind);if(!o)throw new Error('未知出现位置。');return {X:this.data[this.offset(o[0])],Y:this.data[this.offset(o[1])]};}
     setSpawn(kind,x,y){const o=this.spawnOffsets(kind);this.data[this.offset(o[0])]=Math.max(0,Math.min(255,Number(x)||0));this.data[this.offset(o[1])]=Math.max(0,Math.min(255,Number(y)||0));}
+    ensureFinalRules(){if(!this.hasFinalRules)throw new Error('当前 ROM 不支持 QXR1 Final Rules（需要 32KB Runtime 6.5~6.9）。');}
+    ensureFinalRulesV3(){if(!this.supportsFinalRulesV3)throw new Error('当前 ROM 不支持 QXR1 v3 扩展（需要 32KB Runtime 6.6）。');}
+    finalSpawnRecord(stage){this.ensureFinalRules();stage=Number(stage);if(!Number.isInteger(stage)||stage<1||stage>70)throw new Error('Final Rules 出生点只支持 Stage 1~70。');return CFG.finalRulesSpawnStart+(stage-1)*CFG.finalRulesSpawnRecordSize;}
+    getCustomEnemySpawnCount(stage,twoPlayer=false){return this.data[this.finalSpawnRecord(stage)+(twoPlayer?1:0)];}
+    setCustomEnemySpawnCount(stage,twoPlayer,count){const o=this.finalSpawnRecord(stage)+(twoPlayer?1:0);count=Number(count);if(!Number.isInteger(count)||count<0||count>8)throw new Error('Custom Spawn Count 必须是 Original(0) 或 1~8。');this.data[o]=count;}
+    getCustomEnemySpawnPoint(stage,index){const o=this.finalSpawnRecord(stage);index=Number(index);if(!Number.isInteger(index)||index<0||index>=8)throw new Error('Custom Spawn index 必须是 0~7。');return {X:Math.max(FINAL_SPAWN_MIN,Math.min(FINAL_SPAWN_MAX,this.data[o+2+index])),Y:Math.max(FINAL_SPAWN_MIN,Math.min(FINAL_SPAWN_MAX,this.data[o+10+index]))};}
+    setCustomEnemySpawnPoint(stage,index,x,y){const o=this.finalSpawnRecord(stage);index=Number(index);if(!Number.isInteger(index)||index<0||index>=8)throw new Error('Custom Spawn index 必须是 0~7。');x=Math.max(FINAL_SPAWN_MIN,Math.min(FINAL_SPAWN_MAX,Number(x)||FINAL_SPAWN_MIN));y=Math.max(FINAL_SPAWN_MIN,Math.min(FINAL_SPAWN_MAX,Number(y)||FINAL_SPAWN_MIN));this.data[o+2+index]=x;this.data[o+10+index]=y;}
+    getCustomEnemySpawnCell(stage,index){const p=this.getCustomEnemySpawnPoint(stage,index),col=Math.max(0,Math.min(12,Math.round((p.X-FINAL_SPAWN_MIN)/16))),row=Math.max(0,Math.min(12,Math.round((p.Y-FINAL_SPAWN_MIN)/16)));return {row,col,id:this.getCell(stage,row,col)};}
+    setDefaultEightCustomEnemySpawns(stage){const pts=[[0x18,0x18],[0x58,0x18],[0x98,0x18],[0xD8,0x18],[0xD8,0x78],[0x98,0xD8],[0x58,0xD8],[0x18,0x78]];this.setCustomEnemySpawnCount(stage,false,8);this.setCustomEnemySpawnCount(stage,true,8);pts.forEach((p,i)=>this.setCustomEnemySpawnPoint(stage,i,p[0],p[1]));}
+    pacingOffset(stage,twoPlayer){this.ensureFinalRulesV3();stage=Number(stage);if(!Number.isInteger(stage)||stage<1||stage>70)throw new Error('敌人出现节奏只支持 Stage 1~70。');return (twoPlayer?CFG.finalRulesPacing2PInterval:CFG.finalRulesPacing1PInterval)+stage-1;}
+    getEnemySpawnInterval(stage,twoPlayer=false){return Math.max(1,Math.min(255,this.data[this.pacingOffset(stage,twoPlayer)]));}
+    setEnemySpawnInterval(stage,twoPlayer,frames){frames=Number(frames);if(!Number.isInteger(frames)||frames<1||frames>255)throw new Error('敌人出现间隔必须是 1~255 帧。');this.data[this.pacingOffset(stage,twoPlayer)]=frames;}
+    getMaxActiveEnemies(stage,twoPlayer=false){this.ensureFinalRulesV3();stage=Number(stage);if(!Number.isInteger(stage)||stage<1||stage>70)throw new Error('敌人出现节奏只支持 Stage 1~70。');if(this.supportsFinalRulesV5){const raw=this.data[CFG.finalRulesPackedStageRules+stage-1],limit=twoPlayer?(raw&7):((raw>>5)&7);return Math.max(1,Math.min(6,limit-1));}const base=twoPlayer?CFG.finalRulesPacing2PMaxActiveLegacy:CFG.finalRulesPacing1PMaxActiveLegacy;return Math.max(1,Math.min(6,this.data[base+stage-1]));}
+    setMaxActiveEnemies(stage,twoPlayer,count){this.ensureFinalRulesV3();stage=Number(stage);count=Number(count);if(!Number.isInteger(stage)||stage<1||stage>70)throw new Error('敌人出现节奏只支持 Stage 1~70。');if(!Number.isInteger(count)||count<1||count>6)throw new Error('最大同时在场敌人数必须是 1~6。');if(this.supportsFinalRulesV5){const o=CFG.finalRulesPackedStageRules+stage-1,raw=this.data[o],limit=count+1;this.data[o]=twoPlayer?((raw&0xF8)|(limit&7)):((raw&0x1F)|((limit&7)<<5));return;}const base=twoPlayer?CFG.finalRulesPacing2PMaxActiveLegacy:CFG.finalRulesPacing1PMaxActiveLegacy;this.data[base+stage-1]=count;}
+    setStage35EnemyPacingPreset(stage){this.setEnemySpawnInterval(stage,false,this.getEnemySpawnInterval(35,false));this.setEnemySpawnInterval(stage,true,this.getEnemySpawnInterval(35,true));this.setMaxActiveEnemies(stage,false,this.getMaxActiveEnemies(35,false));this.setMaxActiveEnemies(stage,true,this.getMaxActiveEnemies(35,true));}
+    setOriginalEnemyPacingPreset(stage){stage=Number(stage);const st=Math.min(stage,35),p1=Math.max(1,Math.min(255,0xBE-st*4)),p2=Math.max(1,Math.min(255,p1-0x14));this.setEnemySpawnInterval(stage,false,p1);this.setEnemySpawnInterval(stage,true,p2);this.setMaxActiveEnemies(stage,false,4);this.setMaxActiveEnemies(stage,true,6);}
+    ensureFinalRulesV4(){if(!this.supportsFinalRulesV4)throw new Error('当前 ROM 不支持 QXR1 v4+ 扩展。');}
+    ensureFinalRulesV5(){if(!this.supportsFinalRulesV5)throw new Error('当前 ROM 不支持 QXR1 v5 扩展（需要 32KB Runtime 6.9）。');}
+    stageRuleOffset(stage){this.ensureFinalRulesV4();stage=Number(stage);if(!Number.isInteger(stage)||stage<1||stage>70)throw new Error('逐关规则只支持 Stage 1~70。');return CFG.finalRulesPackedStageRules+stage-1;}
+    getStageBaseExists(stage){if(this.supportsFinalRulesV5)return (this.data[this.stageRuleOffset(stage)]&0x10)!==0;this.ensureFinalRulesV4();stage=Number(stage);if(!Number.isInteger(stage)||stage<1||stage>70)throw new Error('老巢存在开关只支持 Stage 1~70。');return this.data[CFG.finalRulesBaseExistsLegacy+stage-1]!==0;}
+    setStageBaseExists(stage,on){if(this.supportsFinalRulesV5){const o=this.stageRuleOffset(stage);this.data[o]=on?(this.data[o]|0x10):(this.data[o]&0xEF);return;}this.ensureFinalRulesV4();stage=Number(stage);if(!Number.isInteger(stage)||stage<1||stage>70)throw new Error('老巢存在开关只支持 Stage 1~70。');this.data[CFG.finalRulesBaseExistsLegacy+stage-1]=on?1:0;}
+    stagePlayerSpawnOffset(stage,twoPlayer=false){this.ensureFinalRulesV5();stage=Number(stage);if(!Number.isInteger(stage)||stage<1||stage>70)throw new Error('逐关玩家出生点只支持 Stage 1~70。');return (twoPlayer?CFG.finalRulesStageP2Spawn:CFG.finalRulesStageP1Spawn)+stage-1;}
+    getStagePlayerSpawn(stage,twoPlayer=false){const raw=this.data[this.stagePlayerSpawnOffset(stage,twoPlayer)];if(raw===0xFF){const p=this.getSpawn(twoPlayer?'Player2':'Player1');return {IsCustom:false,X:p.X,Y:p.Y};}const xi=Math.min(12,(raw>>4)&15),yi=Math.min(12,raw&15);return {IsCustom:true,X:FINAL_SPAWN_MIN+xi*16,Y:FINAL_SPAWN_MIN+yi*16};}
+    setStagePlayerSpawnOriginal(stage,twoPlayer=false){this.data[this.stagePlayerSpawnOffset(stage,twoPlayer)]=0xFF;}
+    setStagePlayerSpawn(stage,twoPlayer,x,y){const o=this.stagePlayerSpawnOffset(stage,twoPlayer),xi=Math.max(0,Math.min(12,Math.round((Number(x)-FINAL_SPAWN_MIN)/16))),yi=Math.max(0,Math.min(12,Math.round((Number(y)-FINAL_SPAWN_MIN)/16)));this.data[o]=(xi<<4)|yi;}
+    getStagePlayerSpawnCell(stage,twoPlayer=false){const p=this.getStagePlayerSpawn(stage,twoPlayer),col=Math.max(0,Math.min(12,Math.round((p.X-FINAL_SPAWN_MIN)/16))),row=Math.max(0,Math.min(12,Math.round((p.Y-FINAL_SPAWN_MIN)/16)));return {row,col,id:this.getCell(stage,row,col)};}
     paletteOffset(kind){return {Sprite:CFG.paletteSpr,Frame2:CFG.paletteFrame2,Level:CFG.levelPalette,Frame1:CFG.paletteFrame1,Title:CFG.titlePalette,LevelSelect:CFG.levelSelectPalette,Misc1:CFG.paletteMisc1,Misc2:CFG.paletteMisc2}[kind];}
     getPalette(kind){const o=this.offset(this.paletteOffset(kind));return Array.from(this.data.slice(o,o+16));}
     setPaletteByte(kind,index,value){if(index<0||index>=16)throw new Error('Palette索引越界。');this.data[this.offset(this.paletteOffset(kind))+index]=Number(value)&0x3F;}
@@ -615,7 +758,7 @@ window.QuarrelExCore = (() => {
     getScreenElements(kind){return SCREEN_LAYOUTS[kind]||[];}
     getScreenElementTile(def,index){if(index<0||index>=def.length)throw new Error('Screen element index 超出范围。');return this.data[this.offset(def.offset)+index];}
     getScreenElementTiles(def){return Array.from({length:def.length},(_,i)=>this.getScreenElementTile(def,i));}
-    setScreenElementTile(def,index,tile){if(index<0||index>=def.length)throw new Error('Screen element index 超出范围。');tile=Number(tile);if(!Number.isInteger(tile)||tile<0||tile>0xFE)throw new Error('$FF 是字符串终止符；画面图块必须在 $00~$FE。');this.data[this.offset(def.offset)+index]=tile;}
+    setScreenElementTile(def,index,tile){if(index<0||index>=def.length)throw new Error('Screen element index 超出范围。');tile=Number(tile);if(!Number.isInteger(tile)||tile<0||tile>0xFF)throw new Error('画面原始字节必须在 $00~$FF；$FF 可作为字符串终止符。');this.data[this.offset(def.offset)+index]=tile;}
     clearStage(stage){for(let r=0;r<13;r++)for(let c=0;c<13;c++)this.setCell(stage,r,c,0x0D);}
     clearAllStages(){for(let st=1;st<=this.maxNormalStage;st++)this.clearStage(st);this.clearStage(this.demoStageNumber);}
     exportSharedConfig(){
@@ -626,12 +769,17 @@ window.QuarrelExCore = (() => {
       for(let stage=1;stage<=stageMax;stage++){
         const ed=this.getEnemyData(stage);
         const Map=Array.from({length:13},(_,r)=>Array.from({length:13},(_,c)=>this.getCell(stage,r,c)));
-        Stages.push({Stage:stage,Map,EnemyTypes:Array.from(ed.types),EnemyCounts:Array.from(ed.counts),EnemyTotal:Array.from(ed.counts).reduce((a,b)=>a+b,0)});
+        const EnemySpawn=this.hasFinalRules?{Player1Count:this.getCustomEnemySpawnCount(stage,false),Player2Count:this.getCustomEnemySpawnCount(stage,true),Points:Array.from({length:8},(_,i)=>this.getCustomEnemySpawnPoint(stage,i))}:null;
+        const EnemyPacing=this.supportsFinalRulesV3?{Player1IntervalFrames:this.getEnemySpawnInterval(stage,false),Player2IntervalFrames:this.getEnemySpawnInterval(stage,true),Player1MaxActive:this.getMaxActiveEnemies(stage,false),Player2MaxActive:this.getMaxActiveEnemies(stage,true)}:null;
+        const BaseExists=this.supportsFinalRulesV4?this.getStageBaseExists(stage):null;
+        let PlayerSpawn=null;if(this.supportsFinalRulesV5){const p1=this.getStagePlayerSpawn(stage,false),p2=this.getStagePlayerSpawn(stage,true);PlayerSpawn={Player1:p1.IsCustom?{X:p1.X,Y:p1.Y}:null,Player2:p2.IsCustom?{X:p2.X,Y:p2.Y}:null};}
+        Stages.push({Stage:stage,Map,EnemyTypes:Array.from(ed.types),EnemyCounts:Array.from(ed.counts),EnemyTotal:Array.from(ed.counts).reduce((a,b)=>a+b,0),...(EnemySpawn?{EnemySpawn}:{}),...(EnemyPacing?{EnemyPacing}:{}),...(BaseExists!==null?{BaseExists}:{}),...(PlayerSpawn?{PlayerSpawn}:{})});
       }
       const Demo={Map:Array.from({length:13},(_,r)=>Array.from({length:13},(_,c)=>this.getCell(this.demoStageNumber,r,c)))};
       const Screens={};
       for(const kind of ['Title','GameOver']){const Elements={};for(const def of this.getScreenElements(kind))Elements[def.key]=this.getScreenElementTiles(def);Screens[kind]={Elements};}
-      return {Schema:'QuarrelExConfig',Version:3,Gameplay:{StartingLives:this.startingLives,InitialTankLevel:this.initialTankLevel,LockInitialState:this.lockInitialState,PlayerFastMove:this.supportsPlayerFastMove&&this.isFeatureEnabled(ExFeature.PlayerFastMove),FeatureFlags:this.hasExV2Config?this.featureFlags:null,EnemyItemFlags:this.supportsEnemyPowerUpPickup?(this.enemyItemFlags&0x7F):null,Spawns},Palettes,Terrain:this.selectableTerrainIds.map(Id=>({Id,Attr:this.getTerrainAttribute(Id)&3,Tiles:this.getTerrainTiles(Id)})),FlagTsa:{Flag:this.getFlagTsa(false),Fort:this.getFlagTsa(true)},Stages,Demo,Screens};
+      const FinalRules=this.hasFinalRules?{SkipFinalGameOver:this.skipFinalGameOver,ExtraLifeMode:this.extraLifeMode,ExtraLifeValue:this.extraLifeValue,TwoPlayerBonusMode:this.twoPlayerBonusMode,ArmoredTankMode:this.armoredTankMode,...(this.supportsFinalRulesV3?{CheatPlayer1Lives:this.cheatPlayer1Lives,CheatPlayer2Lives:this.cheatPlayer2Lives}:{})}:null;
+      return {Schema:'QuarrelExConfig',Version:3,Gameplay:{StartingLives:this.startingLives,InitialTankLevel:this.initialTankLevel,LockInitialState:this.lockInitialState,PlayerFastMove:this.supportsPlayerFastMove&&this.isFeatureEnabled(ExFeature.PlayerFastMove),FeatureFlags:this.hasExV2Config?this.featureFlags:null,EnemyItemFlags:this.supportsEnemyPowerUpPickup?(this.enemyItemFlags&0x7F):null,Spawns,...(FinalRules?{FinalRules}:{})},Palettes,Terrain:this.selectableTerrainIds.map(Id=>({Id,Attr:this.getTerrainAttribute(Id)&3,Tiles:this.getTerrainTiles(Id)})),FlagTsa:{Flag:this.getFlagTsa(false),Fort:this.getFlagTsa(true)},Stages,Demo,Screens};
     }
     validateSharedConfig(cfg){
       const errors=[],warnings=[];
@@ -664,6 +812,10 @@ window.QuarrelExCore = (() => {
         }
         if(g.EnemyItemFlags!=null&&!this.supportsEnemyPowerUpPickup)warn('目标 ROM 不支持敌人道具效果；EnemyItemFlags 将被忽略。');
         if(g.LockInitialState&&!this.supportsLockInitialState)warn('目标 ROM 不支持锁定初始状态；该选项将被忽略。');
+        if(g.FinalRules!=null){
+          if(!this.hasFinalRules)warn('目标 ROM 不支持 QXR1 Final Rules；Gameplay.FinalRules 将被忽略。');
+          else{const f=g.FinalRules;if(typeof f.SkipFinalGameOver!=='boolean')err('Gameplay.FinalRules.SkipFinalGameOver 必须是 boolean。');if(!isInt(f.ExtraLifeMode)||f.ExtraLifeMode<0||f.ExtraLifeMode>3)err('Gameplay.FinalRules.ExtraLifeMode 必须是 0~3。');if(!isInt(f.ExtraLifeValue)||f.ExtraLifeValue<1||f.ExtraLifeValue>99)err('Gameplay.FinalRules.ExtraLifeValue 必须是 1~99。');if(!isInt(f.TwoPlayerBonusMode)||f.TwoPlayerBonusMode<0||f.TwoPlayerBonusMode>1)err('Gameplay.FinalRules.TwoPlayerBonusMode 必须是 0 或 1。');if(!isInt(f.ArmoredTankMode)||f.ArmoredTankMode<0||f.ArmoredTankMode>1)err('Gameplay.FinalRules.ArmoredTankMode 必须是 0 或 1。');if((f.CheatPlayer1Lives!=null||f.CheatPlayer2Lives!=null)&&!this.supportsFinalRulesV3)warn('配置包含 A+B+Start 秘籍命数，但目标 ROM 不是 QXR1 v3 / Runtime 6.6；这些值将被忽略。');if(f.CheatPlayer1Lives!=null&&(!isInt(f.CheatPlayer1Lives)||f.CheatPlayer1Lives<1||f.CheatPlayer1Lives>99))err('Gameplay.FinalRules.CheatPlayer1Lives 必须是 1~99。');if(f.CheatPlayer2Lives!=null&&(!isInt(f.CheatPlayer2Lives)||f.CheatPlayer2Lives<1||f.CheatPlayer2Lives>99))err('Gameplay.FinalRules.CheatPlayer2Lives 必须是 1~99。');}
+        }
 
         const spawns=g.Spawns;
         if(!spawns||typeof spawns!=='object')err('Gameplay.Spawns 缺失。');
@@ -729,6 +881,17 @@ window.QuarrelExCore = (() => {
             }
           }
 
+          if(sc.EnemySpawn!=null){
+            if(!this.hasFinalRules)warn('配置包含 Stage.EnemySpawn，但目标 ROM 不支持 QXR1 Final Rules；这些出生点将被忽略。');
+            else{const es=sc.EnemySpawn;if(!isInt(es.Player1Count)||es.Player1Count<0||es.Player1Count>8||!isInt(es.Player2Count)||es.Player2Count<0||es.Player2Count>8)err(`Stage ${sc.Stage} EnemySpawn 1P/2P Count 必须是 0~8。`);if(!Array.isArray(es.Points)||es.Points.length!==8)err(`Stage ${sc.Stage} EnemySpawn.Points 必须正好有 8 项。`);else es.Points.forEach((pt,i)=>{if(!pt||!isInt(pt.X)||pt.X<FINAL_SPAWN_MIN||pt.X>FINAL_SPAWN_MAX||!isInt(pt.Y)||pt.Y<FINAL_SPAWN_MIN||pt.Y>FINAL_SPAWN_MAX)err(`Stage ${sc.Stage} EnemySpawn.Points[${i}] 必须在 $18~$D8。`);});}
+          }
+          if(sc.EnemyPacing!=null){
+            if(!this.supportsFinalRulesV3)warn(`Stage ${sc.Stage} 包含 EnemyPacing，但目标 ROM 不是 QXR1 v3+ / Runtime 6.6+；该项将被忽略。`);
+            else{const ep=sc.EnemyPacing;if(!isInt(ep.Player1IntervalFrames)||ep.Player1IntervalFrames<1||ep.Player1IntervalFrames>255||!isInt(ep.Player2IntervalFrames)||ep.Player2IntervalFrames<1||ep.Player2IntervalFrames>255)err(`Stage ${sc.Stage} EnemyPacing 1P/2P IntervalFrames 必须是 1~255。`);if(!isInt(ep.Player1MaxActive)||ep.Player1MaxActive<1||ep.Player1MaxActive>6||!isInt(ep.Player2MaxActive)||ep.Player2MaxActive<1||ep.Player2MaxActive>6)err(`Stage ${sc.Stage} EnemyPacing 1P/2P MaxActive 必须是 1~6。`);}
+          }
+          if(sc.BaseExists!=null){if(typeof sc.BaseExists!=='boolean')err(`Stage ${sc.Stage} BaseExists 必须是 boolean。`);else if(!this.supportsFinalRulesV4)warn(`Stage ${sc.Stage} 包含 BaseExists，但目标 ROM 不是 QXR1 v4+；该项将被忽略。`);}
+          if(sc.PlayerSpawn!=null){if(typeof sc.PlayerSpawn!=='object')err(`Stage ${sc.Stage} PlayerSpawn 必须是对象。`);else if(!this.supportsFinalRulesV5)warn(`Stage ${sc.Stage} 包含 PlayerSpawn，但目标 ROM 不是 QXR1 v5 / Runtime 6.9；该项将被忽略。`);else for(const key of ['Player1','Player2']){const q=sc.PlayerSpawn[key];if(q==null)continue;if(typeof q!=='object'||!isInt(q.X)||!isInt(q.Y))err(`Stage ${sc.Stage} PlayerSpawn.${key} 必须为 null 或 {X,Y} 整数对象。`);else if(q.X<FINAL_SPAWN_MIN||q.X>FINAL_SPAWN_MAX||q.Y<FINAL_SPAWN_MIN||q.Y>FINAL_SPAWN_MAX||((q.X-FINAL_SPAWN_MIN)&15)!==0||((q.Y-FINAL_SPAWN_MIN)&15)!==0)err(`Stage ${sc.Stage} PlayerSpawn.${key} 必须使用 $18~$D8 的 16px 网格。`);}}
+
           if(!Array.isArray(sc.Map)||sc.Map.length!==13||sc.Map.some(row=>!Array.isArray(row)||row.length!==13))err(`Stage ${sc.Stage} 的 Map 必须是完整 13×13。`);
           else{
             let warned=false;
@@ -770,7 +933,7 @@ window.QuarrelExCore = (() => {
           const a=layout.Elements[def.key];
           if(!Array.isArray(a)){warn(`Screens.${kind}.Elements 缺少 ${def.key}；该元素保持目标 ROM 原值。`);continue;}
           if(a.length!==def.length){err(`Screens.${kind}.Elements.${def.key} 必须正好包含 ${def.length} 个值。`);continue;}
-          a.forEach((v,i)=>{if(!isInt(v)||v<0||v>0xFE)err(`Screens.${kind}.Elements.${def.key}[${i}]=${v}，必须在 $00~$FE；$FF 为终止符。`);});
+          a.forEach((v,i)=>{if(!isInt(v)||v<0||v>0xFF)err(`Screens.${kind}.Elements.${def.key}[${i}]=${v}，必须在 $00~$FF；$FF 可作为字符串终止符。`);});
         }
       }
       return {errors,warnings};
@@ -786,6 +949,8 @@ window.QuarrelExCore = (() => {
       if(this.hasExV2Config&&g.FeatureFlags!=null)this.setFeatureFlags(g.FeatureFlags);
       if(this.supportsEnemyPowerUpPickup&&g.EnemyItemFlags!=null)this.data[this.exV2ConfigOffset+6]=(this.enemyItemFlags&0x80)|(g.EnemyItemFlags&0x7F);
       if(this.supportsLockInitialState)this.setLockInitialState(g.LockInitialState);
+
+      if(this.hasFinalRules&&g.FinalRules){this.setSkipFinalGameOver(g.FinalRules.SkipFinalGameOver);this.setExtraLifeMode(g.FinalRules.ExtraLifeMode);this.setExtraLifeValue(g.FinalRules.ExtraLifeValue);this.setTwoPlayerBonusMode(g.FinalRules.TwoPlayerBonusMode);this.setArmoredTankMode(g.FinalRules.ArmoredTankMode);if(this.supportsFinalRulesV3&&g.FinalRules.CheatPlayer1Lives!=null)this.setCheatPlayer1Lives(g.FinalRules.CheatPlayer1Lives);if(this.supportsFinalRulesV3&&g.FinalRules.CheatPlayer2Lives!=null)this.setCheatPlayer2Lives(g.FinalRules.CheatPlayer2Lives);}
 
       for(const k of ['Enemy1','Enemy2','Enemy3','Player1','Player2']){const sp=g.Spawns[k];this.setSpawn(k,sp.X,sp.Y);}
       for(const k of ['Sprite','Frame2','Level','Frame1','Title','LevelSelect','Misc1','Misc2'])for(let i=0;i<16;i++)this.setPaletteByte(k,i,cfg.Palettes[k][i]);
@@ -806,6 +971,10 @@ window.QuarrelExCore = (() => {
         for(let slot=0;slot<4;slot++)this.setEnemyType(stage,slot,sc.EnemyTypes[slot]);
         const sum=sc.EnemyCounts.reduce((a,b)=>a+b,0);
         if(this.supportsCustomEnemyTotal||sum===20)for(let slot=0;slot<4;slot++)this.setEnemyCount(stage,slot,sc.EnemyCounts[slot]);
+        if(this.hasFinalRules&&sc.EnemySpawn){this.setCustomEnemySpawnCount(stage,false,sc.EnemySpawn.Player1Count);this.setCustomEnemySpawnCount(stage,true,sc.EnemySpawn.Player2Count);for(let i=0;i<8;i++)this.setCustomEnemySpawnPoint(stage,i,sc.EnemySpawn.Points[i].X,sc.EnemySpawn.Points[i].Y);}
+        if(this.supportsFinalRulesV3&&sc.EnemyPacing){this.setEnemySpawnInterval(stage,false,sc.EnemyPacing.Player1IntervalFrames);this.setEnemySpawnInterval(stage,true,sc.EnemyPacing.Player2IntervalFrames);this.setMaxActiveEnemies(stage,false,sc.EnemyPacing.Player1MaxActive);this.setMaxActiveEnemies(stage,true,sc.EnemyPacing.Player2MaxActive);}
+        if(this.supportsFinalRulesV4&&sc.BaseExists!=null)this.setStageBaseExists(stage,sc.BaseExists);
+        if(this.supportsFinalRulesV5&&sc.PlayerSpawn){for(const [key,tp] of [['Player1',false],['Player2',true]]){const q=sc.PlayerSpawn[key];if(q==null)this.setStagePlayerSpawnOriginal(stage,tp);else this.setStagePlayerSpawn(stage,tp,q.X,q.Y);}}
         if(stage>35&&!this.hasIndependentMaps)continue;
         for(let r=0;r<13;r++)for(let c=0;c<13;c++){
           const id=sc.Map[r][c];
@@ -842,6 +1011,7 @@ window.QuarrelExCore = (() => {
         lines.push('关卡: Stage 1~70 + Demo');
         lines.push(this.hasIndependentMaps?'Stage 1~70 地图: 全部独立（1 byte terrain ID）':'Stage 36~70 地图: 复用 Stage 1~35');
         lines.push(`36~70 Type: $${hex(this.offset(CFG.enemyType36To70),4)}`,`36~70 Count: $${hex(this.offset(CFG.enemyCount36To70),4)}`);
+        if(this.hasFinalRules){const rt=this.finalRulesVersion>=5?'6.9.1':this.finalRulesVersion>=4?'6.7/6.8':this.finalRulesVersion>=3?'6.6':'6.5';lines.push(`Final Rules: QXR1 v${this.finalRulesVersion} / Runtime ${rt}`);lines.push(`Final GAME OVER Skip: ${this.skipFinalGameOver?'ON':'OFF'}`);lines.push(`Extra Life: mode=${this.extraLifeMode}, value=${this.extraLifeValue}×10000`);lines.push(`2P Bonus: ${this.twoPlayerBonusMode===0?'Original':'Win Streak'}`);lines.push(`Armored Tank: ${this.armoredTankMode===0?'Original':this.finalRulesVersion>=4?'One Hit（普通装甲=白色1HP；闪光奖励装甲保持原版）':'One Hit'}`);lines.push('自定义敌人出生点: Stage 1~70 / 1P、2P 各 Original 或 1~8 点');if(this.supportsFinalRulesV3){lines.push(`A+B+Start 秘籍命数: 1P=${this.cheatPlayer1Lives}, 2P=${this.cheatPlayer2Lives}`);lines.push('敌人出现节奏: Stage 1~70 / 1P、2P 独立 Interval + Max Active');}if(this.supportsFinalRulesV4)lines.push('老巢存在: Stage 1~70 独立开关；关闭后地图底层地形生效');if(this.supportsFinalRulesV5)lines.push('玩家出生点: Stage 1~70 / P1、P2 各 Original 或独立16px网格位置');}
         if(this.supportsTerrain64) lines.push('地形定义: 00~3F 共64项；20~3F为预留自定义槽。');
         else if(this.supportsTerrain1F) lines.push('地形定义: 00~1F 共32项；18~1F为新增单格砖/钢。');
         else lines.push('地形定义: Legacy 00~17（用户选择跳过0E/0F）。');
@@ -860,14 +1030,14 @@ window.QuarrelExCore = (() => {
     }
   }
 
-  return { CFG, RomKind, ExLayout, ExFeature, EnemyItemEffect, USER_TERRAIN_IDS_17, USER_TERRAIN_IDS_1F, USER_TERRAIN_IDS_3F, BattleCityRom, hex };
+  return { CFG, RomKind, ExLayout, ExFeature, EnemyItemEffect, USER_TERRAIN_IDS_17, USER_TERRAIN_IDS_1F, USER_TERRAIN_IDS_3F, FINAL_SPAWN_MIN, FINAL_SPAWN_MAX, BattleCityRom, hex };
 })();
 
 </script>
 <script>
 'use strict';
 window.QuarrelExHelp = {
-  zh: `Quarrel Ex Web v1.6.0 中文帮助
+  zh: `Quarrel Ex Web v1.6.6 中文帮助
 ============================
 
 1. 支持的 ROM
@@ -938,7 +1108,7 @@ Phase 6 的 EnemyItemFlags bit7 另外用于“锁定初始状态”；bits0~6 �
 10. 通用配置文件
 ----------------
 “导出配置”与“导入配置”只使用 QuarrelExConfig v3 JSON（\`.qexcfg.json\`）。正式版不再导入 v1/v2。
-Web v1.6 与 C# Desktop v1.1 完全通用。
+Web v1.6.6 与 C# Desktop v1.1.6 完全通用。
 
 配置包含：
 - 起始命数、初始等级、锁定选项
@@ -950,6 +1120,9 @@ Web v1.6 与 C# Desktop v1.1 完全通用。
 - Ex Stage 1~70（原版 Stage 1~35）的完整关卡数据
 - Demo 13×13 地图（可选 v3 扩展）
 - Title / Game Over 原生画面字符串（可选 v3 扩展）
+- Runtime 6.5~6.9：Final Rules 与 Stage 1~70 EnemySpawn（可选 v3 扩展）
+- Runtime 6.6：A+B+Start 1P/2P 秘籍命数与 Stage 1~70 EnemyPacing（可选 v3 扩展）
+- Runtime 6.7+：One Hit 普通装甲白色1HP、闪光奖励装甲保持原版；Flag TSA Editor 每关 BaseExists（可选 v3 扩展）
   · 13×13 Map
   · 4 个 EnemyTypes
   · 4 个 EnemyCounts
@@ -961,6 +1134,7 @@ Web v1.6 与 C# Desktop v1.1 完全通用。
 ---------------------------
 Ctrl+S：保存。支持 File System Access API 时写回当前文件；没有可写句柄时自动进入“另存为”。
 Ctrl+Shift+S：另存为，成功后新文件成为当前文件。
+也可以把 .nes ROM 直接拖到浏览器窗口打开；如果当前 ROM 有未保存修改，会显示“保存 / 不保存 / 取消”选择。选择保存时，只有保存/另存为成功后才会继续打开拖入 ROM。
 Ctrl+Z：撤销。Ctrl+Y 或 Ctrl+Shift+Z：重做。历史最多保留 50 个状态。
 不支持直接文件写入的浏览器会退回普通下载方式。ROM 数据只在本机处理。
 
@@ -974,7 +1148,7 @@ Ctrl+Z：撤销。Ctrl+Y 或 Ctrl+Shift+Z：重做。历史最多保留 50 个�
 所有支持的 ROM 都会在关卡列表末尾显示 Demo。Demo 使用原版物理地图槽36和4-bit存储，只允许 $00~$0D；Enemy Type/Count 与 Stage 35 共用。
 “画面 / Screen”页签可编辑 Title 与 Game Over。普通字符串按 8×8 CHR Tile 编辑；BATTLE/CITY/GAME/OVER 是原版32×32放大字形，每个大框对应一个完整源字形。
 `,
-  en: `Quarrel Ex Web v1.6.0 English Help
+  en: `Quarrel Ex Web v1.6.6 English Help
 ================================
 
 Supported ROMs include the original 16KB Battle City, legacy Ex ROMs, BCEX v2 16KB, and BCEX v2 32KB/70-map ROMs.
@@ -989,19 +1163,21 @@ Palette Editor restores the original Quarrel concept with eight 16-color groups:
 
 Flag TSA Editor restores visual Flag/Fort editing as 6x4 background CHR tile grids. Per-row $FF terminators are preserved automatically.
 
-Game Settings include starting lives (1-255), initial tank level, Phase6 Lock Initial State, three enemy spawn points, P1/P2 spawn points, and clear-current/all-stage commands. Lock Initial State does not stop stars/pistol upgrades during the current life; after an actual death, respawn returns to the configured base level.
+Game Settings include normal starting lives (1-255), initial tank level, Phase6 Lock Initial State, original global spawn points, and Runtime 6.5~6.9 Stage 1-70 custom enemy spawn points (1P/2P Original or 1-8 shared S1-S8 coordinates). Runtime 6.6/QXR1 v3 additionally provides independent P1/P2 A+B+Start cheat lives (default 10/10) and per-stage 1P/2P spawn interval/max-active pacing. Lock Initial State does not stop stars/pistol upgrades during the current life; after an actual death, respawn returns to the configured base level.
 
 BCEX FeatureFlags: bit0 auto fire, bit1 pistol/Lv4, bit2 downgrade on hit, bit3 player fast movement (Phase 6.2), bit4 random enemy order, bit5 Lv4 destroys forest, bit6 enemy item pickup (32KB), bit7 no friendly fire. In Phase6, EnemyItemFlags bit7 is used for Lock Initial State while bits0-6 remain enemy-item-effect switches.
 
 Phase6.1+ bonus handling: every hit on a flashing bonus tank immediately respawns the bonus; any active bonus is replaced at once. The old Pending queue is retired. Non-lethal player downgrade also plays the normal bullet-hit-tank sound.
 
-Import/Export Config accepts QuarrelExConfig v3 JSON (\`.qexcfg.json\`) only and is shared with Desktop v1.1. v3 also transfers Ex Stage 1-70 (original Stage 1-35), with a 13x13 Map, four raw EnemyTypes, four EnemyCounts and EnemyTotal per stage. Enemy Type bit2 ($04) is the flashing/bonus flag; common bases are $80/$A0/$C0/$E0, and forced-flashing forms are $84/$A4/$C4/$E4. The original game also adds $04 to the 4th, 11th and 18th spawned enemies.
+Final Rules for QXR1 v2~v5 / Runtime 6.5~6.9 include Skip Final GAME OVER, score extra-life mode/value, 2P Original/Win-Streak bonus, and Armored Tank Original/One-Hit. QXR1 v3 / Runtime 6.6 adds A+B+Start cheat lives and Stage 1-70 independent enemy appearance pacing. QXR1 v4 / Runtime 6.7 refines One Hit so flashing/item armored tanks keep original durability and adds Stage 1-70 BaseExists in Flag TSA Editor.
 
-Save uses the current writable file handle when available; Save As uses Ctrl+Shift+S. Config v3 import runs full preflight validation and is transactional: hard errors leave the ROM untouched.
+Import/Export Config accepts QuarrelExConfig v3 JSON (\`.qexcfg.json\`) only and is shared with Desktop v1.1.6. v3 also transfers Ex Stage 1-70 (original Stage 1-35), with a 13x13 Map, four raw EnemyTypes, four EnemyCounts and EnemyTotal per stage. Enemy Type bit2 ($04) is the flashing/bonus flag; common bases are $80/$A0/$C0/$E0, and forced-flashing forms are $84/$A4/$C4/$E4. The original game also adds $04 to the 4th, 11th and 18th spawned enemies.
 
-Demo is exposed after the normal stage list in every supported ROM format. It uses original 4-bit storage and only allows $00-$0D; its Enemy Type/Count shares Stage 35. The Screen tab edits native Title/Game Over sources: ordinary strings are 8x8 tiles, while BATTLE/CITY/GAME/OVER are whole 32x32 magnified-glyph source slots. Config v3 remains Version 3 and adds optional Demo/Screens fields.
+Save uses the current writable file handle when available; Save As uses Ctrl+Shift+S. A .nes ROM can also be dragged onto the browser window. If the current ROM is dirty, the editor offers Save / Don't Save / Cancel; Save must complete successfully before the dropped ROM is opened. Config v3 import runs full preflight validation and is transactional: hard errors leave the ROM untouched.
+
+Demo is exposed after the normal stage list in every supported ROM format. Runtime 6.9.2 keeps Demo on the original/global player spawn, original enemy spawn cycle and original Stage-30 pacing instead of inheriting QXR per-stage Stage-30 overrides; it also preserves the original near-HQ no-fire behavior even when Hold-B auto fire is enabled. It uses original 4-bit storage and only allows $00-$0D; its Enemy Type/Count shares Stage 35. The Screen tab edits native Title/Game Over sources: ordinary strings are 8x8 tiles, while BATTLE/CITY/GAME/OVER are whole 32x32 magnified-glyph source slots. Config v3 remains Version 3 and adds optional Demo/Screens fields.
 `,
-  tsaZh: `Quarrel Ex Web v1.6.0 - TSA / 属性说明
+  tsaZh: `Quarrel Ex Web v1.6.6 - TSA / 属性说明
 ====================================
 
 一个地图“地形 ID”代表一个 16×16 复合块。它由：
@@ -1019,11 +1195,11 @@ Attr 只有 2 bit，因此有效值就是 0、1、2、3。编辑器用下拉框�
 
 点击 TL/TR/BL/BR 后会显示 256 个背景 CHR Tile，并使用当前 Attr 的关卡调色板预览。选择后 16×16 预览、地形栏和地图会同步更新。
 
-$0E/$0F 为 Battle City 内部/保留地形 ID，Web v1.6 与 Desktop v1.1 都将它们屏蔽，不允许在地图或 TSA 编辑器中选择。
+$0E/$0F 为 Battle City 内部/保留地形 ID，Web v1.6.6 与 Desktop v1.1.6 都将它们屏蔽，不允许在地图或 TSA 编辑器中选择。
 
 修改 TSA 不只可能改变外观。Battle City 的砖、钢、水、树林、冰等碰撞/破坏行为与展开后的 8×8 Tile 类型有关，因此请保留 ROM 备份。
 `,
-  tsaEn: `Quarrel Ex Web v1.6.0 - TSA / Attribute Guide
+  tsaEn: `Quarrel Ex Web v1.6.6 - TSA / Attribute Guide
 ===========================================
 
 A terrain ID is a 16x16 composite block made from Attr (background palette 0-3) and four 8x8 CHR tiles: TL, TR, BL and BR.
@@ -1032,7 +1208,7 @@ Terrain IDs are not CHR tile IDs. For example, terrain $0A may represent full wa
 
 Attr is a 2-bit value, so only 0, 1, 2 and 3 are valid. Click TL/TR/BL/BR to open the visual 256-tile CHR picker. The picker previews tiles using the terrain's current Attr palette.
 
-Terrain IDs $0E/$0F are internal/reserved and are hidden from map/TSA editing in Web v1.6 and Desktop v1.1.
+Terrain IDs $0E/$0F are internal/reserved and are hidden from map/TSA editing in Web v1.6.6 and Desktop v1.1.6.
 
 Changing TSA can affect more than appearance: Battle City collision and destruction behavior depends on the expanded 8x8 tile types used for brick, steel, water, forest, ice, etc. Keep ROM backups.
 `
@@ -1043,7 +1219,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
 'use strict';
 
 (() => {
-  const { BattleCityRom, RomKind, ExFeature, EnemyItemEffect, hex } = window.QuarrelExCore;
+  const { BattleCityRom, RomKind, ExFeature, EnemyItemEffect, FINAL_SPAWN_MIN, FINAL_SPAWN_MAX, hex } = window.QuarrelExCore;
   const HELP = window.QuarrelExHelp;
   const $ = id => document.getElementById(id);
   const rgbCss = rgb => `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
@@ -1109,7 +1285,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   function resetUiBeforeLoad() {
     painting=false; lastPaintCell=''; chrPickTarget=null; screenSelected=null; history=[]; redoHistory=[]; savedBytes=null; fileHandle=null; model=null; clearCaches();
     $('stageSelect').innerHTML=''; $('stageSelect').disabled=true;
-    $('terrain').innerHTML=''; $('enemyRows').innerHTML=''; $('tsaRows').innerHTML=''; $('paletteGrid').innerHTML=''; $('flagGrid').innerHTML=''; $('fortGrid').innerHTML=''; $('spawnRows').innerHTML='';
+    $('terrain').innerHTML=''; $('enemyRows').innerHTML=''; $('tsaRows').innerHTML=''; $('paletteGrid').innerHTML=''; $('flagGrid').innerHTML=''; $('fortGrid').innerHTML=''; $('spawnRows').innerHTML=''; $('customSpawnRows').innerHTML='';
     $('enemySum').textContent=''; $('mapNote').textContent=''; $('infoBox').textContent='打开 ROM 后显示格式信息。';
     $('romBadge').textContent='未打开 ROM'; $('screenSelection').textContent='未打开 ROM'; const sctx=$('screenCanvas').getContext('2d');sctx.fillStyle='#000';sctx.fillRect(0,0,512,480);
     $('saveBtn').disabled=true; $('saveAsBtn').disabled=true; $('importConfigBtn').disabled=true; $('exportConfigBtn').disabled=true; $('undoBtn').disabled=true; $('redoBtn').disabled=true;
@@ -1400,10 +1576,20 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   function refreshPalette(){const sel=$('paletteSet');if(!sel.options.length)PALETTE_KINDS.forEach(([v,n])=>sel.add(new Option(n,v)));const grid=$('paletteGrid');grid.innerHTML='';if(!model)return;const kind=sel.value||'Level',pal=model.getPalette(kind);pal.forEach((v,i)=>{const b=document.createElement('button');b.className='palette-cell';b.style.background=rgbCss(NESPAL[v&0x3F]);b.textContent=`${i.toString().padStart(2,'0')}  $${hex(v&0x3F)}`;b.addEventListener('click',()=>openPalettePicker(kind,i,v));grid.appendChild(b);});}
   function openPalettePicker(kind,index,current){palettePickTarget={kind,index};$('paletteTitle').textContent=`${kind} Palette[${index}] - 当前 $${hex(current&0x3F)}`;const g=$('palettePickerGrid');g.innerHTML='';for(let i=0;i<64;i++){const b=document.createElement('button');b.className='nes-color';b.style.background=rgbCss(NESPAL[i]);b.textContent=hex(i);b.addEventListener('click',()=>{snapshot();model.setPaletteByte(kind,index,i);hidePalettePicker();clearCaches();markDirty();refreshPalette();renderMap();refreshGameSettings();buildTerrain();refreshTSA();refreshFlagTsa();renderScreenEditor();setStatus(`Palette ${kind}[${index}] = $${hex(i)}`,'ok');});g.appendChild(b);}$('paletteModal').classList.remove('hidden');}
   function hidePalettePicker(){palettePickTarget=null;$('paletteModal').classList.add('hidden');}
-  function refreshFlagTsa(){for(const fort of [false,true]){const root=$(fort?'fortGrid':'flagGrid');root.innerHTML='';if(!model)continue;const data=model.getFlagTsa(fort);data.forEach((tile,i)=>{const b=document.createElement('button');b.className='flag-tile';const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,0,0,0,4);b.appendChild(cv);b.title=`$${hex(tile)}`;b.addEventListener('click',()=>openFlagChrPicker(fort,Math.floor(i/6),i%6,tile));root.appendChild(b);});}}
+  function refreshFlagTsa(){
+    const stage=currentStage(),baseOk=!!model?.supportsFinalRulesV4&&stage>=1&&stage<=70;
+    $('stageBaseExists').disabled=!baseOk;
+    $('stageBaseExistsLabel').textContent=stage>=1&&stage<=70?`Stage ${stage} 存在老巢`:'当前关卡存在老巢';
+    if(!model){$('stageBaseExists').checked=true;$('stageBaseInfo').textContent='请先打开 ROM。';}
+    else if(!model.supportsFinalRulesV4){$('stageBaseExists').checked=true;$('stageBaseInfo').textContent='每关独立老巢开关需要 QXR1 v4 / Runtime 6.7+；旧 Runtime 始终按原版绘制老巢。';}
+    else if(!baseOk){$('stageBaseExists').checked=true;$('stageBaseInfo').textContent='Demo 不使用 Stage 1~70 的独立老巢设置。';}
+    else{const on=model.getStageBaseExists(stage);$('stageBaseExists').checked=on;$('stageBaseInfo').textContent=on?'ON：本关按原版绘制老巢，并覆盖老巢位置。':'OFF：Runtime 不绘制普通/铁锹老巢；该区域的 13×13 地图数据会正常生效，不再被占位。';}
+    for(const fort of [false,true]){const root=$(fort?'fortGrid':'flagGrid');root.innerHTML='';if(!model)continue;const data=model.getFlagTsa(fort);data.forEach((tile,i)=>{const b=document.createElement('button');b.className='flag-tile';const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,0,0,0,4);b.appendChild(cv);b.title=`$${hex(tile)}`;b.addEventListener('click',()=>openFlagChrPicker(fort,Math.floor(i/6),i%6,tile));root.appendChild(b);});}
+  }
   function openFlagChrPicker(fort,row,col,current){chrPickTarget={flagTsa:true,fort,row,col};$('chrTitle').textContent=`${fort?'Fort':'Flag'} TSA [${row},${col}]`;$('chrHint').textContent=`当前 Tile=$${hex(current)}。`;const grid=$('chrGrid');grid.innerHTML='';for(let tile=0;tile<256;tile++){const b=document.createElement('button');b.className='chr-tile-btn'+(tile===current?' selected':'');const cv=document.createElement('canvas');cv.width=32;cv.height=32;drawChrTile(cv.getContext('2d'),tile,0,0,0,4);const sp=document.createElement('span');sp.textContent=hex(tile);b.append(cv,sp);b.addEventListener('click',()=>{snapshot();model.setFlagTsaTile(fort,row,col,tile);hideChrPicker();markDirty();refreshFlagTsa();setStatus(`${fort?'Fort':'Flag'} TSA = $${hex(tile)}`,'ok');});grid.appendChild(b);}$('chrModal').classList.remove('hidden');}
   const SPAWN_NAMES=[['Enemy1','敌人1'],['Enemy2','敌人2'],['Enemy3','敌人3'],['Player1','玩家1'],['Player2','玩家2']];
   let selectedSpawn='Player1',spawnDrag=null;
+  let customSpawnSelected=0,customSpawnDrag=-1;
 
   function renderSpawnEditor(){
     const cv=$('spawnCanvas');if(!cv)return;const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#181c20';ctx.fillRect(0,0,512,480);if(!model)return;
@@ -1423,10 +1609,59 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
       for(const axis of ['X','Y']){const cell=document.createElement('td'),input=document.createElement('input');input.type='number';input.min='0';input.max='255';input.dataset.spawn=k;input.dataset.axis=axis;input.value=String(p[axis]);input.addEventListener('change',spawnChanged);cell.appendChild(input);tr.appendChild(cell);}tb.appendChild(tr);
     }
     renderSpawnEditor();
+    refreshStagePlayerSpawnSettings();
+    refreshCustomSpawnSettings();
+    refreshStagePacing();
   }
   function spawnChanged(e){if(!model)return;const k=e.target.dataset.spawn,p=model.getSpawn(k),v=Math.max(0,Math.min(255,Number(e.target.value)||0));snapshot();selectedSpawn=k;model.setSpawn(k,e.target.dataset.axis==='X'?v:p.X,e.target.dataset.axis==='Y'?v:p.Y);markDirty();refreshGameSettings();}
   function spawnEventPoint(e){const cv=$('spawnCanvas'),r=cv.getBoundingClientRect();return {X:Math.max(0,Math.min(255,Math.round((e.clientX-r.left)*256/r.width))),Y:Math.max(0,Math.min(239,Math.round((e.clientY-r.top)*240/r.height)))};}
   function spawnHit(p){if(!model)return null;let hit=null,best=1e9;for(const [k] of SPAWN_NAMES){const q=model.getSpawn(k),dx=p.X-q.X,dy=p.Y-q.Y,d=dx*dx+dy*dy;if(Math.abs(dx)<=12&&Math.abs(dy)<=12&&d<best){hit=k;best=d;}}return hit;}
+  let stagePlayerSelected=0,stagePlayerDrag=-1;
+  function stagePlayerSpawnAvailable(){return !!model?.supportsFinalRulesV5&&currentStage()>=1&&currentStage()<=70;}
+  function stagePlayerSnap(v){return Math.max(FINAL_SPAWN_MIN,Math.min(FINAL_SPAWN_MAX,FINAL_SPAWN_MIN+Math.round((Number(v)-FINAL_SPAWN_MIN)/16)*16));}
+  function renderStagePlayerSpawnEditor(){
+    const cv=$('stagePlayerSpawnCanvas'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#181c20';ctx.fillRect(0,0,520,520);
+    if(!stagePlayerSpawnAvailable()){ctx.fillStyle='#c7cbd1';ctx.font='18px Segoe UI';ctx.textAlign='center';ctx.fillText(model?.supportsFinalRulesV5?'Demo 不使用逐关玩家出生点':'需要 QXR1 v5 / Runtime 6.9',260,260);return;}
+    const st=currentStage(),scale=2.5;for(let r=0;r<13;r++)for(let c=0;c<13;c++)drawBlock(ctx,model.getCell(st,r,c),c*16*scale,r*16*scale,scale);ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=1;for(let i=0;i<=13;i++){const v=i*16*scale+.5;ctx.beginPath();ctx.moveTo(v,0);ctx.lineTo(v,520);ctx.stroke();ctx.beginPath();ctx.moveTo(0,v);ctx.lineTo(520,v);ctx.stroke();}
+    for(let i=0;i<2;i++){const tp=i===1,p=model.getStagePlayerSpawn(st,tp),cell=model.getStagePlayerSpawnCell(st,tp),cx=(p.X-0x10)*scale,cy=(p.Y-0x10)*scale,w=16*scale;ctx.globalAlpha=p.IsCustom?0.82:0.42;ctx.fillStyle=cell.id!==0x0D?'#f59e0b':tp?'#22c55e':'#3b82f6';ctx.fillRect(cx-w/2,cy-w/2,w,w);ctx.globalAlpha=1;ctx.strokeStyle=i===stagePlayerSelected?'#fff':'rgba(255,255,255,.9)';ctx.lineWidth=i===stagePlayerSelected?4:2;ctx.setLineDash(p.IsCustom?[]:[6,4]);ctx.strokeRect(cx-w/2+1,cy-w/2+1,w-2,w-2);ctx.setLineDash([]);ctx.fillStyle='#fff';ctx.font='bold 14px Segoe UI';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(tp?'P2':'P1',cx,cy);}
+  }
+  function refreshStagePlayerSpawnSettings(){
+    const available=stagePlayerSpawnAvailable(),ids=['stagePlayerMode1','stagePlayerMode2'];ids.forEach(id=>$(id).disabled=!available);
+    if(!model?.supportsFinalRulesV5){$('stagePlayerSpawnInfo').textContent='逐关 P1/P2 玩家出生点需要 QXR1 v5 / Runtime 6.9。';for(const id of ['stagePlayerX1','stagePlayerY1','stagePlayerX2','stagePlayerY2'])$(id).disabled=true;renderStagePlayerSpawnEditor();return;}
+    if(!available){$('stagePlayerSpawnInfo').textContent='Demo 不使用 Stage 1~70 独立玩家出生点。';for(const id of ['stagePlayerX1','stagePlayerY1','stagePlayerX2','stagePlayerY2'])$(id).disabled=true;renderStagePlayerSpawnEditor();return;}
+    const st=currentStage(),p1=model.getStagePlayerSpawn(st,false),p2=model.getStagePlayerSpawn(st,true);$('stagePlayerMode1').value=p1.IsCustom?'1':'0';$('stagePlayerMode2').value=p2.IsCustom?'1':'0';$('stagePlayerX1').value=p1.X;$('stagePlayerY1').value=p1.Y;$('stagePlayerX2').value=p2.X;$('stagePlayerY2').value=p2.Y;$('stagePlayerX1').disabled=$('stagePlayerY1').disabled=!p1.IsCustom;$('stagePlayerX2').disabled=$('stagePlayerY2').disabled=!p2.IsCustom;const c1=model.getStagePlayerSpawnCell(st,false),c2=model.getStagePlayerSpawnCell(st,true);$('stagePlayerSpawnInfo').textContent=`Stage ${st}：P1 ${p1.IsCustom?'Custom':'Original'} $${hex(p1.X)},$${hex(p1.Y)} / Terrain $${hex(c1.id)}；P2 ${p2.IsCustom?'Custom':'Original'} $${hex(p2.X)},$${hex(p2.Y)} / Terrain $${hex(c2.id)}。拖拽会自动改为 Custom。`;renderStagePlayerSpawnEditor();
+  }
+  function stagePlayerEventPoint(e){const r=$('stagePlayerSpawnCanvas').getBoundingClientRect(),lx=(e.clientX-r.left)*208/r.width,ly=(e.clientY-r.top)*208/r.height;return {X:stagePlayerSnap(lx+0x10),Y:stagePlayerSnap(ly+0x10)};}
+  function stagePlayerNearest(p){if(!stagePlayerSpawnAvailable())return -1;let best=-1,d=Infinity;for(let i=0;i<2;i++){const q=model.getStagePlayerSpawn(currentStage(),i===1),v=(p.X-q.X)**2+(p.Y-q.Y)**2;if(v<d){d=v;best=i;}}return d<=20*20?best:-1;}
+  function setStagePlayerUi(i,x,y,announce=false){if(!stagePlayerSpawnAvailable())return;const nx=stagePlayerSnap(x),ny=stagePlayerSnap(y);model.setStagePlayerSpawn(currentStage(),i===1,nx,ny);stagePlayerSelected=i;markDirty();if(announce){const c=model.getStagePlayerSpawnCell(currentStage(),i===1);$('stagePlayerSpawnCoord').textContent=`P${i+1}: Custom X=$${hex(nx)} Y=$${hex(ny)} · Cell (${c.row+1},${c.col+1}) · Terrain $${hex(c.id)}`;}refreshStagePlayerSpawnSettings();}
+
+  function customSpawnAvailable(){return !!model?.hasFinalRules&&currentStage()>=1&&currentStage()<=70;}
+  function customSpawnSnapCoord(v){v=Math.max(FINAL_SPAWN_MIN,Math.min(FINAL_SPAWN_MAX,v));if(!$('customSpawnSnap').checked)return Math.round(v);return Math.max(FINAL_SPAWN_MIN,Math.min(FINAL_SPAWN_MAX,FINAL_SPAWN_MIN+Math.round((v-FINAL_SPAWN_MIN)/16)*16));}
+  function customSpawnUsage(i){if(!customSpawnAvailable())return '不可用';const a=model.getCustomEnemySpawnCount(currentStage(),false),b=model.getCustomEnemySpawnCount(currentStage(),true),u1=a>0&&i<a,u2=b>0&&i<b;return u1&&u2?'1P / 2P':u1?'1P':u2?'2P':'未使用';}
+  function renderCustomSpawnEditor(){
+    const cv=$('customSpawnCanvas'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#181c20';ctx.fillRect(0,0,520,520);
+    if(!customSpawnAvailable()){ctx.fillStyle='#c7cbd1';ctx.font='18px Segoe UI';ctx.textAlign='center';ctx.fillText(model?.hasFinalRules?'Demo 不使用自定义出生点':'需要 QXR1 Final Rules / Runtime 6.5~6.9',260,260);return;}
+    const st=currentStage(),scale=2.5;
+    for(let r=0;r<13;r++)for(let c=0;c<13;c++)drawBlock(ctx,model.getCell(st,r,c),c*16*scale,r*16*scale,scale);
+    ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=1;for(let i=0;i<=13;i++){const v=i*16*scale+.5;ctx.beginPath();ctx.moveTo(v,0);ctx.lineTo(v,520);ctx.stroke();ctx.beginPath();ctx.moveTo(0,v);ctx.lineTo(520,v);ctx.stroke();}
+    const c1=model.getCustomEnemySpawnCount(st,false),c2=model.getCustomEnemySpawnCount(st,true),show=$('customSpawnShowUnused').checked;
+    for(let i=0;i<8;i++){
+      const u1=c1>0&&i<c1,u2=c2>0&&i<c2;if(!show&&!u1&&!u2)continue;const p=model.getCustomEnemySpawnPoint(st,i),cell=model.getCustomEnemySpawnCell(st,i),cx=(p.X-0x10)*scale,cy=(p.Y-0x10)*scale,w=16*scale;
+      ctx.globalAlpha=(u1||u2)?0.78:0.45;ctx.fillStyle=cell.id!==0x0D?'#f59e0b':u1&&u2?'#3b82f6':u1||u2?'#8b5cf6':'#6b7280';ctx.fillRect(cx-w/2,cy-w/2,w,w);ctx.globalAlpha=1;ctx.strokeStyle=i===customSpawnSelected?'#fff':'rgba(255,255,255,.9)';ctx.lineWidth=i===customSpawnSelected?4:2;ctx.strokeRect(cx-w/2+1,cy-w/2+1,w-2,w-2);ctx.fillStyle='#fff';ctx.font='bold 14px Segoe UI';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('S'+(i+1),cx,cy);
+    }
+  }
+  function refreshCustomSpawnSettings(){
+    const supported=!!model?.hasFinalRules,available=customSpawnAvailable();
+    for(const id of ['customSpawnCount1','customSpawnCount2','customSpawnSnap','customSpawnShowUnused','customSpawnPreset8','customSpawnOriginal'])$(id).disabled=!available;
+    $('customSpawnInfo').textContent=!supported?'当前 ROM 未检测到 QXR1 Final Rules；请使用更新后的 32KB Runtime 6.5~6.9 IPS。':!available?'Demo 不使用 Stage 1~70 自定义敌人出生点。':'1P/2P 各支持 Original 或 1~8；共用 S1~S8 坐标，Count 独立。安全中心坐标 $18~$D8。';
+    const tb=$('customSpawnRows');tb.innerHTML='';
+    if(available){$('customSpawnCount1').value=String(model.getCustomEnemySpawnCount(currentStage(),false));$('customSpawnCount2').value=String(model.getCustomEnemySpawnCount(currentStage(),true));for(let i=0;i<8;i++){const p=model.getCustomEnemySpawnPoint(currentStage(),i),cell=model.getCustomEnemySpawnCell(currentStage(),i),tr=document.createElement('tr');if(i===customSpawnSelected)tr.classList.add('custom-spawn-active');if(cell.id!==0x0D)tr.classList.add('custom-spawn-warning');tr.innerHTML=`<td><button type="button" data-cspawn-select="${i}">S${i+1}</button></td><td><input type="number" min="${FINAL_SPAWN_MIN}" max="${FINAL_SPAWN_MAX}" step="16" data-cspawn-i="${i}" data-axis="X" value="${p.X}"></td><td><input type="number" min="${FINAL_SPAWN_MIN}" max="${FINAL_SPAWN_MAX}" step="16" data-cspawn-i="${i}" data-axis="Y" value="${p.Y}"></td><td>${customSpawnUsage(i)}</td><td class="${cell.id!==0x0D?'warn':''}">$${hex(cell.id)}${cell.id!==0x0D?' ⚠':''}</td>`;tb.appendChild(tr);}tb.querySelectorAll('[data-cspawn-select]').forEach(b=>b.addEventListener('click',()=>{customSpawnSelected=Number(b.dataset.cspawnSelect);refreshCustomSpawnSettings();}));tb.querySelectorAll('[data-cspawn-i]').forEach(inp=>inp.addEventListener('change',()=>{if(!customSpawnAvailable())return;snapshot();const i=Number(inp.dataset.cspawnI),p=model.getCustomEnemySpawnPoint(currentStage(),i),v=customSpawnSnapCoord(Number(inp.value));customSpawnSelected=i;model.setCustomEnemySpawnPoint(currentStage(),i,inp.dataset.axis==='X'?v:p.X,inp.dataset.axis==='Y'?v:p.Y);markDirty();refreshCustomSpawnSettings();}));}
+    renderCustomSpawnEditor();
+  }
+  function customSpawnEventPoint(e){const r=$('customSpawnCanvas').getBoundingClientRect(),lx=(e.clientX-r.left)*208/r.width,ly=(e.clientY-r.top)*208/r.height;return {X:lx+0x10,Y:ly+0x10};}
+  function customSpawnNearest(p){if(!customSpawnAvailable())return -1;let best=-1,d=Infinity;for(let i=0;i<8;i++){const q=model.getCustomEnemySpawnPoint(currentStage(),i),v=(p.X-q.X)**2+(p.Y-q.Y)**2;if(v<d){d=v;best=i;}}return d<=18*18?best:-1;}
+  function setCustomSpawnPointUi(i,x,y,announce=false){if(!customSpawnAvailable())return;const nx=customSpawnSnapCoord(x),ny=customSpawnSnapCoord(y);model.setCustomEnemySpawnPoint(currentStage(),i,nx,ny);customSpawnSelected=i;markDirty();if(announce){const c=model.getCustomEnemySpawnCell(currentStage(),i);$('customSpawnCoord').textContent=`S${i+1}: X=$${hex(nx)} Y=$${hex(ny)} · Cell (${c.row+1},${c.col+1}) · Terrain $${hex(c.id)}${c.id!==0x0D?' · 非空地形，建议确认生成空间':''}`;$('customSpawnCoord').className=c.id!==0x0D?'warn':'ok';}refreshCustomSpawnSettings();}
+
   function setLockFromUi(on){if(!model?.supportsLockInitialState)return;snapshot();try{model.setLockInitialState(on);markDirty();refreshGameSettings();refreshExOptions();refreshInfo();setStatus('锁定初始状态已更新。','ok');}catch(e){setStatus(e.message,'bad');}}
   function exportConfig(){
     if(!model)return;
@@ -1463,6 +1698,15 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     }
   }
 
+  function stagePacingAvailable(){return !!model?.supportsFinalRulesV3&&currentStage()>=1&&currentStage()<=70;}
+  function refreshStagePacing(){
+    const available=stagePacingAvailable(),ids=['pacing1Interval','pacing2Interval','pacing1Active','pacing2Active','pacingStage35','pacingOriginal'];ids.forEach(id=>$(id).disabled=!available);
+    if(!model?.supportsFinalRulesV3){$('stagePacingInfo').textContent='当前 ROM 未检测到 QXR1 v3 / Runtime 6.6；敌人出现节奏表不可编辑。';return;}
+    if(!available){$('stagePacingInfo').textContent='Demo 不使用 Stage 1~70 独立敌人出现节奏。';return;}
+    const st=currentStage();$('pacing1Interval').value=String(model.getEnemySpawnInterval(st,false));$('pacing2Interval').value=String(model.getEnemySpawnInterval(st,true));$('pacing1Active').value=String(model.getMaxActiveEnemies(st,false));$('pacing2Active').value=String(model.getMaxActiveEnemies(st,true));
+    $('stagePacingInfo').textContent=`Stage ${st}：1P ${$('pacing1Interval').value} 帧 / 同时 ${$('pacing1Active').value}；2P ${$('pacing2Interval').value} 帧 / 同时 ${$('pacing2Active').value}。间隔越小越快。`;
+  }
+
   function refreshExOptions() {
     const hasV2=!!model?.hasExV2Config, supportsPickup=!!model?.supportsEnemyPowerUpPickup;
     featureBindings.forEach(([id,flag])=>{
@@ -1477,6 +1721,14 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     else if(model.isOriginal)$('exInfo').textContent='Battle City 原版 ROM：没有 BCEX v2 配置块，Ex 功能不可用。';
     else if(!hasV2)$('exInfo').textContent='Legacy Ex ROM：未检测到 BCEX v2 配置块。高级功能不能只写 Flag，必须使用带对应运行程序的 BCEX v2 ROM。';
     else $('exInfo').textContent=`BCEX v2 / FeatureFlags=$${hex(model.featureFlags)}。${model.supportsBonusReplaceAlways?' 闪光坦克奖励=立即替换当前道具（固定）。':''}${model.supportsPlayerFastMove?' 支持我方坦克加速移动。':''}${supportsPickup?` EnemyItemFlags=$${hex(model.enemyItemFlags)}。`:''}`;
+    refreshFinalRules();
+  }
+
+  function refreshFinalRules(){
+    const on=!!model?.hasFinalRules;for(const id of ['ruleSkipGameOver','ruleBonus2P','ruleArmor','ruleLifeMode','ruleLifeValue'])$(id).disabled=!on;const v3=!!model?.supportsFinalRulesV3;for(const id of ['ruleCheatLives1','ruleCheatLives2'])$(id).disabled=!v3;
+    if(!on){$('finalRulesInfo').textContent='当前 ROM 未检测到 QXR1 Final Rules / Runtime 6.5~6.9。';$('ruleCheatInfo').textContent='A+B+Start 独立秘籍命数需要 QXR1 v3 / Runtime 6.6。';return;}
+    $('ruleSkipGameOver').checked=model.skipFinalGameOver;$('ruleBonus2P').value=String(model.twoPlayerBonusMode);$('ruleArmor').value=String(model.armoredTankMode);$('ruleLifeMode').value=String(model.extraLifeMode);$('ruleLifeValue').value=String(model.extraLifeValue);$('ruleLifeValue').disabled=![1,2].includes(model.extraLifeMode);if(v3){$('ruleCheatLives1').value=String(model.cheatPlayer1Lives);$('ruleCheatLives2').value=String(model.cheatPlayer2Lives);$('ruleCheatInfo').textContent='标题画面按住 A+B 再按 Start：使用这里的 1P/2P 独立秘籍命数；普通 Start 使用普通起始命数。';}else $('ruleCheatInfo').textContent='A+B+Start 独立秘籍命数需要 QXR1 v3 / Runtime 6.6。';
+    $('finalRulesInfo').textContent=`QXR1 v${model.finalRulesVersion} / Runtime ${model.finalRulesVersion>=5?'6.9.1':model.finalRulesVersion>=4?'6.7/6.8':model.finalRulesVersion>=3?'6.6':'6.5'} / Skip=${model.skipFinalGameOver?'ON':'OFF'} / ExtraLife=${model.extraLifeMode}:${model.extraLifeValue}×10000 / 2P=${model.twoPlayerBonusMode?'Win Streak':'Original'} / Armor=${model.armoredTankMode?'One Hit':'Original'}`;
   }
 
   function featureChanged(id,flag) {
@@ -1513,7 +1765,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     if(!model)return;const rc=mapRC(e),key=`${rc.r},${rc.c}`;if(key===lastPaintCell)return;lastPaintCell=key;
     try{
       const converted=model.setCell(currentStage(),rc.r,rc.c,selectedTerrain);if(converted){clearCaches();populateStages(currentStage());refreshTSA();refreshExOptions();refreshInfo();refreshBadge();$('convertOverlayBtn').disabled=true;setStatus('已自动转换为32KB Legacy Overlay；请保存新的 ROM。','ok');}
-      markDirty();renderMap();
+      markDirty();renderMap();renderSpawnEditor();refreshStagePlayerSpawnSettings();refreshCustomSpawnSettings();
     }catch(err){setStatus(err.message,'bad');}
   }
 
@@ -1572,16 +1824,48 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     return await saveAsRom();
   }
 
+  let unsavedResolve=null;
+  function finishUnsavedPrompt(choice){
+    if(!unsavedResolve)return;
+    const resolve=unsavedResolve;unsavedResolve=null;$('unsavedModal').classList.add('hidden');resolve(choice);
+  }
+  function promptUnsavedChoice(){
+    if(!dirty||!model)return Promise.resolve('discard');
+    return new Promise(resolve=>{unsavedResolve=resolve;$('unsavedModal').classList.remove('hidden');$('unsavedSave').focus();});
+  }
+  async function prepareForRomReplacement(){
+    if(!dirty||!model)return true;
+    const choice=await promptUnsavedChoice();
+    if(choice==='cancel')return false;
+    if(choice==='discard')return true;
+    return await saveRom();
+  }
+
   async function openRom(){
-    if(dirty&&!confirm('当前 ROM 有未保存修改。仍要切换 ROM 吗？'))return;
+    if(!await prepareForRomReplacement())return;
     if(window.showOpenFilePicker&&window.isSecureContext){
       try{
         const [handle]=await window.showOpenFilePicker({multiple:false,types:[{description:'NES ROM',accept:{'application/octet-stream':['.nes']}}]});
         if(!handle)return;
         const file=await handle.getFile();await loadFile(file,handle);return;
-      }catch(err){if(err?.name==='AbortError')return;}
+      }catch(err){if(err?.name==='AbortError')return;setStatus('打开 ROM 失败：'+err.message,'bad');return;}
     }
     $('fileInput').click();
+  }
+
+  function isFileDrag(dt){return !!dt&&Array.from(dt.types||[]).includes('Files');}
+  function showDropOverlay(show){$('dropOverlay').classList.toggle('show',!!show);$('dropOverlay').setAttribute('aria-hidden',show?'false':'true');}
+  async function openDroppedRom(dt){
+    const items=Array.from(dt?.items||[]);
+    const item=items.find(x=>x.kind==='file'&&/\.nes$/i.test(x.getAsFile()?.name||''));
+    let file=item?.getAsFile()||Array.from(dt?.files||[]).find(f=>/\.nes$/i.test(f.name||''))||null;
+    let handle=null;
+    if(item&&typeof item.getAsFileSystemHandle==='function'){
+      try{const h=await item.getAsFileSystemHandle();if(h?.kind==='file'){handle=h;file=await h.getFile();}}catch{}
+    }
+    if(!file){setStatus('拖入的文件不是 .nes ROM。','warn');return;}
+    if(!await prepareForRomReplacement()){setStatus('已取消打开拖入的 ROM。','warn');return;}
+    await loadFile(file,handle);
   }
 
   function convertOverlay() {
@@ -1599,7 +1883,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   function hideHelp(){$('helpModal').classList.add('hidden');}
   function showAbout(){
     $('helpTitle').textContent='关于 Quarrel Ex Web';
-    $('helpText').textContent='Quarrel Ex Web v1.6.0\n\n本地浏览器版 Battle City / Battle City Ex 编辑器。\n新增：Original / Ex 均可编辑 Demo 地图；统一 Title + Game Over Screen Editor，可编辑原生 8×8 字符串与 32×32 放大字形源。\n正式版文件操作：仅支持 QuarrelExConfig v3；配置导入先完整校验并事务式应用；加入撤销/重做，以及完善的保存/另存为。Config v3 包含完整关卡地图、Demo、Title/Game Over 画面元素、Enemy Type/Count/Total、调色板、TSA、Flag TSA、出生位置与全局设置。\n\n支持 Original16K / Ex16K / Legacy 32KB Overlay / BCEX v2 32KB 70-map。\nROM 数据只在本机浏览器内处理。';
+    $('helpText').textContent='Quarrel Ex Web v1.6.6\n\n本地浏览器版 Battle City / Battle City Ex 编辑器。\n当前功能：Web 拖拽打开 .nes ROM，并在未保存状态下提供保存/不保存/取消流程；Runtime 6.9.2 / QXR1 v5 支持 Stage 1~70 独立 P1/P2 玩家出生点、逐关 EnemyPacing/BaseExists、Final Rules、秘籍命数、1~8 自定义敌人出生点、装甲 One Hit、自动闪光坦克与道具修复；同时保留原版 Demo 逻辑并修正 Skip ON 返回标题前的关卡画面闪帧。\n正式版文件操作：仅支持 QuarrelExConfig v3；配置导入先完整校验并事务式应用；加入撤销/重做，以及完善的保存/另存为。Config v3 包含完整关卡地图、Demo、Title/Game Over 画面元素、Enemy Type/Count/Total、调色板、TSA、Flag TSA、原版出生位置；支持 QXR1 的 ROM 还会保存 FinalRules、每关 EnemySpawn、EnemyPacing、秘籍命数与 BaseExists；QXR1 v5 额外保存每关 P1/P2 PlayerSpawn。\n\n支持 Original16K / Ex16K / Legacy 32KB Overlay / BCEX v2 32KB 70-map。\nROM 数据只在本机浏览器内处理。';
     $('helpModal').classList.remove('hidden');closeMenus();
   }
 
@@ -1610,25 +1894,58 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   $('startingLives').addEventListener('change',()=>{if(!model)return;snapshot();model.setStartingLives($('startingLives').value);markDirty();refreshGameSettings();});
   $('initialLevel').addEventListener('change',()=>{if(!model)return;snapshot();model.setInitialTankLevel($('initialLevel').value);markDirty();refreshGameSettings();});
   $('lockInitialSettings').addEventListener('change',()=>setLockFromUi($('lockInitialSettings').checked));
+  for(const [id,tp] of [['stagePlayerMode1',false],['stagePlayerMode2',true]])$(id).addEventListener('change',()=>{if(!stagePlayerSpawnAvailable())return;snapshot();if(Number($(id).value)===0)model.setStagePlayerSpawnOriginal(currentStage(),tp);else{const p=model.getStagePlayerSpawn(currentStage(),tp);if(!p.IsCustom)model.setStagePlayerSpawn(currentStage(),tp,p.X,p.Y);}markDirty();refreshStagePlayerSpawnSettings();});
+  for(const [id,tp,axis] of [['stagePlayerX1',false,'X'],['stagePlayerY1',false,'Y'],['stagePlayerX2',true,'X'],['stagePlayerY2',true,'Y']])$(id).addEventListener('change',()=>{if(!stagePlayerSpawnAvailable())return;snapshot();const p=model.getStagePlayerSpawn(currentStage(),tp),v=stagePlayerSnap(Number($(id).value));model.setStagePlayerSpawn(currentStage(),tp,axis==='X'?v:p.X,axis==='Y'?v:p.Y);markDirty();refreshStagePlayerSpawnSettings();});
+
+  $('customSpawnCount1').addEventListener('change',()=>{if(!customSpawnAvailable())return;snapshot();model.setCustomEnemySpawnCount(currentStage(),false,Number($('customSpawnCount1').value));markDirty();refreshCustomSpawnSettings();});
+  $('customSpawnCount2').addEventListener('change',()=>{if(!customSpawnAvailable())return;snapshot();model.setCustomEnemySpawnCount(currentStage(),true,Number($('customSpawnCount2').value));markDirty();refreshCustomSpawnSettings();});
+  $('customSpawnSnap').addEventListener('change',renderCustomSpawnEditor);
+  $('customSpawnShowUnused').addEventListener('change',renderCustomSpawnEditor);
+  $('customSpawnPreset8').addEventListener('click',()=>{if(!customSpawnAvailable())return;snapshot();model.setDefaultEightCustomEnemySpawns(currentStage());customSpawnSelected=0;markDirty();refreshCustomSpawnSettings();});
+  $('customSpawnOriginal').addEventListener('click',()=>{if(!customSpawnAvailable())return;snapshot();model.setCustomEnemySpawnCount(currentStage(),false,0);model.setCustomEnemySpawnCount(currentStage(),true,0);markDirty();refreshCustomSpawnSettings();});
+  $('ruleSkipGameOver').addEventListener('change',()=>{if(!model?.hasFinalRules)return;snapshot();model.setSkipFinalGameOver($('ruleSkipGameOver').checked);markDirty();refreshFinalRules();refreshInfo();});
+  $('ruleBonus2P').addEventListener('change',()=>{if(!model?.hasFinalRules)return;snapshot();model.setTwoPlayerBonusMode(Number($('ruleBonus2P').value));markDirty();refreshFinalRules();refreshInfo();});
+  $('ruleArmor').addEventListener('change',()=>{if(!model?.hasFinalRules)return;snapshot();model.setArmoredTankMode(Number($('ruleArmor').value));markDirty();refreshFinalRules();refreshInfo();});
+  $('stageBaseExists').addEventListener('change',()=>{if(!model?.supportsFinalRulesV4||currentStage()<1||currentStage()>70)return;snapshot();model.setStageBaseExists(currentStage(),$('stageBaseExists').checked);markDirty();refreshFlagTsa();refreshInfo();renderMap();refreshGameSettings();});
+  $('ruleLifeMode').addEventListener('change',()=>{if(!model?.hasFinalRules)return;snapshot();model.setExtraLifeMode(Number($('ruleLifeMode').value));markDirty();refreshFinalRules();refreshInfo();});
+  $('ruleLifeValue').addEventListener('change',()=>{if(!model?.hasFinalRules)return;snapshot();model.setExtraLifeValue(Number($('ruleLifeValue').value));markDirty();refreshFinalRules();refreshInfo();});
+  $('ruleCheatLives1').addEventListener('change',()=>{if(!model?.supportsFinalRulesV3)return;snapshot();model.setCheatPlayer1Lives(Number($('ruleCheatLives1').value));markDirty();refreshFinalRules();refreshInfo();});
+  $('ruleCheatLives2').addEventListener('change',()=>{if(!model?.supportsFinalRulesV3)return;snapshot();model.setCheatPlayer2Lives(Number($('ruleCheatLives2').value));markDirty();refreshFinalRules();refreshInfo();});
+  $('pacing1Interval').addEventListener('change',()=>{if(!stagePacingAvailable())return;snapshot();model.setEnemySpawnInterval(currentStage(),false,Number($('pacing1Interval').value));markDirty();refreshStagePacing();refreshInfo();});
+  $('pacing2Interval').addEventListener('change',()=>{if(!stagePacingAvailable())return;snapshot();model.setEnemySpawnInterval(currentStage(),true,Number($('pacing2Interval').value));markDirty();refreshStagePacing();refreshInfo();});
+  $('pacing1Active').addEventListener('change',()=>{if(!stagePacingAvailable())return;snapshot();model.setMaxActiveEnemies(currentStage(),false,Number($('pacing1Active').value));markDirty();refreshStagePacing();refreshInfo();});
+  $('pacing2Active').addEventListener('change',()=>{if(!stagePacingAvailable())return;snapshot();model.setMaxActiveEnemies(currentStage(),true,Number($('pacing2Active').value));markDirty();refreshStagePacing();refreshInfo();});
+  $('pacingStage35').addEventListener('click',()=>{if(!stagePacingAvailable())return;snapshot();model.setStage35EnemyPacingPreset(currentStage());markDirty();refreshStagePacing();refreshInfo();});
+  $('pacingOriginal').addEventListener('click',()=>{if(!stagePacingAvailable())return;snapshot();model.setOriginalEnemyPacingPreset(currentStage());markDirty();refreshStagePacing();refreshInfo();});
   $('fLockInitial').addEventListener('change',()=>setLockFromUi($('fLockInitial').checked));
-  $('clearStageBtn').addEventListener('click',()=>{if(!model||!confirm('确定清空当前关卡为 $0D 空白吗？'))return;snapshot();model.clearStage(currentStage());markDirty();renderMap();});
-  $('clearAllBtn').addEventListener('click',()=>{if(!model||!confirm('确定清空全部可编辑关卡吗？'))return;snapshot();model.clearAllStages();markDirty();renderMap();});
+  $('clearStageBtn').addEventListener('click',()=>{if(!model||!confirm('确定清空当前关卡为 $0D 空白吗？'))return;snapshot();model.clearStage(currentStage());markDirty();renderMap();renderSpawnEditor();refreshStagePlayerSpawnSettings();refreshCustomSpawnSettings();});
+  $('clearAllBtn').addEventListener('click',()=>{if(!model||!confirm('确定清空全部可编辑关卡吗？'))return;snapshot();model.clearAllStages();markDirty();renderMap();renderSpawnEditor();refreshStagePlayerSpawnSettings();refreshCustomSpawnSettings();});
   $('exportConfigBtn').addEventListener('click',exportConfig);$('importConfigBtn').addEventListener('click',()=>$('configInput').click());$('configInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f)importConfigFile(f);e.target.value='';});
 
   // Build enemy-effect controls once.
   enemyEffects.forEach(([flag,label])=>{
     const line=document.createElement('label');line.className='checkline';const cb=document.createElement('input');cb.type='checkbox';cb.dataset.effect=String(flag);cb.disabled=true;cb.addEventListener('change',()=>enemyEffectChanged(cb,flag));line.append(cb,document.createTextNode(label));$('enemyEffects').appendChild(line);
   });
+  for(const id of ['customSpawnCount1','customSpawnCount2']){const el=$(id);el.add(new Option('Original (3)','0'));for(let n=1;n<=8;n++)el.add(new Option(String(n),String(n)));}
 
   featureBindings.forEach(([id,flag])=>$(id).addEventListener('change',()=>featureChanged(id,flag)));
   $('presetOriginal').addEventListener('click',()=>applyPreset(0x00,'已切换为原版行为预设。'));
   $('presetRecommended').addEventListener('click',()=>applyPreset(0xA7,'已应用推荐 Ex 预设（$A7；加速移动默认关闭，可单独开启）。'));
 
   $('openBtn').addEventListener('click',openRom);$('fileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f)loadFile(f,null);e.target.value='';});
+  $('unsavedSave').addEventListener('click',()=>finishUnsavedPrompt('save'));
+  $('unsavedDiscard').addEventListener('click',()=>finishUnsavedPrompt('discard'));
+  $('unsavedCancel').addEventListener('click',()=>finishUnsavedPrompt('cancel'));
+  $('unsavedModal').addEventListener('click',e=>{if(e.target===$('unsavedModal'))finishUnsavedPrompt('cancel');});
+  document.addEventListener('dragenter',e=>{if(isFileDrag(e.dataTransfer)){e.preventDefault();showDropOverlay(true);}});
+  document.addEventListener('dragover',e=>{if(isFileDrag(e.dataTransfer)){e.preventDefault();e.dataTransfer.dropEffect='copy';showDropOverlay(true);}});
+  document.addEventListener('dragleave',e=>{if(!e.relatedTarget)showDropOverlay(false);});
+  document.addEventListener('drop',e=>{if(!isFileDrag(e.dataTransfer))return;e.preventDefault();showDropOverlay(false);openDroppedRom(e.dataTransfer);});
+  window.addEventListener('blur',()=>showDropOverlay(false));
   $('saveBtn').addEventListener('click',saveRom);$('saveAsBtn').addEventListener('click',saveAsRom);$('undoBtn').addEventListener('click',undo);$('redoBtn').addEventListener('click',redo);
   $('convertOverlayBtn').addEventListener('click',()=>{closeMenus();convertOverlay();});
   $('validateBtn').addEventListener('click',()=>{closeMenus();if(!model)return;try{model.validate();refreshAll();setStatus('ROM 结构重新检查通过。','ok');}catch(err){setStatus(err.message,'bad');}});
-  $('stageSelect').addEventListener('change',()=>{renderMap();buildTerrain();refreshEnemy();refreshGameSettings();});
+  $('stageSelect').addEventListener('change',()=>{renderMap();buildTerrain();refreshEnemy();refreshGameSettings();refreshFlagTsa();});
   document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tabpane').forEach(x=>x.classList.add('hidden'));b.classList.add('active');$(b.dataset.tab).classList.remove('hidden');}));
   document.querySelectorAll('[data-help]').forEach(b=>b.addEventListener('click',()=>showHelp(b.dataset.help)));
   document.querySelectorAll('[data-about]').forEach(b=>b.addEventListener('click',showAbout));
@@ -1639,6 +1956,18 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   $('spawnCanvas').addEventListener('pointermove',e=>{if(!model||!spawnDrag)return;const p=spawnEventPoint(e);model.setSpawn(spawnDrag,p.X,p.Y);markDirty();const rowInputs=document.querySelectorAll(`[data-spawn="${spawnDrag}"]`);rowInputs.forEach(i=>i.value=String(model.getSpawn(spawnDrag)[i.dataset.axis]));renderSpawnEditor();});
   $('spawnCanvas').addEventListener('pointerup',()=>{spawnDrag=null;refreshGameSettings();});
   $('spawnCanvas').addEventListener('pointercancel',()=>{spawnDrag=null;refreshGameSettings();});
+  $('stagePlayerSpawnCanvas').addEventListener('pointerdown',e=>{if(!stagePlayerSpawnAvailable()||e.button!==0)return;const p=stagePlayerEventPoint(e);let i=stagePlayerNearest(p);if(i<0)i=stagePlayerSelected;snapshot();stagePlayerDrag=i;stagePlayerSelected=i;$('stagePlayerSpawnCanvas').setPointerCapture(e.pointerId);setStagePlayerUi(i,p.X,p.Y,false);});
+  $('stagePlayerSpawnCanvas').addEventListener('pointermove',e=>{if(!stagePlayerSpawnAvailable()||stagePlayerDrag<0)return;const p=stagePlayerEventPoint(e);setStagePlayerUi(stagePlayerDrag,p.X,p.Y,false);});
+  $('stagePlayerSpawnCanvas').addEventListener('pointerup',()=>{if(stagePlayerDrag>=0&&stagePlayerSpawnAvailable()){const p=model.getStagePlayerSpawn(currentStage(),stagePlayerDrag===1);setStagePlayerUi(stagePlayerDrag,p.X,p.Y,true);}stagePlayerDrag=-1;});
+  $('stagePlayerSpawnCanvas').addEventListener('pointercancel',()=>{stagePlayerDrag=-1;refreshStagePlayerSpawnSettings();});
+  $('stagePlayerSpawnCanvas').tabIndex=0;$('stagePlayerSpawnCanvas').addEventListener('keydown',e=>{if(!stagePlayerSpawnAvailable()||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();snapshot();const p=model.getStagePlayerSpawn(currentStage(),stagePlayerSelected===1);let x=p.X,y=p.Y;if(e.key==='ArrowLeft')x-=16;if(e.key==='ArrowRight')x+=16;if(e.key==='ArrowUp')y-=16;if(e.key==='ArrowDown')y+=16;setStagePlayerUi(stagePlayerSelected,x,y,true);});
+
+  $('customSpawnCanvas').addEventListener('pointerdown',e=>{if(!customSpawnAvailable()||e.button!==0)return;const p=customSpawnEventPoint(e);let i=customSpawnNearest(p);if(i<0)i=customSpawnSelected;snapshot();customSpawnDrag=i;customSpawnSelected=i;$('customSpawnCanvas').setPointerCapture(e.pointerId);setCustomSpawnPointUi(i,p.X,p.Y,false);});
+  $('customSpawnCanvas').addEventListener('pointermove',e=>{if(!customSpawnAvailable()||customSpawnDrag<0)return;const p=customSpawnEventPoint(e);setCustomSpawnPointUi(customSpawnDrag,p.X,p.Y,false);});
+  $('customSpawnCanvas').addEventListener('pointerup',e=>{if(customSpawnDrag>=0&&customSpawnAvailable()){const p=model.getCustomEnemySpawnPoint(currentStage(),customSpawnDrag);setCustomSpawnPointUi(customSpawnDrag,p.X,p.Y,true);}customSpawnDrag=-1;});
+  $('customSpawnCanvas').addEventListener('pointercancel',()=>{customSpawnDrag=-1;refreshCustomSpawnSettings();});
+  $('customSpawnCanvas').tabIndex=0;
+  $('customSpawnCanvas').addEventListener('keydown',e=>{if(!customSpawnAvailable()||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();snapshot();const p=model.getCustomEnemySpawnPoint(currentStage(),customSpawnSelected),step=16;let x=p.X,y=p.Y;if(e.key==='ArrowLeft')x-=step;if(e.key==='ArrowRight')x+=step;if(e.key==='ArrowUp')y-=step;if(e.key==='ArrowDown')y+=step;setCustomSpawnPointUi(customSpawnSelected,x,y,true);});
 
   $('map').addEventListener('contextmenu',e=>{e.preventDefault();if(!model)return;const rc=mapRC(e),id=model.getCell(currentStage(),rc.r,rc.c);if(!model.selectableTerrainIdsForStage(currentStage()).includes(id)){setStatus(`地形 $${hex(id)} 为内部保留值，未吸取。`,'warn');return;}selectedTerrain=id;buildTerrain();});
   $('map').addEventListener('pointerdown',e=>{if(!model||e.button!==0)return;snapshot();painting=true;lastPaintCell='';$('map').setPointerCapture(e.pointerId);paintAt(e);});
@@ -1656,7 +1985,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     else if(mod&&k==='s'){e.preventDefault();saveRom();}
     else if(e.key==='F1'&&e.shiftKey){e.preventDefault();showHelp('en');}
     else if(e.key==='F1'){e.preventDefault();showHelp('zh');}
-    else if(e.key==='Escape'){hideHelp();hideChrPicker();hidePalettePicker();}
+    else if(e.key==='Escape'){if(!$('unsavedModal').classList.contains('hidden'))finishUnsavedPrompt('cancel');else{hideHelp();hideChrPicker();hidePalettePicker();}}
   });
   window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
   document.addEventListener('click',e=>{if(!e.target.closest('details.menu'))closeMenus();});

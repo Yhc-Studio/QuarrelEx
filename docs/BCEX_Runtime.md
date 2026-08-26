@@ -1,47 +1,55 @@
-# BCEX runtime format
+# BCEX 32KB Runtime 6.9.2
 
-## ExFeatureFlags ($EF7A)
+Current QuarrelEx 32KB runtime: **Runtime 6.9.2 / QXR1 v5**.
 
-| Bit | Mask | Feature |
-|---:|---:|---|
-| 0 | `$01` | Hold B auto-fire |
-| 1 | `$02` | Pistol + Lv4 system |
-| 2 | `$04` | Downgrade one level when hit |
-| 3 | `$08` | Faster player movement (r6.2+) |
-| 4 | `$10` | Randomize enemy spawn order |
-| 5 | `$20` | Lv4 bullets can remove forest |
-| 6 | `$40` | Enemy can pick up power-ups (32KB) |
-| 7 | `$80` | Disable friendly fire |
+## Current feature set
 
-## EnemyItemFlags ($EF7B)
+- 70 independent maps.
+- Enemy totals up to 255.
+- Extended terrain/TSA editing.
+- Original player/enemy spawn editing.
+- Stage 1-70 custom 1-8 enemy spawn points.
+- Stage 1-70 independent P1/P2 player spawn positions.
+- Stage 1-70 independent P1/P2 enemy spawn interval and maximum active count.
+- Stage 1-70 BaseExists.
+- A+B+Start configurable cheat lives.
+- Final GAME OVER Skip.
+- Score extra-life modes.
+- 2P Original / Win-Streak.
+- Armored Original / One-Hit.
+- Automatic flashing tanks stay at spawn #4/#11/#18 even when EnemyTotal > 20.
+- A new flashing tank does not forcibly remove an existing item.
+- Correct next-stage terrain/setup state.
+- Skip ON uses the correct GAME OVER cleanup path and does not flash the stage map.
+- Demo uses original/global player spawn, original enemy spawn cycle and original Stage-30 pacing.
+- Demo preserves the original near-HQ no-fire behavior even when Hold-B auto fire is enabled.
 
-| Bit | Mask | Enemy power-up effect |
-|---:|---:|---|
-| 0 | `$01` | Helmet |
-| 1 | `$02` | Clock |
-| 2 | `$04` | Shovel |
-| 3 | `$08` | Star |
-| 4 | `$10` | Grenade |
-| 5 | `$20` | Tank |
-| 6 | `$40` | Pistol |
-| 7 | `$80` | Lock initial player state after an actual death |
+## QXR1 v5 compact stage layout
 
-## LayoutFlags
+```text
+$BE60-$BEA5  Stage 1-70 1P enemy interval
+$BEA6-$BEEB  Stage 1-70 2P enemy interval
+$BEEC-$BF31  Packed stage rules
+$BF32-$BF77  Stage 1-70 P1 player spawn
+$BF78-$BFBD  Stage 1-70 P2 player spawn
+```
 
-| Bit | Meaning |
-|---:|---|
-| 0 | 70 independent maps |
-| 1 | 1-255 custom enemy total |
-| 2 | Extended terrain through `$1F` |
-| 3 | 64 terrain entries through `$3F` |
-| 4 | Locked initial state runtime support |
-| 5 | Bonus tank always replaces the current power-up |
-| 6 | Faster player movement runtime support |
+Packed stage rule:
 
-Current 16KB runtime uses LayoutFlags `$76`; current 32KB runtime uses `$7F`.
+```text
+bits 7-5 = 1P enemy limit (MaxActive + 1)
+bit  4   = BaseExists
+bit  3   = reserved
+bits 2-0 = 2P enemy limit (MaxActive + 1)
+```
 
-## Notes
+Player spawn byte:
 
-- 16KB maps retain legacy storage constraints; the 32KB format is the preferred long-term format for custom terrain and independent Stage 36-70 maps.
-- 32KB runtime r6.4.1 fixes enemy Star steel-breaking behavior, enemy Grenade explosion SFX, and the erroneous branch into `$B54B`.
-- Config v3 is unchanged by r6.3/r6.4.1.
+```text
+$FF = Original/global spawn
+high nibble = X grid index 0..12
+low nibble  = Y grid index 0..12
+X/Y = $18 + index * $10
+```
+
+Config remains **QuarrelExConfig v3**.

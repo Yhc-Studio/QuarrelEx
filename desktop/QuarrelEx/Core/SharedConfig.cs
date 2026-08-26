@@ -25,6 +25,44 @@ public sealed class GameplayConfig
     public int? FeatureFlags { get; set; }
     public int? EnemyItemFlags { get; set; }
     public Dictionary<string, SpawnPointConfig> Spawns { get; set; } = new();
+    // Optional Config v3 extension used by BCEX 32KB runtime 6.5 Final Rules.
+    // Older v3 files omit this field and keep the target ROM's current values.
+    public FinalRulesConfig? FinalRules { get; set; }
+}
+
+public sealed class FinalRulesConfig
+{
+    public bool SkipFinalGameOver { get; set; }
+    public int ExtraLifeMode { get; set; }
+    public int ExtraLifeValue { get; set; } = 2;
+    public int TwoPlayerBonusMode { get; set; }
+    public int ArmoredTankMode { get; set; }
+    // Optional Runtime 6.6 / QXR1 v3 extension. Null keeps the target ROM value.
+    public int? CheatPlayer1Lives { get; set; }
+    public int? CheatPlayer2Lives { get; set; }
+}
+
+public sealed class EnemySpawnConfig
+{
+    public int Player1Count { get; set; }
+    public int Player2Count { get; set; }
+    public List<SpawnPointConfig> Points { get; set; } = Enumerable.Range(0, 8)
+        .Select(_ => new SpawnPointConfig()).ToList();
+}
+
+public sealed class EnemyPacingConfig
+{
+    public int Player1IntervalFrames { get; set; }
+    public int Player2IntervalFrames { get; set; }
+    public int Player1MaxActive { get; set; }
+    public int Player2MaxActive { get; set; }
+}
+
+public sealed class StagePlayerSpawnConfig
+{
+    // null = use the original/global player spawn position.
+    public SpawnPointConfig? Player1 { get; set; }
+    public SpawnPointConfig? Player2 { get; set; }
 }
 
 public sealed class SpawnPointConfig
@@ -57,6 +95,17 @@ public sealed class StageConfig
     public int[] EnemyCounts { get; set; } = new int[4];
     // Redundant by design for integrity checking. Must equal sum(EnemyCounts).
     public int EnemyTotal { get; set; }
+    // Optional Config v3 extension for per-stage 1P/2P custom enemy spawn points.
+    public EnemySpawnConfig? EnemySpawn { get; set; }
+    // Optional Runtime 6.6 / QXR1 v3 per-stage enemy appearance pacing.
+    public EnemyPacingConfig? EnemyPacing { get; set; }
+    // Optional Runtime 6.7 / QXR1 v4 extension. When false the runtime does not
+    // draw/protect the HQ, so the 13x13 map data underneath remains active.
+    public bool? BaseExists { get; set; }
+    // Optional Runtime 6.9.2 / QXR1 v5 extension. A null Player1/Player2 inside
+    // this object means that player uses the original/global spawn position.
+    // If PlayerSpawn itself is absent, older Config v3 files preserve the target ROM.
+    public StagePlayerSpawnConfig? PlayerSpawn { get; set; }
 }
 
 public sealed class ConfigValidationResult

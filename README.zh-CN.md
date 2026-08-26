@@ -1,53 +1,73 @@
 # QuarrelEx
 
-![Version](https://img.shields.io/badge/release-v1.1-blue)
+![Version](https://img.shields.io/badge/release-v1.1.6-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Web-0aa0c0)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-**QuarrelEx** 是一个面向《Battle City / 坦克大战》的现代关卡与 ROM 编辑器，同时提供 Windows 桌面端与 Web 端。项目沿用了原 Quarrel 编辑器的工作思路，并加入 BCEX 扩展 ROM、70 关、TSA/CHR 可视化编辑、调色板、游戏规则、Config v3、撤销/重做等功能。
+**QuarrelEx** 是一个面向《Battle City / 坦克大战》的 ROM 与关卡编辑器，同时提供 Windows 桌面端与 Web 端。当前版本把 70 关 BCEX、TSA/CHR 可视化、游戏规则、拖拽打开、Config v3，以及 32KB Runtime 的参数统一到同一套编辑流程中。
 
 [English](README.md)
 
-> **本仓库不包含《Battle City》ROM 本体。** 仓库中的 IPS 仅用于用户自己合法取得的、校验值完全匹配的基础 ROM。
+> **本仓库不包含游戏 ROM 本体。** IPS 需要用户自己合法取得、并且校验值匹配的基础 ROM。
 
-## 当前正式版本
+## 当前版本
 
 | 组件 | 版本 |
 |---|---:|
-| Desktop 桌面端 | 1.1 |
-| Web 网页端 | 1.6.0 |
-| 通用配置格式 | QuarrelExConfig v3 |
-| 16KB BCEX Runtime | 内部修订 6.3 |
-| 32KB BCEX Runtime | 内部修订 6.4.1 |
-
-当前编辑器正式版本为 **QuarrelEx v1.1**；BCEX Runtime 本身相对 v1.0 没有改动。
+| QuarrelEx | 1.1.6 |
+| Desktop | 1.1.6 |
+| Web | 1.6.6 |
+| Config | QuarrelExConfig v3 |
+| 32KB BCEX Runtime | Runtime 6.9.2 / QXR1 v5 |
 
 ## 主要功能
 
-- 支持原版 Battle City，以及 BCEX 16KB / 32KB 格式。
-- Stage 1~70；32KB 版本为 70 张真正独立地图；所有支持的 ROM 模式现在都额外显示并可编辑 Demo 地图。
-- 每关 4 组 Enemy Type / Count；支持的 BCEX ROM 可将敌人总数设为 **1~255**。
-- TSA/属性可视化编辑：Attr 只能选择 `0~3`，TL/TR/BL/BR 直接从 `$00~$FF` CHR Tile 中选择。
-- 扩展地形：16KB 到 `$00~$1F`；32KB 到 `$00~$3F`，包含额外自定义槽。
-- 调色板编辑器、Flag/Fort TSA Editor。
-- 统一 Title + Game Over Screen Editor：普通字符串按原生 8×8 CHR Tile 编辑；BATTLE/CITY/GAME/OVER 的原版 32×32 放大字形按完整源字形槽编辑。
-- 玩家1/2与敌人1/2/3出生点支持数值输入和鼠标拖拽。
-- Ex 功能：按住 B 连发、手枪/Lv4、受击降级、我方加速、随机敌人顺序、取消队友互伤、敌人拾取道具、锁定初始状态等。
-- Web/Desktop 共用 Config v3，包含游戏设置、Palette、TSA、Flag/Fort TSA、Stage地图、Demo地图、Title/Game Over 画面元素、Enemy Type/Count/Total。
-- 撤销/重做：`Ctrl+Z`、`Ctrl+Y`、`Ctrl+Shift+Z`。
-- 完整的保存 / 另存为。
-- Config v3 导入前完整校验，硬错误不会写入一半 ROM。
+- 支持原版 Battle City、BCEX 16KB、BCEX 32KB。
+- Stage 1~70；当前 32KB Runtime 提供 70 张独立地图。
+- Demo 地图编辑。
+- Enemy Type / Count；支持的 BCEX 可设置 1~255 个敌人总数。
+- TSA / CHR / 调色板 / Flag-Fort 可视化编辑。
+- Title + Game Over Screen Editor。
+- 原版玩家/敌人出生位置编辑。
+- Stage 1~70 自定义敌人出生点：1P / 2P 可分别选择 Original 或 1~8 点，支持地图叠加、16px 吸附与地形警告。
+- Stage 1~70 独立 **玩家** P1/P2 出生点，支持地图拖拽。
+- 每关独立 1P/2P 出敌间隔和最大同时在场数量。
+- 每关独立 Base Exists。
+- A+B+Start 秘籍命数。
+- Final GAME OVER Skip、分数加命、2P Original / Win-Streak。
+- 400 分装甲坦克 Original / One-Hit：普通装甲可变成白色 1HP，闪光/带道具装甲保持原版耐久与道具流程。
+- 自动闪光奖励坦克固定为本关出生序号 **#4 / #11 / #18**，EnemyTotal 超过 20 时也不会后移。
+- 新闪光坦克出生时不再强制清除当前已有道具。
+- 修复过关后的下一关地形/场景初始化异常。
+- Skip ON 使用正确的 GAME OVER 清理流程，不再在返回标题前闪一帧关卡地图。
+- Demo 不继承逐关 QXR 参数，保持原版/global 玩家出生、原版敌人出生循环、原版节奏，以及老巢附近停止射击的原版行为。
+- 按住 B 连发、手枪/Lv4、受击降级、我方加速、随机敌人顺序、取消队友互伤、敌人拾取道具、锁定初始状态等。
+- Web / Desktop 共用 Config v3。
+- Save / Save As、Undo / Redo。
+- 支持拖拽打开 `.nes`；当前 ROM 未保存时提供 **保存 / 不保存 / 取消**。
+- 主地图修改后，Game Settings 中所有依赖地图的可视化立即刷新。
+
+## Mid City2 兼容
+
+兼容补丁放在：
+
+```text
+patches/compatibility/
+```
+
+应用以后，**Mid City2** 和 **Mid City2 PS** 可以直接被当前 QuarrelEx 读取，并开放相同的 QXR1 v5 参数，同时保留各自原有地图、图形和改版特点。
 
 ## 仓库结构
 
 ```text
 QuarrelEx/
-├─ desktop/                 # C# WinForms / .NET 8 完整工程
-├─ web/                     # Web端与单文件版
+├─ desktop/
+├─ web/
 ├─ patches/
 │  ├─ 16KB/
-│  └─ 32KB/                 # 32KB准备脚本 + 最终IPS
+│  ├─ 32KB/
+│  └─ compatibility/
 ├─ docs/
 ├─ examples/
 ├─ .github/workflows/
@@ -57,98 +77,49 @@ QuarrelEx/
 └─ LICENSE
 ```
 
-## IPS 基础 ROM
-
-16KB IPS 直接应用到以下基础 ROM；32KB 版本先使用仓库内的准备脚本，从同一份原版 ROM 生成 32KB 工作底包，再应用 32KB IPS：
+## 标准 IPS 基础 ROM
 
 ```text
-名称:    Battle City (J)
-大小:    24592 bytes
+Battle City (J)
+Size:    24592 bytes
 CRC32:   F599A07E
 MD5:     cd4fe2e78df0696dbe652f02c19541a1
 SHA-1:   e1061c9241b06a965fb7845cb951d921aca010ef
 SHA-256: a869aead5b6957fc62002ff9636e048cc34baf0100d629b07dc51aa18f220c0c
 ```
 
-具体补丁步骤与结果校验值见 [patches/README.md](patches/README.md)。
+当前 32KB 版本先运行准备脚本，再应用：
+
+```text
+patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.2.ips
+```
+
+详细步骤和校验见 [patches/README.md](patches/README.md)。
 
 ## Desktop
 
-运行环境：Windows 10/11 + .NET 8 Desktop Runtime。
-
-源码使用 Visual Studio 2022 打开：
+工程：
 
 ```text
 desktop/QuarrelEx.sln
 ```
 
-常用快捷键：
-
-| 快捷键 | 功能 |
-|---|---|
-| `Ctrl+O` | 打开 ROM |
-| `Ctrl+S` | 保存 |
-| `Ctrl+Shift+S` | 另存为 |
-| `Ctrl+Z` | 撤销 |
-| `Ctrl+Y` / `Ctrl+Shift+Z` | 重做 |
-| `F2` | 敌人编辑器 |
-| `F3` | TSA/属性 |
-| `F4` | 调色板 |
-| `F5` | Flag TSA |
-| `F6` | 游戏设置 |
-| `F7` | Ex 选项 |
-| `F8` | ROM 信息 |
-| `F9` | Title / Game Over Screen Editor |
-
-右侧编辑功能采用独立工具窗口，可移动、缩放、最大化或放到第二显示器。
-
 ## Web
-
-可直接使用：
 
 ```text
 web/QuarrelEx.html
 web/QuarrelEx_Standalone.html
 ```
 
-`QuarrelEx_Standalone.html` 是单文件版本。支持 File System Access API 的浏览器可以直接保存回打开的 ROM；不支持时会退回下载保存。
-
-## Enemy Type / 闪光标志
-
-`$04` 是闪光/奖励标志位，并不是一个单独的 Enemy Type。
-
-| 普通 | 强制闪光/奖励 |
-|---|---|
-| `$80` | `$84` |
-| `$A0` | `$A4` |
-| `$C0` | `$C4` |
-| `$E0` | `$E4` |
-
-详细说明见 [docs/Enemy_Types.md](docs/Enemy_Types.md)。
-
 ## Config v3
 
-Web 和 Desktop 只接受/导出 `QuarrelExConfig Version 3`，扩展名建议使用：
-
-```text
-*.qexcfg.json
-```
-
-正式版会在导入前完整检查 Schema、版本、Palette、TSA、地图13×13、关卡连续性、EnemyTotal/Count、ROM能力等；只有全部硬错误检查通过后才正式写入当前 ROM。Demo 与 Screens 是 Config v3 的可选扩展字段，因此旧的合法 v3 文件仍然可以导入，缺失时保留目标 ROM 原值。
+Web / Desktop 使用同一个 `*.qexcfg.json`。Screen 原始字节允许 `$00-$FF`，因此兼容改版使用的 `$FF` 字符串终止符可以正常导入/导出。
 
 规范见 [docs/QuarrelExConfig_v3_Spec.txt](docs/QuarrelExConfig_v3_Spec.txt)。
 
-## 编译与 GitHub Actions
+## 版权说明
 
-仓库已经包含 Windows GitHub Actions：`.github/workflows/build-desktop.yml`。Push/PR 修改桌面端源码时可以自动 Restore + Build .NET 8 WinForms 工程。
-
-## ROM / 版权说明
-
-仓库只提供编辑器源码与补丁，不提供游戏 ROM。
-
-MIT License 只覆盖 QuarrelEx 自己编写的代码；Battle City 的 ROM、图像、音乐、音效及其他第三方资源仍归各自权利人所有。
-
-为了方便公开发布，本仓库版源码**不打包从原 Quarrel EXE 提取的原始图标资源**；QuarrelEx 自己的工具栏功能图标由程序代码生成。
+仓库只提供编辑器源码与 IPS，不提供游戏 ROM。
 
 ## License
 

@@ -21,6 +21,7 @@ public sealed class MainForm : Form
     private bool _refreshing;
     private readonly Dictionary<EditorToolKind, ToolWindowForm> _toolWindows = new();
     private readonly Dictionary<EditorToolKind, ToolStripMenuItem> _toolWindowMenuItems = new();
+    private readonly HashSet<Control> _romDropControls = new();
 
     private readonly TableLayoutPanel _rootLayout = new()
     {
@@ -104,6 +105,7 @@ public sealed class MainForm : Form
         MinimumSize = new Size(820, 520);
 
         BuildRootLayout();
+        EnableRomDropRecursive(this);
         ConfigureEnemyGrid();
         ConfigureTsaEditor();
         ConfigureExOptions();
@@ -355,6 +357,7 @@ public sealed class MainForm : Form
         if (!_toolWindows.TryGetValue(kind, out var window) || window.IsDisposed)
         {
             window = CreateToolWindow(kind);
+            EnableRomDropRecursive(window);
             _toolWindows[kind] = window;
             window.VisibleChanged += (_, _) => UpdateToolWindowMenuChecks();
             window.FormClosed += (_, _) => { _toolWindows.Remove(kind); UpdateToolWindowMenuChecks(); };
@@ -390,7 +393,7 @@ public sealed class MainForm : Form
             EditorToolKind.Tsa => ("Quarrel Ex - TSA / 属性编辑器", new Size(820, 560)),
             EditorToolKind.Palette => ("Quarrel Ex - 调色板编辑器", new Size(520, 430)),
             EditorToolKind.FlagTsa => ("Quarrel Ex - Flag TSA Editor", new Size(600, 500)),
-            EditorToolKind.GameSettings => ("Quarrel Ex - 游戏设置", new Size(620, 690)),
+            EditorToolKind.GameSettings => ("Quarrel Ex - 游戏设置", new Size(700, 820)),
             EditorToolKind.ExOptions => ("Quarrel Ex - Ex 选项", new Size(580, 600)),
             EditorToolKind.Screen => ("Quarrel Ex - Title / Game Over Screen Editor", new Size(820, 660)),
             _ => ("Quarrel Ex - ROM 信息", new Size(600, 500))
@@ -533,9 +536,10 @@ public sealed class MainForm : Form
     private void ShowAbout()
     {
         MessageBox.Show(this,
-            "Quarrel Ex v1.1\r\nBattle City / Battle City Ex Editor\r\n\r\n" +
-            "配置文件升级为 QuarrelExConfig v3：除全局设置外，现在还包含关卡地图与每关 Enemy Type / Count / Total，并继续与 Web 版通用。\r\n" +
-            "敌人、TSA、调色板、Flag TSA、游戏设置、Ex选项与ROM信息继续使用独立工具窗口。",
+            "Quarrel Ex v1.1.6\r\nBattle City / Battle City Ex Editor\r\n\r\n" +
+            "Web/Desktop 继续共用 QuarrelExConfig v3；关卡地图、Enemy Type / Count / Total、Demo、Screen 与 Runtime 扩展均可互通。\r\n" +
+            "Runtime 6.9.2 / QXR1 v5：Stage 1~70 独立 P1/P2 玩家出生点、压缩逐关规则表、Skip ON 无关卡闪帧；Demo 保持原版出生/节奏/近老巢停火逻辑。\r\n" +
+            "支持把 .nes ROM 直接拖入窗口打开；有未保存修改时会显示“是/否/取消”，选择“是”会先保存/另存为成功后再打开。\r\n保留 Runtime 6.5 Final Rules、自定义 1~8 出生点、GAME OVER Skip、加命规则、2P Win Streak 与装甲坦克耐久；地图修改会同步刷新游戏设置中的两个出生点地图。",
             "关于 Quarrel Ex", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
@@ -806,15 +810,19 @@ public sealed class MainForm : Form
         if (!PromptSaveIfDirty()) return;
         using var dlg = new OpenFileDialog { Filter = "NES ROM (*.nes)|*.nes|所有文件 (*.*)|*.*", Title = "打开 Battle City / Battle City Ex ROM" };
         if (dlg.ShowDialog(this) != DialogResult.OK) return;
+        OpenRomPath(dlg.FileName);
+    }
 
+    private void OpenRomPath(string path)
+    {
         try
         {
-            var newRom = new BattleCityRom(File.ReadAllBytes(dlg.FileName), _cfg);
+            var newRom = new BattleCityRom(File.ReadAllBytes(path), _cfg);
             var newRenderer = new NesRenderer(newRom);
             DetachCurrentRomUi();
             _rom = newRom;
             _renderer = newRenderer;
-            _filePath = dlg.FileName;
+            _filePath = path;
             _savedBytes = _rom.GetBytesCopy();
             _dirty = false;
             _undo.Clear();
@@ -842,6 +850,55 @@ public sealed class MainForm : Form
         {
             MessageBox.Show(this, ex.Message, "无法打开 ROM", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+
+    private void EnableRomDropRecursive(Control control)
+    {
+        if (!_romDropControls.Add(control)) return;
+        control.AllowDrop = true;
+        control.DragEnter += RomDrop_DragEnter;
+        control.DragOver += RomDrop_DragEnter;
+        control.DragDrop += RomDrop_DragDrop;
+        control.ControlAdded += RomDrop_ControlAdded;
+        control.Disposed += (_, _) => _romDropControls.Remove(control);
+        foreach (Control child in control.Controls) EnableRomDropRecursive(child);
+    }
+
+    private void RomDrop_ControlAdded(object? sender, ControlEventArgs e)
+        => EnableRomDropRecursive(e.Control);
+
+    private static string? GetDroppedRomPath(IDataObject? data)
+    {
+        if (data?.GetData(DataFormats.FileDrop) is not string[] files) return null;
+        return files.FirstOrDefault(path =>
+            !string.IsNullOrWhiteSpace(path) &&
+            File.Exists(path) &&
+            Path.GetExtension(path).Equals(".nes", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void RomDrop_DragEnter(object? sender, DragEventArgs e)
+    {
+        var path = GetDroppedRomPath(e.Data);
+        e.Effect = path is null ? DragDropEffects.None : DragDropEffects.Copy;
+        if (path is not null) SetStatus($"释放以打开 {Path.GetFileName(path)}。", false);
+    }
+
+    private void RomDrop_DragDrop(object? sender, DragEventArgs e)
+    {
+        var path = GetDroppedRomPath(e.Data);
+        if (path is null)
+        {
+            SetStatus("拖入的文件不是 .nes ROM。", true);
+            return;
+        }
+
+        if (!PromptSaveIfDirty())
+        {
+            SetStatus("已取消打开拖入的 ROM。", false);
+            return;
+        }
+
+        OpenRomPath(path);
     }
 
     private void ExportSharedConfig()
@@ -1021,7 +1078,7 @@ public sealed class MainForm : Form
             RefreshEnemyGrid();
             _tsaEditor.Bind(_rom, _renderer);
             _paletteEditor.Bind(_rom, _renderer);
-            _flagTsaEditor.Bind(_rom, _renderer);
+            _flagTsaEditor.Bind(_rom, _renderer, () => CurrentStage);
             _gameSettings.Bind(_rom, _renderer, () => CurrentStage);
             _screenEditor.Bind(_rom, _renderer);
             RefreshExOptions();
@@ -1040,6 +1097,7 @@ public sealed class MainForm : Form
         BuildTerrainButtons();
         RefreshEnemyGrid();
         _gameSettings.RefreshValues();
+        _flagTsaEditor.Rebuild();
         RefreshStageNote();
     }
 
@@ -1186,6 +1244,9 @@ public sealed class MainForm : Form
             MarkDirty();
             var cellSize = _stageCanvas.CellSize;
             _stageCanvas.Invalidate(new Rectangle(e.Column * cellSize, e.Row * cellSize, cellSize + 1, cellSize + 1));
+            // Game Settings contains three map-backed spawn visualizers. Keep all of them in sync
+            // immediately while the main 13x13 map is painted.
+            _gameSettings.RefreshMapVisuals();
         }
         catch (Exception ex) { MessageBox.Show(this, ex.Message, "写入地图失败", MessageBoxButtons.OK, MessageBoxIcon.Error); }
     }

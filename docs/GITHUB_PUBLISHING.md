@@ -1,50 +1,35 @@
-# Publishing this package to GitHub
+# Publishing QuarrelEx to GitHub
 
-Recommended repository name: **QuarrelEx**
-
-Recommended description:
-
-> Modern Battle City / Battle City Ex editor for Windows and Web.
-
-Recommended topics:
+Recommended repository name:
 
 ```text
-nes
-famicom
-battle-city
-rom-hacking
-level-editor
-nes-editor
-winforms
-javascript
-retro-gaming
+QuarrelEx
 ```
 
-## First push
+Recommended tag:
 
-Create an empty public repository named `QuarrelEx` on GitHub. Do not ask GitHub to generate another README/LICENSE because this package already contains them.
+```text
+v1.1.6
+```
 
-From the extracted repository directory:
+Suggested commit:
 
 ```bash
-git init
 git add .
-git commit -m "QuarrelEx v1.1"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/QuarrelEx.git
-git push -u origin main
+git commit -m "QuarrelEx v1.1.6"
+git push
 ```
 
-## First Release
-
-Tag suggestion:
+Recommended Release assets:
 
 ```text
-v1.1.0
+QuarrelEx_BCEX_16KB_v1.0.ips
+QuarrelEx_BCEX_32KB_Runtime6.9.2.ips
+MidCity2_to_QuarrelEx_Runtime6.9.2.ips
+MidCity2_PS_to_QuarrelEx_Runtime6.9.2.ips
+QuarrelEx_Web_v1.6.6_Standalone.html
+QuarrelEx_Desktop_v1.1.6_Source.zip
+SHA256SUMS.txt
 ```
 
-Use `docs/Release_v1.1.md` as the release-note starting point.
-
-Recommended release assets are prepared separately in the companion `QuarrelEx_v1.1_ReleaseAssets.zip`.
-
-Before publishing, optionally add screenshots under `docs/screenshots/` and reference them from the root README.
+Do not upload a Battle City ROM image.

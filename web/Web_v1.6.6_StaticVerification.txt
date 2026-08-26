@@ -1,0 +1,7 @@
+QuarrelEx Web v1.6.6 static verification
+
+- Normal and Standalone HTML are byte-identical.
+- Inline JavaScript syntax: 3/3 PASS using Node.js v22.
+- Current release text: Runtime 6.9.2 / QXR1 v5.
+- Config raw Screen bytes support $00-$FF.
+- Drag-and-drop open and Stage 1-70 QXR controls remain present.

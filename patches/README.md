@@ -1,8 +1,8 @@
-# BCEX IPS patches
+# QuarrelEx IPS patches
 
-No ROM images are included. Apply exactly one patch to the supported clean base ROM.
+No ROM images are included.
 
-## Required base ROM
+## Standard Battle City base ROM
 
 ```text
 Battle City (J)
@@ -15,37 +15,29 @@ SHA-256: a869aead5b6957fc62002ff9636e048cc34baf0100d629b07dc51aa18f220c0c
 
 ## 16KB BCEX
 
-Patch:
+Apply directly:
 
 ```text
 16KB/QuarrelEx_BCEX_16KB_v1.0.ips
 ```
 
-Expected patched ROM:
+Expected result:
 
 ```text
 Size:    24592 bytes
 CRC32:   AECB82CE
-MD5:     116af2e87dfbafa40d945564afdac0ff
-SHA-1:   ea64679211533f00f08757fb90c4a236ed836ca5
 SHA-256: 33d51720a9891b6eb4a835b8fd9c4181c3689452456aaa417914e3dbb3427939
 ```
 
-Internal runtime revision: 6.3.
+## 32KB BCEX — Runtime 6.9.2
 
-## 32KB BCEX
-
-For the 32KB build, first create a legal 32KB working base from your own clean ROM. This avoids storing a near-complete relocated copy of the original PRG data inside the IPS patch.
-
-### Step 1 — prepare the 32KB base
-
-Windows:
+Prepare the 32KB base first:
 
 ```text
 32KB\prepare_32k_base.bat "Battle City (J).nes"
 ```
 
-Cross-platform Python:
+or:
 
 ```text
 python 32KB/prepare_32k_base.py "Battle City (J).nes"
@@ -59,26 +51,64 @@ CRC32:   C24D701C
 SHA-256: 1c561a7a11162171d8b55551fdfd3d56ab796a27364a252eaf8971cf554d9094
 ```
 
-### Step 2 — apply the IPS
-
-Patch the prepared `_32K_base.nes` with:
+Then apply:
 
 ```text
-32KB/QuarrelEx_BCEX_32KB_v1.0.ips
+32KB/QuarrelEx_BCEX_32KB_Runtime6.9.2.ips
 ```
 
-Expected patched ROM:
+Expected result:
 
 ```text
 Size:    40976 bytes
-CRC32:   A632130F
-MD5:     c8c3014a5656816e84730d726c270422
-SHA-1:   388716536405f1d18b85c117fce9263f764fb22e
-SHA-256: 1f056fccfe6fb1df98262526080ae88980df5eaaa3e076a20e06be2e88a494e9
+CRC32:   246F6679
+MD5:     fe96c57fc2d1f7159f0631dac448a6d3
+SHA-1:   1364ef8026d4538a3bfa1117c13a577f19308723
+SHA-256: 292e7e56709b6c387059a1bd49736800bd4919004de4110be630e0aa45530c95
 ```
 
-Internal runtime revision: 6.4.1.
+## Mid City2 compatibility
 
-## Applying
+### Mid City2 source
 
-Use an IPS-compatible patcher such as Floating IPS (Flips) or another trusted IPS tool. Always make a backup of your source ROM first.
+```text
+Size:    40976 bytes
+CRC32:   111BD2F7
+SHA-256: 4a5db45617c769e788f3dedf7b5e6f438e11a75ec46a8858741aede02188501c
+```
+
+Apply:
+
+```text
+compatibility/MidCity2_to_QuarrelEx_Runtime6.9.2.ips
+```
+
+Expected:
+
+```text
+CRC32:   BE6298A5
+SHA-256: d999dee312f62f0ce10fbbdf808cc956f3c06186e7df1bddde94e1853ecf9339
+```
+
+### Mid City2 PS source
+
+```text
+Size:    40976 bytes
+CRC32:   1EE13F42
+SHA-256: d2caa53c09a60016a0b0e4ccf49fe4cc49a8761da00a6068287bfc93f6d632f2
+```
+
+Apply:
+
+```text
+compatibility/MidCity2_PS_to_QuarrelEx_Runtime6.9.2.ips
+```
+
+Expected:
+
+```text
+CRC32:   A7D92E53
+SHA-256: 1422fc41243264da2a2444fe5872c00ba2df67b525845601d563529a87da9b15
+```
+
+Always keep a backup and verify hashes before applying a patch.

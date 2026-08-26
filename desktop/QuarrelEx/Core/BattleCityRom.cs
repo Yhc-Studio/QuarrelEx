@@ -27,6 +27,34 @@ public sealed class BattleCityRom
     private static readonly byte[] Terrain64AttrReference = [0xB9,0x00,0xB4];
     private static readonly byte[] Terrain64TsaReference = [0xBD,0x40,0xB4];
     private static readonly byte[] ExV2Magic = [(byte)'B',(byte)'C',(byte)'E',(byte)'X'];
+    private static readonly byte[] FinalRulesMagic = [(byte)'Q',(byte)'X',(byte)'R',(byte)'1'];
+    private const int FinalRulesConfigCpu = 0xB55F;
+    private const int FinalRulesFlagsCpu = 0xB564;
+    private const int FinalRulesExtraLifeModeCpu = 0xB565;
+    private const int FinalRulesExtraLifeValueCpu = 0xB566;
+    private const int FinalRulesTwoPlayerBonusCpu = 0xB567;
+    private const int FinalRulesArmoredTankCpu = 0xB568;
+    private const int FinalRulesCheatP1LivesCpu = 0xB569;
+    private const int FinalRulesCheatP2LivesCpu = 0xB56A;
+    private const int FinalRulesSpawnStartCpu = 0xB570;
+    private const int FinalRulesSpawnRecordSize = 18;
+    private const int FinalRulesNormalStartingLivesCpu = 0xBBCE;
+    private const int FinalRulesPacing1PIntervalCpu = 0xBE60;
+    private const int FinalRulesPacing2PIntervalCpu = 0xBEA6;
+    // QXR1 v3/v4 legacy tables.
+    private const int FinalRulesPacing1PMaxActiveLegacyCpu = 0xBEEC;
+    private const int FinalRulesPacing2PMaxActiveLegacyCpu = 0xBF32;
+    private const int FinalRulesBaseExistsLegacyCpu = 0xBF78;
+    // QXR1 v5 / Runtime 6.9 packed stage rules + per-stage player spawns.
+    // PackedStageRules bits: 7-5=1P enemy-limit (MaxActive+1), bit4=BaseExists,
+    // bit3=reserved, bits2-0=2P enemy-limit (MaxActive+1).
+    private const int FinalRulesPackedStageRulesCpu = 0xBEEC;
+    private const int FinalRulesStageP1SpawnCpu = 0xBF32;
+    private const int FinalRulesStageP2SpawnCpu = 0xBF78;
+    public const int CustomEnemySpawnMin = 0x18;
+    public const int CustomEnemySpawnMax = 0xD8;
+    public const int CustomEnemySpawnPointCount = 8;
+
 
 
     private static readonly IReadOnlyList<ScreenElementDefinition> TitleScreenElements =
@@ -95,6 +123,60 @@ public sealed class BattleCityRom
     public bool SupportsBonusReplaceAlways => HasExV2Config && HasLayout(ExLayout.BonusReplaceAlways); // Phase 6.1
     public bool SupportsPlayerFastMove => HasExV2Config && HasLayout(ExLayout.PlayerFastMove); // Phase 6.2
     public bool LockInitialState => SupportsLockInitialState && (EnemyItemFlags & 0x80) != 0;
+
+    public bool HasFinalRules
+    {
+        get
+        {
+            if (!HasIndependentMaps || !SpanEquals(FinalRulesConfigOffset, FinalRulesMagic)) return false;
+            var version = _data[FinalRulesConfigOffset + 4];
+            return version is >= 0x02 and <= 0x05;
+        }
+    }
+    public byte FinalRulesVersion => HasFinalRules ? _data[FinalRulesConfigOffset + 4] : (byte)0;
+    public bool SupportsFinalRulesV3 => HasFinalRules && FinalRulesVersion >= 3;
+    public bool SupportsFinalRulesV4 => HasFinalRules && FinalRulesVersion >= 4;
+    public bool SupportsFinalRulesV5 => HasFinalRules && FinalRulesVersion >= 5;
+    public bool SkipFinalGameOver
+    {
+        get => HasFinalRules && (_data[Cpu8000FileOffset(FinalRulesFlagsCpu)] & 0x01) != 0;
+        set
+        {
+            EnsureFinalRules();
+            var o = Cpu8000FileOffset(FinalRulesFlagsCpu);
+            _data[o] = value ? (byte)(_data[o] | 0x01) : (byte)(_data[o] & 0xFE);
+        }
+    }
+    public int ExtraLifeMode
+    {
+        get { if (!HasFinalRules) return 0; var v = _data[Cpu8000FileOffset(FinalRulesExtraLifeModeCpu)]; return v <= 3 ? v : 0; }
+        set { EnsureFinalRules(); if (value is < 0 or > 3) throw new ArgumentOutOfRangeException(nameof(value)); _data[Cpu8000FileOffset(FinalRulesExtraLifeModeCpu)] = (byte)value; }
+    }
+    public int ExtraLifeValue
+    {
+        get => HasFinalRules ? Math.Clamp((int)_data[Cpu8000FileOffset(FinalRulesExtraLifeValueCpu)], 1, 99) : 2;
+        set { EnsureFinalRules(); _data[Cpu8000FileOffset(FinalRulesExtraLifeValueCpu)] = (byte)Math.Clamp(value, 1, 99); }
+    }
+    public int TwoPlayerBonusMode
+    {
+        get { if (!HasFinalRules) return 0; var v = _data[Cpu8000FileOffset(FinalRulesTwoPlayerBonusCpu)]; return v <= 1 ? v : 0; }
+        set { EnsureFinalRules(); if (value is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(value)); _data[Cpu8000FileOffset(FinalRulesTwoPlayerBonusCpu)] = (byte)value; }
+    }
+    public int ArmoredTankMode
+    {
+        get { if (!HasFinalRules) return 0; var v = _data[Cpu8000FileOffset(FinalRulesArmoredTankCpu)]; return v <= 1 ? v : 0; }
+        set { EnsureFinalRules(); if (value is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(value)); _data[Cpu8000FileOffset(FinalRulesArmoredTankCpu)] = (byte)value; }
+    }
+    public int CheatPlayer1Lives
+    {
+        get => SupportsFinalRulesV3 ? Math.Clamp((int)_data[Cpu8000FileOffset(FinalRulesCheatP1LivesCpu)], 1, 99) : 10;
+        set { EnsureFinalRulesV3(); _data[Cpu8000FileOffset(FinalRulesCheatP1LivesCpu)] = (byte)Math.Clamp(value, 1, 99); }
+    }
+    public int CheatPlayer2Lives
+    {
+        get => SupportsFinalRulesV3 ? Math.Clamp((int)_data[Cpu8000FileOffset(FinalRulesCheatP2LivesCpu)], 1, 99) : 10;
+        set { EnsureFinalRulesV3(); _data[Cpu8000FileOffset(FinalRulesCheatP2LivesCpu)] = (byte)Math.Clamp(value, 1, 99); }
+    }
 
     public int TerrainCount => IsOriginal ? 16 : SupportsTerrain64 ? 64 : SupportsTerrain1F ? 32 : 24;
 
@@ -431,11 +513,11 @@ public sealed class BattleCityRom
 
     public byte StartingLives
     {
-        get => _data[Offset(_cfg.StartingLives)];
+        get => _data[HasFinalRules ? Cpu8000FileOffset(FinalRulesNormalStartingLivesCpu) : Offset(_cfg.StartingLives)];
         set
         {
             if (value == 0) throw new ArgumentOutOfRangeException(nameof(value), "起始命数必须在 1~255。");
-            _data[Offset(_cfg.StartingLives)] = value;
+            _data[HasFinalRules ? Cpu8000FileOffset(FinalRulesNormalStartingLivesCpu) : Offset(_cfg.StartingLives)] = value;
         }
     }
 
@@ -468,6 +550,185 @@ public sealed class BattleCityRom
         var (xo, yo) = SpawnOffsets(kind);
         _data[Offset(xo)] = x;
         _data[Offset(yo)] = y;
+    }
+
+    public int GetCustomEnemySpawnCount(int stage, bool twoPlayer)
+    {
+        EnsureFinalRulesStage(stage);
+        return _data[FinalRulesSpawnRecordOffset(stage) + (twoPlayer ? 1 : 0)];
+    }
+
+    public void SetCustomEnemySpawnCount(int stage, bool twoPlayer, int count)
+    {
+        EnsureFinalRulesStage(stage);
+        if (count is < 0 or > 8) throw new ArgumentOutOfRangeException(nameof(count), "Custom spawn count 必须是 Original(0) 或 1~8。");
+        _data[FinalRulesSpawnRecordOffset(stage) + (twoPlayer ? 1 : 0)] = (byte)count;
+    }
+
+    public (byte X, byte Y) GetCustomEnemySpawnPoint(int stage, int index)
+    {
+        EnsureFinalRulesStage(stage);
+        if (index is < 0 or >= CustomEnemySpawnPointCount) throw new ArgumentOutOfRangeException(nameof(index));
+        var o = FinalRulesSpawnRecordOffset(stage);
+        // Runtime clamps custom coordinates to the safe playfield as well.
+        // Clamp on read so old/unused records such as $E0 never break the editor UI.
+        var x = (byte)Math.Clamp((int)_data[o + 2 + index], CustomEnemySpawnMin, CustomEnemySpawnMax);
+        var y = (byte)Math.Clamp((int)_data[o + 10 + index], CustomEnemySpawnMin, CustomEnemySpawnMax);
+        return (x, y);
+    }
+
+    public void SetCustomEnemySpawnPoint(int stage, int index, int x, int y)
+    {
+        EnsureFinalRulesStage(stage);
+        if (index is < 0 or >= CustomEnemySpawnPointCount) throw new ArgumentOutOfRangeException(nameof(index));
+        var o = FinalRulesSpawnRecordOffset(stage);
+        _data[o + 2 + index] = (byte)Math.Clamp(x, CustomEnemySpawnMin, CustomEnemySpawnMax);
+        _data[o + 10 + index] = (byte)Math.Clamp(y, CustomEnemySpawnMin, CustomEnemySpawnMax);
+    }
+
+    public (int Row, int Column, int TerrainId) GetCustomEnemySpawnCell(int stage, int index)
+    {
+        var p = GetCustomEnemySpawnPoint(stage, index);
+        var col = Math.Clamp((int)Math.Round((p.X - CustomEnemySpawnMin) / 16.0), 0, 12);
+        var row = Math.Clamp((int)Math.Round((p.Y - CustomEnemySpawnMin) / 16.0), 0, 12);
+        return (row, col, GetCell(stage, row, col));
+    }
+
+    public void SetDefaultEightCustomEnemySpawns(int stage)
+    {
+        EnsureFinalRulesStage(stage);
+        (int X, int Y)[] points =
+        [
+            (0x18,0x18),(0x58,0x18),(0x98,0x18),(0xD8,0x18),
+            (0xD8,0x78),(0x98,0xD8),(0x58,0xD8),(0x18,0x78)
+        ];
+        SetCustomEnemySpawnCount(stage, false, 8);
+        SetCustomEnemySpawnCount(stage, true, 8);
+        for (var i = 0; i < points.Length; i++)
+            SetCustomEnemySpawnPoint(stage, i, points[i].X, points[i].Y);
+    }
+
+    public int GetEnemySpawnInterval(int stage, bool twoPlayer)
+    {
+        EnsureFinalRulesV3Stage(stage);
+        var cpu = twoPlayer ? FinalRulesPacing2PIntervalCpu : FinalRulesPacing1PIntervalCpu;
+        return Math.Clamp((int)_data[Cpu8000FileOffset(cpu) + stage - 1], 1, 255);
+    }
+
+    public void SetEnemySpawnInterval(int stage, bool twoPlayer, int frames)
+    {
+        EnsureFinalRulesV3Stage(stage);
+        if (frames is < 1 or > 255) throw new ArgumentOutOfRangeException(nameof(frames), "敌人出现间隔必须是 1~255 帧；数值越小越快。");
+        var cpu = twoPlayer ? FinalRulesPacing2PIntervalCpu : FinalRulesPacing1PIntervalCpu;
+        _data[Cpu8000FileOffset(cpu) + stage - 1] = (byte)frames;
+    }
+
+    public int GetMaxActiveEnemies(int stage, bool twoPlayer)
+    {
+        EnsureFinalRulesV3Stage(stage);
+        if (SupportsFinalRulesV5)
+        {
+            var raw = _data[Cpu8000FileOffset(FinalRulesPackedStageRulesCpu) + stage - 1];
+            var limit = twoPlayer ? raw & 0x07 : (raw >> 5) & 0x07;
+            return Math.Clamp(limit - 1, 1, 6);
+        }
+        var cpu = twoPlayer ? FinalRulesPacing2PMaxActiveLegacyCpu : FinalRulesPacing1PMaxActiveLegacyCpu;
+        return Math.Clamp((int)_data[Cpu8000FileOffset(cpu) + stage - 1], 1, 6);
+    }
+
+    public void SetMaxActiveEnemies(int stage, bool twoPlayer, int count)
+    {
+        EnsureFinalRulesV3Stage(stage);
+        if (count is < 1 or > 6) throw new ArgumentOutOfRangeException(nameof(count), "最大同时在场敌人数必须是 1~6。");
+        if (SupportsFinalRulesV5)
+        {
+            var o = Cpu8000FileOffset(FinalRulesPackedStageRulesCpu) + stage - 1;
+            var raw = _data[o];
+            var limit = count + 1;
+            _data[o] = twoPlayer
+                ? (byte)((raw & 0xF8) | (limit & 0x07))
+                : (byte)((raw & 0x1F) | ((limit & 0x07) << 5));
+            return;
+        }
+        var cpu = twoPlayer ? FinalRulesPacing2PMaxActiveLegacyCpu : FinalRulesPacing1PMaxActiveLegacyCpu;
+        _data[Cpu8000FileOffset(cpu) + stage - 1] = (byte)count;
+    }
+
+    public void SetStage35EnemyPacingPreset(int stage)
+    {
+        EnsureFinalRulesV3Stage(stage);
+        SetEnemySpawnInterval(stage, false, GetEnemySpawnInterval(35, false));
+        SetEnemySpawnInterval(stage, true, GetEnemySpawnInterval(35, true));
+        SetMaxActiveEnemies(stage, false, GetMaxActiveEnemies(35, false));
+        SetMaxActiveEnemies(stage, true, GetMaxActiveEnemies(35, true));
+    }
+
+    public void SetOriginalEnemyPacingPreset(int stage)
+    {
+        EnsureFinalRulesV3Stage(stage);
+        var originalStage = Math.Min(stage, 35);
+        var onePlayer = Math.Clamp(0xBE - originalStage * 4, 1, 255);
+        var twoPlayer = Math.Clamp(onePlayer - 0x14, 1, 255);
+        SetEnemySpawnInterval(stage, false, onePlayer);
+        SetEnemySpawnInterval(stage, true, twoPlayer);
+        SetMaxActiveEnemies(stage, false, 4);
+        SetMaxActiveEnemies(stage, true, 6);
+    }
+
+    public bool GetStageBaseExists(int stage)
+    {
+        EnsureFinalRulesV4Stage(stage);
+        if (SupportsFinalRulesV5)
+            return (_data[Cpu8000FileOffset(FinalRulesPackedStageRulesCpu) + stage - 1] & 0x10) != 0;
+        return _data[Cpu8000FileOffset(FinalRulesBaseExistsLegacyCpu) + stage - 1] != 0;
+    }
+
+    public void SetStageBaseExists(int stage, bool exists)
+    {
+        EnsureFinalRulesV4Stage(stage);
+        if (SupportsFinalRulesV5)
+        {
+            var o = Cpu8000FileOffset(FinalRulesPackedStageRulesCpu) + stage - 1;
+            _data[o] = exists ? (byte)(_data[o] | 0x10) : (byte)(_data[o] & 0xEF);
+            return;
+        }
+        _data[Cpu8000FileOffset(FinalRulesBaseExistsLegacyCpu) + stage - 1] = exists ? (byte)1 : (byte)0;
+    }
+
+    public (bool IsCustom, byte X, byte Y) GetStagePlayerSpawn(int stage, bool twoPlayer)
+    {
+        EnsureFinalRulesV5Stage(stage);
+        var raw = _data[StagePlayerSpawnOffset(stage, twoPlayer)];
+        if (raw == 0xFF)
+        {
+            var p = GetSpawn(twoPlayer ? SpawnKind.Player2 : SpawnKind.Player1);
+            return (false, p.X, p.Y);
+        }
+        var xi = Math.Min(12, (raw >> 4) & 0x0F);
+        var yi = Math.Min(12, raw & 0x0F);
+        return (true, (byte)(CustomEnemySpawnMin + xi * 16), (byte)(CustomEnemySpawnMin + yi * 16));
+    }
+
+    public void SetStagePlayerSpawnOriginal(int stage, bool twoPlayer)
+    {
+        EnsureFinalRulesV5Stage(stage);
+        _data[StagePlayerSpawnOffset(stage, twoPlayer)] = 0xFF;
+    }
+
+    public void SetStagePlayerSpawn(int stage, bool twoPlayer, int x, int y)
+    {
+        EnsureFinalRulesV5Stage(stage);
+        var xi = Math.Clamp((x - CustomEnemySpawnMin + 8) / 16, 0, 12);
+        var yi = Math.Clamp((y - CustomEnemySpawnMin + 8) / 16, 0, 12);
+        _data[StagePlayerSpawnOffset(stage, twoPlayer)] = (byte)((xi << 4) | yi);
+    }
+
+    public (int Row, int Column, int TerrainId) GetStagePlayerSpawnCell(int stage, bool twoPlayer)
+    {
+        var p = GetStagePlayerSpawn(stage, twoPlayer);
+        var col = Math.Clamp((p.X - CustomEnemySpawnMin) / 16, 0, 12);
+        var row = Math.Clamp((p.Y - CustomEnemySpawnMin) / 16, 0, 12);
+        return (row, col, GetCell(stage, row, col));
     }
 
     private (int X, int Y) SpawnOffsets(SpawnKind kind) => kind switch
@@ -581,7 +842,6 @@ public sealed class BattleCityRom
     public void SetScreenElementTile(ScreenElementDefinition element, int index, byte tile)
     {
         if (index < 0 || index >= element.Length) throw new ArgumentOutOfRangeException(nameof(index));
-        if (tile == 0xFF) throw new InvalidOperationException("$FF 是屏幕字符串终止符，不能作为普通图块写入固定长度元素。");
         _data[Offset(element.FileOffset16K) + index] = tile;
     }
 
@@ -600,6 +860,19 @@ public sealed class BattleCityRom
         cfg.Gameplay.FeatureFlags = HasExV2Config ? FeatureFlags : null;
         cfg.Gameplay.PlayerFastMove = SupportsPlayerFastMove ? IsFeatureEnabled(ExFeature.PlayerFastMove) : false;
         cfg.Gameplay.EnemyItemFlags = SupportsEnemyPowerUpPickup ? (EnemyItemFlags & 0x7F) : null;
+        if (HasFinalRules)
+        {
+            cfg.Gameplay.FinalRules = new FinalRulesConfig
+            {
+                SkipFinalGameOver = SkipFinalGameOver,
+                ExtraLifeMode = ExtraLifeMode,
+                ExtraLifeValue = ExtraLifeValue,
+                TwoPlayerBonusMode = TwoPlayerBonusMode,
+                ArmoredTankMode = ArmoredTankMode,
+                CheatPlayer1Lives = SupportsFinalRulesV3 ? CheatPlayer1Lives : null,
+                CheatPlayer2Lives = SupportsFinalRulesV3 ? CheatPlayer2Lives : null
+            };
+        }
         foreach (SpawnKind k in Enum.GetValues<SpawnKind>())
         {
             var p = GetSpawn(k);
@@ -631,6 +904,42 @@ public sealed class BattleCityRom
                     .Select(r => Enumerable.Range(0, 13).Select(c => GetCell(stage, r, c)).ToArray())
                     .ToArray()
             };
+            if (HasFinalRules)
+            {
+                sc.EnemySpawn = new EnemySpawnConfig
+                {
+                    Player1Count = GetCustomEnemySpawnCount(stage, false),
+                    Player2Count = GetCustomEnemySpawnCount(stage, true),
+                    Points = Enumerable.Range(0, CustomEnemySpawnPointCount)
+                        .Select(i =>
+                        {
+                            var p = GetCustomEnemySpawnPoint(stage, i);
+                            return new SpawnPointConfig { X = p.X, Y = p.Y };
+                        }).ToList()
+                };
+            }
+            if (SupportsFinalRulesV3)
+            {
+                sc.EnemyPacing = new EnemyPacingConfig
+                {
+                    Player1IntervalFrames = GetEnemySpawnInterval(stage, false),
+                    Player2IntervalFrames = GetEnemySpawnInterval(stage, true),
+                    Player1MaxActive = GetMaxActiveEnemies(stage, false),
+                    Player2MaxActive = GetMaxActiveEnemies(stage, true)
+                };
+            }
+            if (SupportsFinalRulesV4)
+                sc.BaseExists = GetStageBaseExists(stage);
+            if (SupportsFinalRulesV5)
+            {
+                var p1 = GetStagePlayerSpawn(stage, false);
+                var p2 = GetStagePlayerSpawn(stage, true);
+                sc.PlayerSpawn = new StagePlayerSpawnConfig
+                {
+                    Player1 = p1.IsCustom ? new SpawnPointConfig { X = p1.X, Y = p1.Y } : null,
+                    Player2 = p2.IsCustom ? new SpawnPointConfig { X = p2.X, Y = p2.Y } : null
+                };
+            }
             cfg.Stages.Add(sc);
         }
 
@@ -720,6 +1029,25 @@ public sealed class BattleCityRom
                 Warn("目标 ROM 不支持敌人道具效果；EnemyItemFlags 将被忽略。");
             if (g.LockInitialState && !SupportsLockInitialState)
                 Warn("目标 ROM 不支持锁定初始状态；该选项将被忽略。");
+
+            if (g.FinalRules is not null)
+            {
+                if (!HasFinalRules)
+                {
+                    Warn("目标 ROM 不支持 QXR1 v2~v5 Final Rules；Gameplay.FinalRules 将被忽略。");
+                }
+                else
+                {
+                    if (g.FinalRules.ExtraLifeMode is < 0 or > 3) Error("Gameplay.FinalRules.ExtraLifeMode 必须是 0~3。");
+                    if (g.FinalRules.ExtraLifeValue is < 1 or > 99) Error("Gameplay.FinalRules.ExtraLifeValue 必须是 1~99。");
+                    if (g.FinalRules.TwoPlayerBonusMode is < 0 or > 1) Error("Gameplay.FinalRules.TwoPlayerBonusMode 必须是 0 或 1。");
+                    if (g.FinalRules.ArmoredTankMode is < 0 or > 1) Error("Gameplay.FinalRules.ArmoredTankMode 必须是 0 或 1。");
+                    if ((g.FinalRules.CheatPlayer1Lives.HasValue || g.FinalRules.CheatPlayer2Lives.HasValue) && !SupportsFinalRulesV3)
+                        Warn("配置包含 A+B+Start 秘籍命数，但目标 ROM 不是 QXR1 v3 / Runtime 6.6；这些值将被忽略。");
+                    if (g.FinalRules.CheatPlayer1Lives.HasValue && g.FinalRules.CheatPlayer1Lives.Value is < 1 or > 99) Error("Gameplay.FinalRules.CheatPlayer1Lives 必须是 1~99。");
+                    if (g.FinalRules.CheatPlayer2Lives.HasValue && g.FinalRules.CheatPlayer2Lives.Value is < 1 or > 99) Error("Gameplay.FinalRules.CheatPlayer2Lives 必须是 1~99。");
+                }
+            }
 
             if (g.Spawns is null)
             {
@@ -877,6 +1205,70 @@ public sealed class BattleCityRom
                     }
                 }
 
+                if (sc.EnemySpawn is not null)
+                {
+                    if (!HasFinalRules)
+                    {
+                        Warn($"Stage {sc.Stage} 包含 EnemySpawn，但目标 ROM 不支持 QXR1 v2~v5 Final Rules；这些出生点将被忽略。");
+                    }
+                    else
+                    {
+                        if (sc.EnemySpawn.Player1Count is < 0 or > 8 || sc.EnemySpawn.Player2Count is < 0 or > 8)
+                            Error($"Stage {sc.Stage}: EnemySpawn 的 1P/2P Count 必须是 0~8。");
+                        if (sc.EnemySpawn.Points is null || sc.EnemySpawn.Points.Count != CustomEnemySpawnPointCount)
+                        {
+                            Error($"Stage {sc.Stage}: EnemySpawn.Points 必须正好有 8 个坐标。");
+                        }
+                        else
+                        {
+                            for (var i = 0; i < sc.EnemySpawn.Points.Count; i++)
+                            {
+                                var point = sc.EnemySpawn.Points[i];
+                                if (point.X is < CustomEnemySpawnMin or > CustomEnemySpawnMax || point.Y is < CustomEnemySpawnMin or > CustomEnemySpawnMax)
+                                    Error($"Stage {sc.Stage}: EnemySpawn.Points[{i}] 必须在 $18~$D8；当前 ({point.X},{point.Y})。");
+                            }
+                        }
+                    }
+                }
+
+                if (sc.EnemyPacing is not null)
+                {
+                    if (!SupportsFinalRulesV3)
+                    {
+                        Warn($"Stage {sc.Stage} 包含 EnemyPacing，但目标 ROM 不是 QXR1 v3+ / Runtime 6.6+；该项将被忽略。");
+                    }
+                    else
+                    {
+                        var ep = sc.EnemyPacing;
+                        if (ep.Player1IntervalFrames is < 1 or > 255 || ep.Player2IntervalFrames is < 1 or > 255)
+                            Error($"Stage {sc.Stage}: EnemyPacing 的 1P/2P IntervalFrames 必须是 1~255。");
+                        if (ep.Player1MaxActive is < 1 or > 6 || ep.Player2MaxActive is < 1 or > 6)
+                            Error($"Stage {sc.Stage}: EnemyPacing 的 1P/2P MaxActive 必须是 1~6。");
+                    }
+                }
+
+                if (sc.BaseExists.HasValue && !SupportsFinalRulesV4)
+                    Warn($"Stage {sc.Stage} 包含 BaseExists，但目标 ROM 不是 QXR1 v4+；该项将被忽略。");
+
+                if (sc.PlayerSpawn is not null)
+                {
+                    if (!SupportsFinalRulesV5)
+                    {
+                        Warn($"Stage {sc.Stage} 包含 PlayerSpawn，但目标 ROM 不是 QXR1 v5 / Runtime 6.9；该项将被忽略。");
+                    }
+                    else
+                    {
+                        foreach (var (name, point) in new[] { ("Player1", sc.PlayerSpawn.Player1), ("Player2", sc.PlayerSpawn.Player2) })
+                        {
+                            if (point is null) continue; // null = Original / global spawn.
+                            if (point.X is < CustomEnemySpawnMin or > CustomEnemySpawnMax || point.Y is < CustomEnemySpawnMin or > CustomEnemySpawnMax)
+                                Error($"Stage {sc.Stage}: PlayerSpawn.{name} 必须在 $18~$D8。");
+                            else if (((point.X - CustomEnemySpawnMin) & 0x0F) != 0 || ((point.Y - CustomEnemySpawnMin) & 0x0F) != 0)
+                                Error($"Stage {sc.Stage}: PlayerSpawn.{name} 必须使用 16px 网格坐标（$18,$28...$D8）。");
+                        }
+                    }
+                }
+
                 if (sc.Map is null || sc.Map.Length != 13 || sc.Map.Any(row => row is null || row.Length != 13))
                 {
                     Error($"Stage {sc.Stage} 的 Map 必须是完整 13×13。");
@@ -1001,8 +1393,8 @@ public sealed class BattleCityRom
                     continue;
                 }
                 for (var i = 0; i < values.Length; i++)
-                    if (values[i] is < 0 or > 0xFE)
-                        Error($"{name}.Elements.{def.Key}[{i}]={values[i]}，必须在 $00~$FE；$FF 为终止符。");
+                    if (values[i] is < 0 or > 0xFF)
+                        Error($"{name}.Elements.{def.Key}[{i}]={values[i]}，必须在 $00~$FF；$FF 可作为字符串终止符。");
             }
         }
 
@@ -1027,6 +1419,17 @@ public sealed class BattleCityRom
             SetEnemyItemFlags((byte)g.EnemyItemFlags.Value);
         if (SupportsLockInitialState)
             SetLockInitialState(g.LockInitialState);
+
+        if (HasFinalRules && g.FinalRules is not null)
+        {
+            SkipFinalGameOver = g.FinalRules.SkipFinalGameOver;
+            ExtraLifeMode = g.FinalRules.ExtraLifeMode;
+            ExtraLifeValue = g.FinalRules.ExtraLifeValue;
+            TwoPlayerBonusMode = g.FinalRules.TwoPlayerBonusMode;
+            ArmoredTankMode = g.FinalRules.ArmoredTankMode;
+            if (SupportsFinalRulesV3 && g.FinalRules.CheatPlayer1Lives.HasValue) CheatPlayer1Lives = g.FinalRules.CheatPlayer1Lives.Value;
+            if (SupportsFinalRulesV3 && g.FinalRules.CheatPlayer2Lives.HasValue) CheatPlayer2Lives = g.FinalRules.CheatPlayer2Lives.Value;
+        }
 
         foreach (SpawnKind k in Enum.GetValues<SpawnKind>())
         {
@@ -1062,6 +1465,30 @@ public sealed class BattleCityRom
             if (SupportsCustomEnemyTotal || sum == 20)
                 for (var slot = 0; slot < 4; slot++)
                     SetEnemyCount(sc.Stage, slot, (byte)sc.EnemyCounts[slot]);
+
+            if (HasFinalRules && sc.EnemySpawn is not null)
+            {
+                SetCustomEnemySpawnCount(sc.Stage, false, sc.EnemySpawn.Player1Count);
+                SetCustomEnemySpawnCount(sc.Stage, true, sc.EnemySpawn.Player2Count);
+                for (var i = 0; i < CustomEnemySpawnPointCount; i++)
+                    SetCustomEnemySpawnPoint(sc.Stage, i, sc.EnemySpawn.Points[i].X, sc.EnemySpawn.Points[i].Y);
+            }
+            if (SupportsFinalRulesV3 && sc.EnemyPacing is not null)
+            {
+                SetEnemySpawnInterval(sc.Stage, false, sc.EnemyPacing.Player1IntervalFrames);
+                SetEnemySpawnInterval(sc.Stage, true, sc.EnemyPacing.Player2IntervalFrames);
+                SetMaxActiveEnemies(sc.Stage, false, sc.EnemyPacing.Player1MaxActive);
+                SetMaxActiveEnemies(sc.Stage, true, sc.EnemyPacing.Player2MaxActive);
+            }
+            if (SupportsFinalRulesV4 && sc.BaseExists.HasValue)
+                SetStageBaseExists(sc.Stage, sc.BaseExists.Value);
+            if (SupportsFinalRulesV5 && sc.PlayerSpawn is not null)
+            {
+                if (sc.PlayerSpawn.Player1 is null) SetStagePlayerSpawnOriginal(sc.Stage, false);
+                else SetStagePlayerSpawn(sc.Stage, false, sc.PlayerSpawn.Player1.X, sc.PlayerSpawn.Player1.Y);
+                if (sc.PlayerSpawn.Player2 is null) SetStagePlayerSpawnOriginal(sc.Stage, true);
+                else SetStagePlayerSpawn(sc.Stage, true, sc.PlayerSpawn.Player2.X, sc.PlayerSpawn.Player2.Y);
+            }
 
             // Shared-map Ex formats physically store only 1~35.
             if (sc.Stage > 35 && !HasIndependentMaps) continue;
@@ -1207,6 +1634,26 @@ public sealed class BattleCityRom
                 lines.Add("BCEX v2: 未检测到（Legacy Ex；Feature Flags 不可编辑）");
             }
 
+            if (HasFinalRules)
+            {
+                var runtime = FinalRulesVersion >= 5 ? "6.9" : FinalRulesVersion >= 4 ? "6.7/6.8" : FinalRulesVersion >= 3 ? "6.6" : "6.5";
+                lines.Add($"Final Rules: QXR1 v{FinalRulesVersion} / Runtime {runtime}");
+                lines.Add($"Final GAME OVER Skip: {(SkipFinalGameOver ? "ON" : "OFF")}");
+                lines.Add($"Extra Life: mode={ExtraLifeMode}, value={ExtraLifeValue}×10000");
+                lines.Add($"2P Bonus: {(TwoPlayerBonusMode == 0 ? "Original" : "Win Streak")}");
+                lines.Add($"Armored Tank: {(ArmoredTankMode == 0 ? "Original" : FinalRulesVersion >= 4 ? "One Hit（普通装甲=白色1HP；闪光奖励装甲保持原版）" : "One Hit")}");
+                lines.Add("自定义敌人出生点: Stage 1~70 / 1P、2P 各 Original 或 1~8 点");
+                if (SupportsFinalRulesV3)
+                {
+                    lines.Add($"A+B+Start 秘籍命数: 1P={CheatPlayer1Lives}, 2P={CheatPlayer2Lives}");
+                    lines.Add("敌人出现节奏: Stage 1~70 独立 1P/2P Interval + Max Active（Runtime 6.6+）");
+                }
+                if (SupportsFinalRulesV4)
+                    lines.Add("老巢存在: Stage 1~70 独立开关；关闭后地图底层地形不被 HQ 覆盖");
+                if (SupportsFinalRulesV5)
+                    lines.Add("玩家出生点: Stage 1~70 / 1P、2P 各 Original 或独立16px网格位置（Runtime 6.9.2）");
+            }
+
             if (SupportsTerrain64) lines.Add("地形: $00~$3F，共64项；$20~$3F为预留自定义槽。");
             else if (SupportsTerrain1F) lines.Add("地形: $00~$1F，共32项；$18~$1F为单格砖/钢。");
             else lines.Add("地形: Legacy $00~$17（正常选择跳过$0E/$0F）。");
@@ -1221,6 +1668,47 @@ public sealed class BattleCityRom
 
     private int Offset(int base16KFileOffset) => base16KFileOffset + MainBankShift;
     private int ExV2ConfigOffset => Offset(_cfg.ExV2ConfigStart);
+    private static int Cpu8000FileOffset(int cpu) => 0x10 + (cpu - 0x8000);
+    private int FinalRulesConfigOffset => Cpu8000FileOffset(FinalRulesConfigCpu);
+    private int FinalRulesSpawnRecordOffset(int stage) => Cpu8000FileOffset(FinalRulesSpawnStartCpu + (stage - 1) * FinalRulesSpawnRecordSize);
+    private int StagePlayerSpawnOffset(int stage, bool twoPlayer)
+        => Cpu8000FileOffset((twoPlayer ? FinalRulesStageP2SpawnCpu : FinalRulesStageP1SpawnCpu) + stage - 1);
+    private void EnsureFinalRules()
+    {
+        if (!HasFinalRules) throw new InvalidOperationException("当前 ROM 不支持 QXR1 Final Rules（需要 BCEX 32KB Runtime 6.5~6.9）。");
+    }
+    private void EnsureFinalRulesStage(int stage)
+    {
+        EnsureFinalRules();
+        if (stage is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(stage), "Final Rules 出生点只支持 Stage 1~70，不包含 Demo。");
+    }
+    private void EnsureFinalRulesV3()
+    {
+        if (!SupportsFinalRulesV3) throw new InvalidOperationException("当前 ROM 不支持 QXR1 v3+ 扩展（需要 BCEX 32KB Runtime 6.6+）。");
+    }
+    private void EnsureFinalRulesV3Stage(int stage)
+    {
+        EnsureFinalRulesV3();
+        if (stage is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(stage), "Runtime 6.6+ 敌人节奏只支持 Stage 1~70，不包含 Demo。");
+    }
+    private void EnsureFinalRulesV4()
+    {
+        if (!SupportsFinalRulesV4) throw new InvalidOperationException("当前 ROM 不支持 QXR1 v4+ 扩展。");
+    }
+    private void EnsureFinalRulesV5()
+    {
+        if (!SupportsFinalRulesV5) throw new InvalidOperationException("当前 ROM 不支持 QXR1 v5 扩展（需要 BCEX 32KB Runtime 6.9.2）。");
+    }
+    private void EnsureFinalRulesV5Stage(int stage)
+    {
+        EnsureFinalRulesV5();
+        if (stage is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(stage), "Runtime 6.9 玩家出生点只支持 Stage 1~70，不包含 Demo。");
+    }
+    private void EnsureFinalRulesV4Stage(int stage)
+    {
+        EnsureFinalRulesV4();
+        if (stage is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(stage), "Runtime 6.7 老巢开关只支持 Stage 1~70，不包含 Demo。");
+    }
     private int LevelPaletteOffset => Offset(_cfg.LevelPalette);
 
     private int TerrainAttributesOffset

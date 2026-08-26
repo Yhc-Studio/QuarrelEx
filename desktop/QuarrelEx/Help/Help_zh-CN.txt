@@ -28,6 +28,7 @@ Quarrel Ex Desktop 是使用 C# WinForms / .NET 8 重建的 Battle City / 坦克
 打开 ROM：文件 → 打开 ROM，或 Ctrl+O。
 保存 ROM：Ctrl+S。
 另存为：文件 → 另存为。
+也可以把 .nes ROM 直接拖到桌面编辑器窗口打开。若当前 ROM 有未保存修改，会先询问“是 / 否 / 取消”：是=保存/另存为成功后打开；否=不保存直接打开；取消=保持当前 ROM。
 Ctrl+Z：撤销。
 F1：中文帮助。
 Shift+F1：English Help。
@@ -320,3 +321,21 @@ F8  ROM 信息
 - 普通标题字符串按 8×8 CHR Tile 编辑；BATTLE/CITY/GAME/OVER 是原版32×32放大字形，每个大框编辑一个完整源字形。
 - Screen Editor 不改坐标、字符串长度或 $FF 终止符。
 - Config v3 版本号仍为3；新增 Demo 与 Screens 可选字段，旧v3缺失时保留目标ROM原值。
+
+
+【v1.1.2 / Runtime 6.5~6.6 Final Rules】
+- 游戏设置新增 Stage 1~70 自定义敌人出生点。1P/2P 各选 Original 或 1~8，共用 S1~S8 坐标；支持实际地图预览、拖拽、16px 吸附和 $18~$D8 安全边界。
+- Final GAME OVER Skip 默认 OFF。
+- 加命规则：Original / Custom Once / Repeat / Disabled，数值单位为 10,000 分。
+- 2P Bonus：Original 或 Win Streak。
+- 400分装甲坦克：Original 或 One Hit。
+- Runtime 6.5 / QXR1 v2 提供上述 Final Rules 和自定义出生点；Runtime 6.6 / QXR1 v3 在此基础上增加：
+  · 标题画面按住 A+B 再按 Start 的秘籍命数，1P/2P 独立设置，默认均为 10；普通 Start 不受影响。
+  · Stage 1~70 独立的 1P/2P 敌人出现间隔（1~255 帧，越小越快）与最大同时在场敌人数（1~6）。
+  · 可一键复制 Stage 35 节奏，也可恢复该关的原版节奏。
+- 修改主地图后，“游戏设置”中的原版出生点地图和 S1~S8 自定义出生点地图会立即同步刷新。
+
+
+【Runtime 6.7 / QXR1 v4】
+- 装甲坦克 One Hit：仅普通 400 分装甲坦克变为白色 1HP；闪光/带道具的 400 分装甲坦克保持原版 4 发耐久和奖励逻辑。
+- Flag TSA Editor 新增 Stage 1~70 独立“存在老巢”开关。关闭后 Runtime 不绘制普通/铁锹老巢，老巢区域下方地图数据正常生效。

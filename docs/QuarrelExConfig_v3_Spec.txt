@@ -5,7 +5,7 @@ Required root:
   Schema  = "QuarrelExConfig"
   Version = 3
 
-Formal Desktop v1.1 / Web v1.6 import only Version 3.
+Formal Desktop v1.1.4 / Web v1.6.4 import only Version 3.
 Older v1/v2 configs are intentionally rejected.
 
 Gameplay
@@ -17,6 +17,21 @@ PlayerFastMove      boolean/null; when FeatureFlags is present, must agree with 
 FeatureFlags        integer 0..255 or null
 EnemyItemFlags      integer 0..127 or null
 Spawns              Enemy1/Enemy2/Enemy3/Player1/Player2, each X/Y integer 0..255
+
+Gameplay.FinalRules (optional v3 extension; QXR1 v2/v3 / Runtime 6.5/6.6)
+------------------------------------------------------------------------
+SkipFinalGameOver   boolean; default ROM value is OFF
+ExtraLifeMode       integer 0..3
+                    0 Original / 1 Custom Once / 2 Repeat / 3 Disabled
+ExtraLifeValue      integer 1..99, units of 10,000 points
+TwoPlayerBonusMode  integer 0..1; 0 Original / 1 Win Streak
+ArmoredTankMode     integer 0..1; 0 Original / 1 One Hit
+CheatPlayer1Lives   optional integer 1..99; QXR1 v3 / Runtime 6.6, default ROM value 10
+CheatPlayer2Lives   optional integer 1..99; QXR1 v3 / Runtime 6.6, default ROM value 10
+
+If this optional object is absent, the target ROM keeps its current Final Rules values.
+If the target ROM does not contain QXR1 v2/v3, the object is ignored with a compatibility warning.
+CheatPlayer1Lives/CheatPlayer2Lives are ignored with a warning on QXR1 v2 targets.
 
 Palettes
 --------
@@ -48,6 +63,28 @@ Each stage contains:
   EnemyCounts  exactly 4 integers 0..255
   EnemyTotal   integer equal to sum(EnemyCounts)
 EnemyCounts sum must be 1..255.
+
+Stages[].EnemySpawn (optional v3 extension; Runtime 6.5)
+--------------------------------------------------------
+Player1Count   integer 0..8; 0 = Original, 1..8 = custom point count
+Player2Count   integer 0..8; independent from Player1Count
+Points         exactly 8 objects {X,Y}; coordinates are shared by 1P/2P
+X/Y            integer $18..$D8
+
+The editor UI can snap coordinates to 16px centers and warns when a point is on terrain other than $0D.
+If EnemySpawn is absent, that stage keeps the target ROM's current spawn record.
+
+Stages[].EnemyPacing (optional v3 extension; QXR1 v3 / Runtime 6.6)
+-------------------------------------------------------------------
+Player1IntervalFrames integer 1..255; lower value = faster enemy appearance
+Player2IntervalFrames integer 1..255
+Player1MaxActive      integer 1..6; maximum simultaneous enemy tanks in 1P
+Player2MaxActive      integer 1..6; maximum simultaneous enemy tanks in 2P
+
+Runtime 6.6 defaults reproduce the original pacing curve for Stage 1..35; Stage 36..70 default to the Stage 35 maximum-speed timing.
+Stage 35 reference values are 1P=50 frames and 2P=30 frames; original max-active values are 1P=4 and 2P=6.
+EnemyPacing is separate from EnemyCounts: the four EnemyCounts still control the stage's total enemy composition.
+If EnemyPacing is absent, that stage keeps the target ROM's current pacing values. QXR1 v2 targets ignore EnemyPacing with a warning.
 
 Demo (optional v3 extension)
 ----------------------------
@@ -95,9 +132,36 @@ On hard error the config is NOT applied at all.
 
 Compatibility warning examples:
 - Lv4 config imported to original ROM
-- target ROM lacks a requested Ex feature
+- target ROM lacks a requested Ex / Final Rules capability
 - target ROM only supports 20 enemies but a stage total is not 20
 - Stage36~70 independent maps imported to a shared-map target
 - terrain IDs not representable by the target ROM
 
 Warnings may skip or downgrade only the unsupported fields while importing the rest.
+
+
+### Runtime 6.7 / QXR1 v4
+
+- Armored Tank One Hit now converts only normal 400-point armored tanks to the white 1-HP form; flashing/item armored tanks keep the original multi-hit durability and flashing/item behavior.
+- Stage 1-70 now has optional `BaseExists` (Config v3 extension). When false, the runtime skips default/protected HQ drawing so map terrain underneath the HQ area remains active.
+- Config schema remains Version 3; older v3 files remain compatible.
+
+Stages[].BaseExists (optional boolean; QXR1 v4 / Runtime 6.7)
+  true  = draw/use the original HQ for this stage
+  false = do not draw/protect the HQ; underlying map terrain remains active
+
+
+### Runtime 6.9.2 / QXR1 v5
+
+Config schema remains Version 3. QXR1 v5 adds an optional per-stage PlayerSpawn object.
+
+Stages[].PlayerSpawn (optional object; Stage 1-70 only)
+  Player1: null | { X, Y }
+  Player2: null | { X, Y }
+
+Semantics:
+- PlayerSpawn absent: preserve the target ROM's current per-stage P1/P2 values.
+- PlayerSpawn present and Player1/Player2 is null: use Original/global spawn for that player.
+- {X,Y}: custom 16px-grid spawn, each coordinate must be $18,$28,...,$D8.
+
+QXR1 v5 also packs per-stage MaxActive and BaseExists internally; Config v3 remains unchanged at the semantic level and continues to expose EnemyPacing.Player1MaxActive, EnemyPacing.Player2MaxActive and BaseExists as ordinary values.
