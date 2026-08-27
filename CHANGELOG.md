@@ -1,8 +1,8 @@
 # Changelog
 
-## QuarrelEx v1.1.6
+## QuarrelEx v1.1.7
 
-### Desktop 1.1.6 / Web 1.6.6
+### Desktop 1.1.7 / Web 1.6.7
 
 - Drag-and-drop ROM opening with Save / Don't Save / Cancel.
 - Shared QuarrelExConfig v3 with strict validation.
@@ -10,10 +10,11 @@
 - Stage 1-70 independent P1/P2 player spawn editing.
 - Stage 1-70 custom 1-8 enemy spawn editing.
 - Stage 1-70 EnemyPacing and BaseExists.
+- Per-stage Enemy counter display: Icons / Number; EnemyTotal > 50 forces Number.
 - Final GAME OVER Skip, Extra Life, 2P Win-Streak and Armor One-Hit.
 - Mid City2 / Mid City2 PS compatibility IPS files.
 
-### Current 32KB Runtime 6.9.2
+### Current 32KB Runtime 6.9.3
 
 - Correct next-stage terrain initialization.
 - Skip ON no longer flashes the old stage map.

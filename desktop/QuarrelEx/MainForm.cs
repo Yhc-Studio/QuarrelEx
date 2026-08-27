@@ -38,6 +38,8 @@ public sealed class MainForm : Form
     private readonly FlowLayoutPanel _terrainPanel = new() { Dock = DockStyle.Fill, AutoScroll = true, WrapContents = true, Padding = new Padding(6) };
     private readonly DataGridView _enemyGrid = new();
     private readonly Label _enemySum = new() { AutoSize = true, MaximumSize = new Size(520, 0), Padding = new Padding(6) };
+    private readonly ComboBox _enemyCounterDisplay = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 150 };
+    private readonly Label _enemyCounterNote = new() { AutoSize = true, MaximumSize = new Size(340, 0), ForeColor = Color.DimGray, Padding = new Padding(6, 5, 0, 0) };
     private readonly TsaEditorControl _tsaEditor = new();
     private readonly PaletteEditorControl _paletteEditor = new();
     private readonly FlagTsaEditorControl _flagTsaEditor = new();
@@ -407,12 +409,18 @@ public sealed class MainForm : Form
         {
             case EditorToolKind.Enemy:
             {
-                var root = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 3, ColumnCount = 1, Padding = new Padding(6) };
+                var root = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 4, ColumnCount = 1, Padding = new Padding(6) };
                 root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+                root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 root.Controls.Add(_enemyGrid, 0, 0);
                 root.Controls.Add(_enemySum, 0, 1);
+                var counterRow = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, WrapContents = true, Padding = new Padding(6, 0, 6, 2) };
+                counterRow.Controls.Add(new Label { AutoSize = true, Text = "右上敌人数显示：", Padding = new Padding(0, 6, 0, 0) });
+                counterRow.Controls.Add(_enemyCounterDisplay);
+                counterRow.Controls.Add(_enemyCounterNote);
+                root.Controls.Add(counterRow, 0, 2);
                 root.Controls.Add(new Label
                 {
                     AutoSize = true,
@@ -420,7 +428,7 @@ public sealed class MainForm : Form
                     ForeColor = Color.DimGray,
                     Padding = new Padding(6, 2, 6, 6),
                     Text = "Type 为原始字节：常用 $80/$A0/$C0/$E0。bit2（$04）是闪光/奖励标志，因此 $84/$A4/$C4/$E4 可强制该类型带闪光。原版流程还会自动给第4、11、18辆出生敌人加 $04。"
-                }, 0, 2);
+                }, 0, 3);
                 return root;
             }
             case EditorToolKind.Tsa:
@@ -536,9 +544,9 @@ public sealed class MainForm : Form
     private void ShowAbout()
     {
         MessageBox.Show(this,
-            "Quarrel Ex v1.1.6\r\nBattle City / Battle City Ex Editor\r\n\r\n" +
+            "Quarrel Ex v1.1.7\r\nBattle City / Battle City Ex Editor\r\n\r\n" +
             "Web/Desktop 继续共用 QuarrelExConfig v3；关卡地图、Enemy Type / Count / Total、Demo、Screen 与 Runtime 扩展均可互通。\r\n" +
-            "Runtime 6.9.2 / QXR1 v5：Stage 1~70 独立 P1/P2 玩家出生点、压缩逐关规则表、Skip ON 无关卡闪帧；Demo 保持原版出生/节奏/近老巢停火逻辑。\r\n" +
+            "Runtime 6.9.3 / QXR1 v5：Stage 1~70 独立 P1/P2 玩家出生点、右上敌人数 Icons/Number、压缩逐关规则表、Skip ON 无关卡闪帧；Demo 保持原版出生/节奏/近老巢停火逻辑。\r\n" +
             "支持把 .nes ROM 直接拖入窗口打开；有未保存修改时会显示“是/否/取消”，选择“是”会先保存/另存为成功后再打开。\r\n保留 Runtime 6.5 Final Rules、自定义 1~8 出生点、GAME OVER Skip、加命规则、2P Win Streak 与装甲坦克耐久；地图修改会同步刷新游戏设置中的两个出生点地图。",
             "关于 Quarrel Ex", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
@@ -745,6 +753,18 @@ public sealed class MainForm : Form
         _enemyGrid.Columns[0].ReadOnly = true;
         _enemyGrid.CellBeginEdit += (_, _) => { if (!_refreshing) PushUndo(); };
         _enemyGrid.CellEndEdit += EnemyGrid_CellEndEdit;
+        _enemyCounterDisplay.Items.Clear();
+        _enemyCounterDisplay.Items.AddRange(new object[] { "Icons", "Number" });
+        _enemyCounterDisplay.SelectedIndex = 0;
+        _enemyCounterDisplay.SelectedIndexChanged += (_, _) =>
+        {
+            if (_rom is null || _refreshing || !_rom.SupportsEnemyCounterDisplay || CurrentStage is < 1 or > 70) return;
+            if (_rom.IsEnemyCounterNumericForced(CurrentStage)) return;
+            PushUndo();
+            _rom.SetEnemyCounterNumericPreference(CurrentStage, _enemyCounterDisplay.SelectedIndex == 1);
+            MarkDirty();
+            RefreshEnemyGrid();
+        };
     }
 
     private void ConfigureTsaEditor()
@@ -1194,6 +1214,25 @@ public sealed class MainForm : Form
                     ? "数量合计：20（原版有效）\r\n当前 ROM 没有自定义总敌人数运行支持。"
                     : $"数量合计：{sum}（建议保持20）\r\n当前 ROM 的运行程序仍按20辆规格设计。";
                 _enemySum.ForeColor = sum == 20 ? Color.DarkGreen : Color.DarkOrange;
+            }
+
+            if (_rom.SupportsEnemyCounterDisplay && CurrentStage is >= 1 and <= 70)
+            {
+                var prefNumber = _rom.GetEnemyCounterNumericPreference(CurrentStage);
+                var forced = sum > 50;
+                _enemyCounterDisplay.Enabled = !forced;
+                _enemyCounterDisplay.SelectedIndex = forced ? 1 : (prefNumber ? 1 : 0);
+                _enemyCounterNote.Text = forced
+                    ? $"EnemyTotal={sum} > 50：运行时强制 Number；已保存偏好为 {(prefNumber ? "Number" : "Icons")}。"
+                    : "EnemyTotal 1~50 可逐关选择 Icons / Number；51~255 自动强制 Number。";
+                _enemyCounterNote.ForeColor = forced ? Color.DarkOrange : Color.DimGray;
+            }
+            else
+            {
+                _enemyCounterDisplay.Enabled = false;
+                _enemyCounterDisplay.SelectedIndex = 0;
+                _enemyCounterNote.Text = "逐关敌人数显示模式需要 QXR1 v5 / Runtime 6.9.3。";
+                _enemyCounterNote.ForeColor = Color.DimGray;
             }
         }
         finally { _refreshing = false; }

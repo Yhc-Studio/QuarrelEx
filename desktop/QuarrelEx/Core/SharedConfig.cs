@@ -102,7 +102,10 @@ public sealed class StageConfig
     // Optional Runtime 6.7 / QXR1 v4 extension. When false the runtime does not
     // draw/protect the HQ, so the 13x13 map data underneath remains active.
     public bool? BaseExists { get; set; }
-    // Optional Runtime 6.9.2 / QXR1 v5 extension. A null Player1/Player2 inside
+    // Optional Runtime 6.9.3 / QXR1 v5 extension. Stored preference is "Icons" or "Number".
+    // Runtime forces Number when EnemyTotal > 50 without overwriting this preference.
+    public string? EnemyCounterDisplay { get; set; }
+    // Optional Runtime 6.9.3 / QXR1 v5 extension. A null Player1/Player2 inside
     // this object means that player uses the original/global spawn position.
     // If PlayerSpawn itself is absent, older Config v3 files preserve the target ROM.
     public StagePlayerSpawnConfig? PlayerSpawn { get; set; }

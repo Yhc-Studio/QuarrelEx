@@ -47,7 +47,7 @@ public sealed class BattleCityRom
     private const int FinalRulesBaseExistsLegacyCpu = 0xBF78;
     // QXR1 v5 / Runtime 6.9 packed stage rules + per-stage player spawns.
     // PackedStageRules bits: 7-5=1P enemy-limit (MaxActive+1), bit4=BaseExists,
-    // bit3=reserved, bits2-0=2P enemy-limit (MaxActive+1).
+    // bit3=EnemyCounter numeric preference, bits2-0=2P enemy-limit (MaxActive+1).
     private const int FinalRulesPackedStageRulesCpu = 0xBEEC;
     private const int FinalRulesStageP1SpawnCpu = 0xBF32;
     private const int FinalRulesStageP2SpawnCpu = 0xBF78;
@@ -137,6 +137,10 @@ public sealed class BattleCityRom
     public bool SupportsFinalRulesV3 => HasFinalRules && FinalRulesVersion >= 3;
     public bool SupportsFinalRulesV4 => HasFinalRules && FinalRulesVersion >= 4;
     public bool SupportsFinalRulesV5 => HasFinalRules && FinalRulesVersion >= 5;
+    public bool SupportsEnemyCounterDisplay =>
+        SupportsFinalRulesV5 &&
+        SpanEquals(Cpu8000FileOffset(0xC377), new byte[] { 0x20, 0x6A, 0xC7 }) &&
+        SpanEquals(Cpu8000FileOffset(0xDB68), new byte[] { 0x20, 0x90, 0xC7 });
     public bool SkipFinalGameOver
     {
         get => HasFinalRules && (_data[Cpu8000FileOffset(FinalRulesFlagsCpu)] & 0x01) != 0;
@@ -695,6 +699,31 @@ public sealed class BattleCityRom
         _data[Cpu8000FileOffset(FinalRulesBaseExistsLegacyCpu) + stage - 1] = exists ? (byte)1 : (byte)0;
     }
 
+    public bool GetEnemyCounterNumericPreference(int stage)
+    {
+        EnsureEnemyCounterDisplayStage(stage);
+        return (_data[Cpu8000FileOffset(FinalRulesPackedStageRulesCpu) + stage - 1] & 0x08) != 0;
+    }
+
+    public void SetEnemyCounterNumericPreference(int stage, bool numeric)
+    {
+        EnsureEnemyCounterDisplayStage(stage);
+        var o = Cpu8000FileOffset(FinalRulesPackedStageRulesCpu) + stage - 1;
+        _data[o] = numeric ? (byte)(_data[o] | 0x08) : (byte)(_data[o] & 0xF7);
+    }
+
+    public bool IsEnemyCounterNumericForced(int stage)
+    {
+        EnsureEnemyCounterDisplayStage(stage);
+        return GetEnemyTotal(stage) > 50;
+    }
+
+    public bool UseNumericEnemyCounter(int stage)
+    {
+        EnsureEnemyCounterDisplayStage(stage);
+        return IsEnemyCounterNumericForced(stage) || GetEnemyCounterNumericPreference(stage);
+    }
+
     public (bool IsCustom, byte X, byte Y) GetStagePlayerSpawn(int stage, bool twoPlayer)
     {
         EnsureFinalRulesV5Stage(stage);
@@ -932,6 +961,7 @@ public sealed class BattleCityRom
                 sc.BaseExists = GetStageBaseExists(stage);
             if (SupportsFinalRulesV5)
             {
+                if (SupportsEnemyCounterDisplay) sc.EnemyCounterDisplay = GetEnemyCounterNumericPreference(stage) ? "Number" : "Icons";
                 var p1 = GetStagePlayerSpawn(stage, false);
                 var p2 = GetStagePlayerSpawn(stage, true);
                 sc.PlayerSpawn = new StagePlayerSpawnConfig
@@ -1250,6 +1280,14 @@ public sealed class BattleCityRom
                 if (sc.BaseExists.HasValue && !SupportsFinalRulesV4)
                     Warn($"Stage {sc.Stage} 包含 BaseExists，但目标 ROM 不是 QXR1 v4+；该项将被忽略。");
 
+                if (sc.EnemyCounterDisplay is not null)
+                {
+                    if (sc.EnemyCounterDisplay != "Icons" && sc.EnemyCounterDisplay != "Number")
+                        Error($"Stage {sc.Stage}: EnemyCounterDisplay 必须是 Icons 或 Number。");
+                    else if (!SupportsEnemyCounterDisplay)
+                        Warn($"Stage {sc.Stage} 包含 EnemyCounterDisplay，但目标 ROM 没有 Runtime 6.9.3 敌人数显示 Hook；该项将被忽略。");
+                }
+
                 if (sc.PlayerSpawn is not null)
                 {
                     if (!SupportsFinalRulesV5)
@@ -1482,6 +1520,8 @@ public sealed class BattleCityRom
             }
             if (SupportsFinalRulesV4 && sc.BaseExists.HasValue)
                 SetStageBaseExists(sc.Stage, sc.BaseExists.Value);
+            if (SupportsEnemyCounterDisplay && sc.EnemyCounterDisplay is not null)
+                SetEnemyCounterNumericPreference(sc.Stage, sc.EnemyCounterDisplay == "Number");
             if (SupportsFinalRulesV5 && sc.PlayerSpawn is not null)
             {
                 if (sc.PlayerSpawn.Player1 is null) SetStagePlayerSpawnOriginal(sc.Stage, false);
@@ -1651,7 +1691,8 @@ public sealed class BattleCityRom
                 if (SupportsFinalRulesV4)
                     lines.Add("老巢存在: Stage 1~70 独立开关；关闭后地图底层地形不被 HQ 覆盖");
                 if (SupportsFinalRulesV5)
-                    lines.Add("玩家出生点: Stage 1~70 / 1P、2P 各 Original 或独立16px网格位置（Runtime 6.9.2）");
+                    lines.Add("玩家出生点: Stage 1~70 / 1P、2P 各 Original 或独立16px网格位置（Runtime 6.9.3）");
+                    lines.Add("敌人数显示: Stage 1~70 Icons / Number；总数 > 50 时运行时强制 Number（Runtime 6.9.3）");
             }
 
             if (SupportsTerrain64) lines.Add("地形: $00~$3F，共64项；$20~$3F为预留自定义槽。");
@@ -1697,12 +1738,17 @@ public sealed class BattleCityRom
     }
     private void EnsureFinalRulesV5()
     {
-        if (!SupportsFinalRulesV5) throw new InvalidOperationException("当前 ROM 不支持 QXR1 v5 扩展（需要 BCEX 32KB Runtime 6.9.2）。");
+        if (!SupportsFinalRulesV5) throw new InvalidOperationException("当前 ROM 不支持 QXR1 v5 扩展（需要 BCEX 32KB Runtime 6.9.3）。");
     }
     private void EnsureFinalRulesV5Stage(int stage)
     {
         EnsureFinalRulesV5();
         if (stage is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(stage), "Runtime 6.9 玩家出生点只支持 Stage 1~70，不包含 Demo。");
+    }
+    private void EnsureEnemyCounterDisplayStage(int stage)
+    {
+        if (!SupportsEnemyCounterDisplay) throw new InvalidOperationException("当前 ROM 不支持逐关敌人数 Icons/Number 显示（需要 Runtime 6.9.3 Hook）。");
+        if (stage is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(stage), "敌人数显示只支持 Stage 1~70，不包含 Demo。");
     }
     private void EnsureFinalRulesV4Stage(int stage)
     {

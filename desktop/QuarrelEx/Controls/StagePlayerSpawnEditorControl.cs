@@ -5,7 +5,7 @@ using QuarrelEx.Rendering;
 namespace QuarrelEx.Controls;
 
 /// <summary>
-/// Runtime 6.9.2 / QXR1 v5 per-stage player spawn editor.
+/// Runtime 6.9.3 / QXR1 v5 per-stage player spawn editor.
 /// P1/P2 may independently use Original/global or a packed 16px-grid position.
 /// </summary>
 public sealed class StagePlayerSpawnEditorControl : Control

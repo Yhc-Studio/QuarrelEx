@@ -1,0 +1,92 @@
+BCEX Runtime 6.9.3 / QXR1 v5 - Numeric Enemy Counter
+=====================================================
+
+Behavior
+--------
+Each Stage 1-70 has one stored display preference in PackedStageRules bit3:
+
+  0 = Icons
+  1 = Number
+
+Runtime selection:
+
+  EnemyTotal 1-50:
+    use the stage preference.
+
+  EnemyTotal 51-255:
+    force Number.
+
+The forced mode does not overwrite bit3.  If a stage is set back to 50 or
+less, its previous Icons/Number preference becomes active again.
+
+Number meaning
+--------------
+The numeric counter displays RAM $7F, the same logical quantity represented
+by the original right-side tank icons: enemies still waiting to spawn.
+
+Examples:
+  initial total 60 -> 60, 59, 58 ... 0
+  initial total 255 -> 255 ... 0
+
+Number rendering supports 0-255 and suppresses leading zeroes.
+
+Icon mode
+---------
+Totals over 20 keep the classic saturated 20-icon display until the remaining
+spawn count falls below 20.
+
+Runtime 6.9.3 also makes icon initialization accurate for totals below 20:
+EnemyTotal=10 starts with 10 markers instead of 20.
+
+Demo
+----
+Demo mode ($46=$02) always uses the original icon display and is not affected
+by the per-stage EnemyCounterDisplay setting.
+
+ROM data
+--------
+PackedStageRules:
+  CPU $BEEC-$BF31
+
+Per-stage byte:
+  bits7-5 = 1P enemy limit (MaxActive+1)
+  bit4    = BaseExists
+  bit3    = EnemyCounterDisplay preference
+  bits2-0 = 2P enemy limit (MaxActive+1)
+
+No QXR1 layout version bump is required because bit3 was reserved in v5.
+
+Runtime hooks
+-------------
+CPU $C377:
+  JSR $C76A
+
+CPU $DB68:
+  JSR $C790
+
+Code:
+  $C000-$C054 decimal renderer
+  $C055-$C06A icon initializer
+  $C76A-$C79E display dispatcher/update
+
+Editor
+------
+Desktop 1.1.7 and Web 1.6.7 expose:
+
+  Enemy Counter Display:
+    Icons
+    Number
+
+When EnemyTotal > 50, the control shows Number and is disabled with a
+"forced" note.  The stored preference is preserved.
+
+Config v3 optional stage field:
+
+  "EnemyCounterDisplay": "Icons"
+or
+  "EnemyCounterDisplay": "Number"
+
+This field is supported by all Runtime 6.9.3 / QXR1 v5 compatible builds:
+- standard BCEX 32KB
+- Mid City2 compatibility build
+- Mid City2 PS compatibility build

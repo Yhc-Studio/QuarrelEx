@@ -1,6 +1,6 @@
 # QuarrelEx
 
-![Version](https://img.shields.io/badge/release-v1.1.6-blue)
+![Version](https://img.shields.io/badge/release-v1.1.7-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Web-0aa0c0)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -15,11 +15,11 @@
 
 | Component | Version |
 |---|---:|
-| QuarrelEx | 1.1.6 |
-| Desktop | 1.1.6 |
-| Web | 1.6.6 |
+| QuarrelEx | 1.1.7 |
+| Desktop | 1.1.7 |
+| Web | 1.6.7 |
 | Config | QuarrelExConfig v3 |
-| 32KB BCEX runtime | Runtime 6.9.2 / QXR1 v5 |
+| 32KB BCEX runtime | Runtime 6.9.3 / QXR1 v5 |
 
 ## Highlights
 
@@ -37,6 +37,7 @@
 - A+B+Start configurable cheat lives.
 - Final GAME OVER Skip, score extra-life rules, 2P Original/Win-Streak.
 - Armored Tank Original/One-Hit. Normal 400-point armored tanks can use the white 1-HP form, while flashing/item armored tanks keep their original durability/item path.
+- Per-stage right-side **Enemy counter display**: Icons or Number for totals 1-50; totals 51-255 force Number while preserving the stored preference.
 - Automatic flashing bonus tanks stay at spawn **#4 / #11 / #18** even when EnemyTotal exceeds 20.
 - A newly spawning flashing tank no longer forcibly deletes an existing item.
 - Correct next-stage terrain/setup after stage clear.
@@ -91,7 +92,7 @@ SHA-256: a869aead5b6957fc62002ff9636e048cc34baf0100d629b07dc51aa18f220c0c
 For the current 32KB build, run the preparation helper and apply:
 
 ```text
-patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.2.ips
+patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.3.ips
 ```
 
 See [patches/README.md](patches/README.md) for exact patching steps and checksums.

@@ -12,9 +12,9 @@ public sealed class GameSettingsControl : UserControl
     private readonly Dictionary<SpawnKind,Label> _spawnLabels=new();
     private readonly SpawnPositionEditorControl _spawnEditor=new(){Width=500,Height=448,Margin=new Padding(0,6,0,6)};
 
-    // Runtime 6.9.2 / QXR1 v5 per-stage P1/P2 player spawn editor.
+    // Runtime 6.9.3 / QXR1 v5 per-stage P1/P2 player spawn editor.
     private readonly StagePlayerSpawnEditorControl _stagePlayerSpawnEditor=new(){Width=500,Height=500,Margin=new Padding(0,6,0,6)};
-    private readonly GroupBox _stagePlayerSpawnBox=new(){Text="Stage 1~70 玩家出生点（Runtime 6.9.2 / QXR1 v5）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8),Margin=new Padding(0,12,0,4)};
+    private readonly GroupBox _stagePlayerSpawnBox=new(){Text="Stage 1~70 玩家出生点（Runtime 6.9.3 / QXR1 v5）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8),Margin=new Padding(0,12,0,4)};
     private readonly ComboBox _stagePlayerMode1=ModeCombo();
     private readonly ComboBox _stagePlayerMode2=ModeCombo();
     private readonly NumericUpDown _stagePlayerX1=GridNum();
@@ -335,7 +335,7 @@ public sealed class GameSettingsControl : UserControl
         _stagePlayerSpawnEditor.Bind(_rom,_renderer,_stageProvider);
         if(!supported)
         {
-            _stagePlayerSpawnNote.Text="逐关 P1/P2 玩家出生点需要 QXR1 v5 / Runtime 6.9.2。";
+            _stagePlayerSpawnNote.Text="逐关 P1/P2 玩家出生点需要 QXR1 v5 / Runtime 6.9.3。";
             return;
         }
         if(!available)

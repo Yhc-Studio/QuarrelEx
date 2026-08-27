@@ -1,0 +1,9 @@
+QuarrelEx Desktop v1.1.7 static verification
+============================================
+
+- Project version is 1.1.7.
+- Runtime 6.9.3 / QXR1 v5 EnemyCounterDisplay model/UI/config code is present.
+- PackedStageRules bit3 is preserved by MaxActive/BaseExists setters.
+- Math.Clamp explicit-int CS0121 fixes remain present.
+- Config $FF Screen raw-byte compatibility remains present.
+- Final Windows compilation should be run with Visual Studio 2022 / GitHub Actions.

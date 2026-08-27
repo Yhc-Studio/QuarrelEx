@@ -1065,7 +1065,8 @@
         0,
         0
       ],
-      "EnemyTotal": 20
+      "EnemyTotal": 20,
+      "EnemyCounterDisplay": "Icons"
     },
     {
       "Stage": 2,

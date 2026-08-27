@@ -151,7 +151,7 @@ Stages[].BaseExists (optional boolean; QXR1 v4 / Runtime 6.7)
   false = do not draw/protect the HQ; underlying map terrain remains active
 
 
-### Runtime 6.9.2 / QXR1 v5
+### Runtime 6.9.3 / QXR1 v5
 
 Config schema remains Version 3. QXR1 v5 adds an optional per-stage PlayerSpawn object.
 
@@ -165,3 +165,10 @@ Semantics:
 - {X,Y}: custom 16px-grid spawn, each coordinate must be $18,$28,...,$D8.
 
 QXR1 v5 also packs per-stage MaxActive and BaseExists internally; Config v3 remains unchanged at the semantic level and continues to expose EnemyPacing.Player1MaxActive, EnemyPacing.Player2MaxActive and BaseExists as ordinary values.
+
+### Runtime 6.9.3 / QXR1 v5 EnemyCounterDisplay
+
+Optional per-stage field:
+  EnemyCounterDisplay: "Icons" | "Number"
+
+The stored preference is used for EnemyTotal 1~50. Runtime forces Number when EnemyTotal is 51~255 without overwriting the stored preference.

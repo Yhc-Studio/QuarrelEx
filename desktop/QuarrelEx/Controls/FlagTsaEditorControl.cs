@@ -86,7 +86,7 @@ public sealed class FlagTsaEditorControl : UserControl
             {
                 _baseExists.Checked = true;
                 _baseExists.Enabled = false;
-                _baseNote.Text = "每关独立老巢开关需要 QXR1 v4+；Runtime 6.9.2 / QXR1 v5 使用压缩逐关规则表。旧 ROM 始终按原版绘制老巢。";
+                _baseNote.Text = "每关独立老巢开关需要 QXR1 v4+；Runtime 6.9.3 / QXR1 v5 使用压缩逐关规则表。旧 ROM 始终按原版绘制老巢。";
                 return;
             }
             if (stage is < 1 or > 70 || _rom.IsDemoStage(stage))

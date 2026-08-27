@@ -1,6 +1,6 @@
-# BCEX 32KB Runtime 6.9.2
+# BCEX 32KB Runtime 6.9.3
 
-Current QuarrelEx 32KB runtime: **Runtime 6.9.2 / QXR1 v5**.
+Current QuarrelEx 32KB runtime: **Runtime 6.9.3 / QXR1 v5**.
 
 ## Current feature set
 
@@ -12,6 +12,7 @@ Current QuarrelEx 32KB runtime: **Runtime 6.9.2 / QXR1 v5**.
 - Stage 1-70 independent P1/P2 player spawn positions.
 - Stage 1-70 independent P1/P2 enemy spawn interval and maximum active count.
 - Stage 1-70 BaseExists.
+- Stage 1-70 EnemyCounterDisplay preference in PackedStageRules bit3; totals above 50 force Number.
 - A+B+Start configurable cheat lives.
 - Final GAME OVER Skip.
 - Score extra-life modes.
@@ -39,7 +40,7 @@ Packed stage rule:
 ```text
 bits 7-5 = 1P enemy limit (MaxActive + 1)
 bit  4   = BaseExists
-bit  3   = reserved
+bit  3   = EnemyCounterDisplay (0 Icons, 1 Number)
 bits 2-0 = 2P enemy limit (MaxActive + 1)
 ```
 

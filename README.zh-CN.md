@@ -1,6 +1,6 @@
 # QuarrelEx
 
-![Version](https://img.shields.io/badge/release-v1.1.6-blue)
+![Version](https://img.shields.io/badge/release-v1.1.7-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Web-0aa0c0)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -15,11 +15,11 @@
 
 | 组件 | 版本 |
 |---|---:|
-| QuarrelEx | 1.1.6 |
-| Desktop | 1.1.6 |
-| Web | 1.6.6 |
+| QuarrelEx | 1.1.7 |
+| Desktop | 1.1.7 |
+| Web | 1.6.7 |
 | Config | QuarrelExConfig v3 |
-| 32KB BCEX Runtime | Runtime 6.9.2 / QXR1 v5 |
+| 32KB BCEX Runtime | Runtime 6.9.3 / QXR1 v5 |
 
 ## 主要功能
 
@@ -37,6 +37,7 @@
 - A+B+Start 秘籍命数。
 - Final GAME OVER Skip、分数加命、2P Original / Win-Streak。
 - 400 分装甲坦克 Original / One-Hit：普通装甲可变成白色 1HP，闪光/带道具装甲保持原版耐久与道具流程。
+- 每关独立右上角**敌人数显示**：总数 1~50 可选 Icons / Number；51~255 强制 Number，但保留原来的偏好设置。
 - 自动闪光奖励坦克固定为本关出生序号 **#4 / #11 / #18**，EnemyTotal 超过 20 时也不会后移。
 - 新闪光坦克出生时不再强制清除当前已有道具。
 - 修复过关后的下一关地形/场景初始化异常。
@@ -91,7 +92,7 @@ SHA-256: a869aead5b6957fc62002ff9636e048cc34baf0100d629b07dc51aa18f220c0c
 当前 32KB 版本先运行准备脚本，再应用：
 
 ```text
-patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.2.ips
+patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.3.ips
 ```
 
 详细步骤和校验见 [patches/README.md](patches/README.md)。
