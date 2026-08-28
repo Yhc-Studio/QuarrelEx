@@ -14,7 +14,8 @@ public sealed class MainForm : Form
     private NesRenderer? _renderer;
     private string? _filePath;
     private bool _dirty;
-    private int _selectedTerrain = 0x0D;
+    private int? _selectedTerrain = 0x0D;
+    private int[,]? _mapClipboard;
     private readonly Stack<byte[]> _undo = new();
     private readonly Stack<byte[]> _redo = new();
     private byte[]? _savedBytes;
@@ -51,9 +52,13 @@ public sealed class MainForm : Form
     private readonly ToolStripMenuItem _saveAsMenu = new("另存为(&A)...") { ShortcutKeys = Keys.Control | Keys.Shift | Keys.S, Enabled = false };
     private readonly ToolStripMenuItem _undoMenu = new("撤销(&U)") { ShortcutKeys = Keys.Control | Keys.Z, Enabled = false };
     private readonly ToolStripMenuItem _redoMenu = new("重做(&R)") { ShortcutKeys = Keys.Control | Keys.Y, Enabled = false };
+    private readonly ToolStripMenuItem _importStageMenu = new("导入当前关卡(&L)...") { Enabled = false };
+    private readonly ToolStripMenuItem _exportStageMenu = new("导出当前关卡(&G)...") { Enabled = false };
     private readonly ToolStripButton _saveToolButton = new("保存") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "保存 ROM (Ctrl+S)", Enabled = false };
     private readonly ToolStripButton _undoToolButton = new("撤销") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "撤销 (Ctrl+Z)", Enabled = false };
     private readonly ToolStripButton _redoToolButton = new("重做") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "重做 (Ctrl+Y / Ctrl+Shift+Z)", Enabled = false };
+    private readonly ToolStripButton _importStageToolButton = new("导入关卡") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "把 .qexstage.json 导入到当前关卡", Enabled = false };
+    private readonly ToolStripButton _exportStageToolButton = new("导出关卡") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "导出当前地图及其引用的 TSA/Attr 地形定义", Enabled = false };
     private readonly ToolStripMenuItem _convertMenu = new("转换为 32KB Ex Overlay（Legacy）") { Enabled = false };
     private readonly Label _mapNote = new() { AutoSize = true, ForeColor = Color.DimGray, Padding = new Padding(3) };
 
@@ -115,7 +120,9 @@ public sealed class MainForm : Form
 
         _stageCanvas.CellPaintRequested += StageCanvas_CellPaintRequested;
         _stageCanvas.CellPickRequested += StageCanvas_CellPickRequested;
-        _stageCombo.SelectedIndexChanged += (_, _) => RefreshStageView();
+        _stageCanvas.SelectionChanged += StageCanvas_SelectionChanged;
+        _stageCanvas.SelectionMoveRequested += StageCanvas_SelectionMoveRequested;
+        _stageCombo.SelectedIndexChanged += (_, _) => { _stageCanvas.ClearSelection(false); RefreshStageView(); };
         FormClosing += MainForm_FormClosing;
         Shown += (_, _) => { FitToWorkingArea(); FitStageCanvasToViewport(); };
         Resize += (_, _) =>
@@ -189,12 +196,20 @@ public sealed class MainForm : Form
         importConfig.Click += (_, _) => ImportSharedConfig();
         var exportConfig = new ToolStripMenuItem("导出配置(&C)...");
         exportConfig.Click += (_, _) => ExportSharedConfig();
-        file.DropDownItems.AddRange([open, _saveMenu, _saveAsMenu, new ToolStripSeparator(), importConfig, exportConfig, new ToolStripSeparator(), exit]);
+        _importStageMenu.Click += (_, _) => ImportStagePackage();
+        _exportStageMenu.Click += (_, _) => ExportStagePackage();
+        file.DropDownItems.AddRange([open, _saveMenu, _saveAsMenu, new ToolStripSeparator(), importConfig, exportConfig, new ToolStripSeparator(), _importStageMenu, _exportStageMenu, new ToolStripSeparator(), exit]);
 
         var edit = new ToolStripMenuItem("编辑(&E)");
         _undoMenu.Click += (_, _) => Undo();
         _redoMenu.Click += (_, _) => Redo();
-        edit.DropDownItems.AddRange([_undoMenu, _redoMenu]);
+        var copyMap = new ToolStripMenuItem("复制地图选区(&C)") { ShortcutKeyDisplayString = "Ctrl+C" };
+        var cutMap = new ToolStripMenuItem("剪切地图选区(&T)") { ShortcutKeyDisplayString = "Ctrl+X" };
+        var pasteMap = new ToolStripMenuItem("粘贴地图选区(&P)") { ShortcutKeyDisplayString = "Ctrl+V" };
+        copyMap.Click += (_, _) => CopyMapSelection(false);
+        cutMap.Click += (_, _) => CopyMapSelection(true);
+        pasteMap.Click += (_, _) => PasteMapSelection();
+        edit.DropDownItems.AddRange([_undoMenu, _redoMenu, new ToolStripSeparator(), copyMap, cutMap, pasteMap]);
 
         var tools = new ToolStripMenuItem("工具(&T)");
         _convertMenu.Click += (_, _) => ConvertToExpanded();
@@ -237,6 +252,10 @@ public sealed class MainForm : Form
         };
         tool.Items.Add(new ToolStripLabel("关卡:"));
         tool.Items.Add(new ToolStripControlHost(_stageCombo));
+        _importStageToolButton.Click += (_, _) => ImportStagePackage();
+        _exportStageToolButton.Click += (_, _) => ExportStagePackage();
+        tool.Items.Add(_importStageToolButton);
+        tool.Items.Add(_exportStageToolButton);
 
         var open = new ToolStripButton("打开") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "打开 ROM (Ctrl+O)" };
         open.Click += (_, _) => OpenRom();
@@ -306,7 +325,7 @@ public sealed class MainForm : Form
 
         var terrainBox = new GroupBox
         {
-            Text = "地形块（左键选择，地图右键吸取）",
+            Text = "地形块（选择工具 / 左键选择地形 / 地图右键吸取）",
             Dock = DockStyle.Fill,
             MinimumSize = new Size(230, 0),
             Margin = new Padding(2)
@@ -819,7 +838,7 @@ public sealed class MainForm : Form
 
     private void DetachCurrentRomUi()
     {
-        _stageCanvas.Renderer = null; _stageCanvas.Rom = null; _stageCanvas.Invalidate();
+        _stageCanvas.Renderer = null; _stageCanvas.Rom = null; _stageCanvas.ClearSelection(false); _stageCanvas.SelectionMode = false; _stageCanvas.Invalidate();
         ClearTerrainButtonImages();
         _enemyGrid.Rows.Clear(); _tsaEditor.Bind(null, null); _paletteEditor.Bind(null, null); _flagTsaEditor.Bind(null, null); _gameSettings.Bind(null, null, null); _screenEditor.Bind(null, null); _infoBox.Clear();
         _renderer?.Dispose(); _renderer = null; _rom = null;
@@ -848,7 +867,7 @@ public sealed class MainForm : Form
             _undo.Clear();
             _redo.Clear();
             UpdateHistoryMenus();
-            if (!_rom.SelectableTerrainIds.Contains(_selectedTerrain)) _selectedTerrain = 0x0D;
+            if (_selectedTerrain is not int selected || !_rom.SelectableTerrainIds.Contains(selected)) _selectedTerrain = 0x0D;
             PopulateStages();
             EnableEditing(true);
             RefreshAll();
@@ -1035,6 +1054,98 @@ public sealed class MainForm : Form
         }
     }
 
+    private string CurrentStageDisplayName()
+        => _rom is not null && _rom.IsDemoStage(CurrentStage) ? "Demo" : $"Stage {CurrentStage}";
+
+    private void ExportStagePackage()
+    {
+        if (_rom is null)
+        {
+            MessageBox.Show(this, "请先打开 ROM。", "导出关卡", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        using var dlg = new SaveFileDialog
+        {
+            Filter = "QuarrelEx Stage (*.qexstage.json)|*.qexstage.json",
+            DefaultExt = "qexstage.json",
+            AddExtension = true,
+            FileName = $"{(string.IsNullOrWhiteSpace(_filePath) ? "BattleCity" : Path.GetFileNameWithoutExtension(_filePath))}_{CurrentStageDisplayName().Replace(' ', '_')}.qexstage.json"
+        };
+        if (dlg.ShowDialog(this) != DialogResult.OK) return;
+
+        try
+        {
+            var package = _rom.ExportStagePackage(CurrentStage);
+            var validation = _rom.ValidateStagePackage(package, CurrentStage);
+            if (!validation.IsValid) throw new InvalidDataException(validation.FormatErrors());
+            File.WriteAllText(dlg.FileName, JsonSerializer.Serialize(package, new JsonSerializerOptions { WriteIndented = true }));
+            SetStatus($"{CurrentStageDisplayName()} 地图与地形配置已导出。", false);
+            MessageBox.Show(this,
+                $"{CurrentStageDisplayName()} 导出成功。{Environment.NewLine}{dlg.FileName}{Environment.NewLine}{Environment.NewLine}文件包含 13×13 地图和该地图实际引用的 TSA/Attr 地形定义。",
+                "关卡导出成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, "导出关卡失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void ImportStagePackage()
+    {
+        if (_rom is null)
+        {
+            MessageBox.Show(this, "请先打开目标 ROM，并选择要导入到的关卡。", "导入关卡", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        using var dlg = new OpenFileDialog
+        {
+            Filter = "QuarrelEx Stage (*.qexstage.json)|*.qexstage.json|JSON (*.json)|*.json",
+            Title = $"导入到 {CurrentStageDisplayName()}"
+        };
+        if (dlg.ShowDialog(this) != DialogResult.OK) return;
+
+        try
+        {
+            var jsonText = File.ReadAllText(dlg.FileName);
+            var package = JsonSerializer.Deserialize<QuarrelExStagePackage>(jsonText, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                          ?? throw new InvalidDataException("关卡配置为空或 JSON 结构错误。");
+
+            var staging = new BattleCityRom(_rom.GetBytesCopy(), _cfg);
+            var validation = staging.ValidateStagePackage(package, CurrentStage);
+            if (!validation.IsValid) throw new InvalidDataException(validation.FormatErrors());
+            var notes = staging.ApplyStagePackage(package, CurrentStage);
+
+            var terrainWarning = "注意：TSA/Attr 地形定义在 ROM 中是全局共享的。导入文件中携带的地形 ID 会被更新，因此其他使用相同地形 ID 的关卡外观也可能改变。";
+            var confirmText = $"将把关卡包导入到当前 {CurrentStageDisplayName()}。{Environment.NewLine}{Environment.NewLine}{terrainWarning}";
+            if (package.SourceStage > 0 && package.SourceStage != CurrentStage)
+                confirmText = $"关卡包来源：Stage {package.SourceStage}{Environment.NewLine}" + confirmText;
+            if (MessageBox.Show(this, confirmText, "确认导入关卡", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return;
+
+            PushUndo();
+            _rom.RestoreBytes(staging.GetBytesCopy());
+            _renderer?.InvalidateCache();
+            _stageCanvas.ClearSelection(false);
+            MarkDirty();
+            RefreshAll();
+
+            var warningText = notes.Count > 0
+                ? Environment.NewLine + Environment.NewLine + "提示：" + Environment.NewLine + "- " + string.Join(Environment.NewLine + "- ", notes)
+                : string.Empty;
+            MessageBox.Show(this, $"已导入到 {CurrentStageDisplayName()}。" + warningText, "关卡导入成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            SetStatus($"{CurrentStageDisplayName()} 地图与地形配置已导入。", false);
+        }
+        catch (JsonException ex)
+        {
+            MessageBox.Show(this, "JSON 格式错误：" + ex.Message, "导入关卡失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, "导入关卡失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
     private bool SaveRom(bool forceSaveAs)
     {
         if (_rom is null) return false;
@@ -1124,16 +1235,18 @@ public sealed class MainForm : Form
     private void RefreshStageNote()
     {
         if (_rom is null) return;
+        string baseText;
         if (_rom.IsDemoStage(CurrentStage))
-            _mapNote.Text = "Demo 地图使用原版 4-bit 地图槽：可编辑地形仅 $00~$0D；Enemy Type/Count 与 Stage 35 共用。";
+            baseText = "Demo 地图使用原版 4-bit 地图槽：可编辑地形仅 $00~$0D；Enemy Type/Count 与 Stage 35 共用。";
         else if (_rom.IsOriginal)
-            _mapNote.Text = "Battle City 原版模式：Stage 1~35 使用独立地图。";
+            baseText = "Battle City 原版模式：Stage 1~35 使用独立地图。";
         else if (_rom.HasIndependentMaps)
-            _mapNote.Text = $"BCEX v2 32KB：Stage 1~70 地图全部独立，地形 $00~${_rom.TerrainCount - 1:X2} 可直接保存。";
+            baseText = $"BCEX v2 32KB：Stage 1~70 地图全部独立，地形 $00~${_rom.TerrainCount - 1:X2} 可直接保存。";
         else if (CurrentStage > 35)
-            _mapNote.Text = $"Stage {CurrentStage} 的地图与 Stage {CurrentStage - 35} 共用；敌人 Type/Count 独立。";
+            baseText = $"Stage {CurrentStage} 的地图与 Stage {CurrentStage - 35} 共用；敌人 Type/Count 独立。";
         else
-            _mapNote.Text = "Stage 1~35 使用独立地图。";
+            baseText = "Stage 1~35 使用独立地图。";
+        _mapNote.Text = baseText + "  选择‘选择 / 移动工具’后可框选、拖移、复制、剪切和粘贴地图块。";
     }
 
     private void BuildTerrainButtons()
@@ -1143,9 +1256,31 @@ public sealed class MainForm : Form
         try
         {
             ClearTerrainButtonImages();
+            var dpi = Math.Max(96, _terrainPanel.DeviceDpi);
+            var selectButton = new Button
+            {
+                Width = ScaleForDpiCompact(188, dpi),
+                Height = ScaleForDpiCompact(38, dpi),
+                Margin = new Padding(ScaleForDpiCompact(2, dpi)),
+                Text = "▣  选择 / 移动工具",
+                TextAlign = ContentAlignment.MiddleCenter,
+                FlatStyle = FlatStyle.Flat,
+                UseVisualStyleBackColor = false,
+                BackColor = _selectedTerrain is null ? Color.LightSkyBlue : SystemColors.Control,
+                AutoEllipsis = true
+            };
+            selectButton.Click += (_, _) =>
+            {
+                _selectedTerrain = null;
+                _stageCanvas.SelectionMode = true;
+                _stageCanvas.Focus();
+                BuildTerrainButtons();
+                SetStatus("地图选择模式：拖框选择；拖动选区可移动，Ctrl+拖动复制；Ctrl+C/X/V 可复制/剪切/粘贴。", false);
+            };
+            _terrainPanel.Controls.Add(selectButton);
+
             foreach (var id in _rom.SelectableTerrainIdsForStage(CurrentStage))
             {
-                var dpi = Math.Max(96, _terrainPanel.DeviceDpi);
                 var previewScale = 2;
                 var button = new Button
                 {
@@ -1162,11 +1297,13 @@ public sealed class MainForm : Form
                     FlatStyle = FlatStyle.Flat,
                     AutoEllipsis = true,
                     UseVisualStyleBackColor = false,
-                    BackColor = id == _selectedTerrain ? Color.LightSkyBlue : SystemColors.Control
+                    BackColor = _selectedTerrain == id ? Color.LightSkyBlue : SystemColors.Control
                 };
                 button.Click += (_, _) =>
                 {
                     _selectedTerrain = (int)button.Tag;
+                    _stageCanvas.SelectionMode = false;
+                    _stageCanvas.ClearSelection(false);
                     BuildTerrainButtons();
                 };
                 _terrainPanel.Controls.Add(button);
@@ -1268,11 +1405,11 @@ public sealed class MainForm : Form
 
     private void StageCanvas_CellPaintRequested(object? sender, CellPaintEventArgs e)
     {
-        if (_rom is null || _renderer is null) return;
+        if (_rom is null || _renderer is null || _selectedTerrain is not int terrain) return;
         try
         {
             if (e.NewStroke) PushUndo();
-            var converted = _rom.SetCell(CurrentStage, e.Row, e.Column, _selectedTerrain);
+            var converted = _rom.SetCell(CurrentStage, e.Row, e.Column, terrain);
             if (converted)
             {
                 _renderer.InvalidateCache();
@@ -1300,8 +1437,149 @@ public sealed class MainForm : Form
             return;
         }
         _selectedTerrain = picked;
+        _stageCanvas.SelectionMode = false;
+        _stageCanvas.ClearSelection(false);
         BuildTerrainButtons();
-        SetStatus($"已吸取地形 {_selectedTerrain:X2}。", false);
+        SetStatus($"已吸取地形 {picked:X2}。", false);
+    }
+
+    private void StageCanvas_SelectionChanged(object? sender, MapSelectionChangedEventArgs e)
+    {
+        if (e.Selection is not Rectangle r) return;
+        SetStatus($"已选择 {r.Width}×{r.Height}（{r.Width * r.Height} 块）。拖动选区可移动，Ctrl+拖动可复制。", false);
+    }
+
+    private int[,] ReadMapRegion(Rectangle source)
+    {
+        if (_rom is null) throw new InvalidOperationException("未打开 ROM。");
+        var data = new int[source.Height, source.Width];
+        for (var row = 0; row < source.Height; row++)
+        for (var col = 0; col < source.Width; col++)
+            data[row, col] = _rom.GetCell(CurrentStage, source.Y + row, source.X + col);
+        return data;
+    }
+
+    private void ValidateMapBlockForCurrentStage(int[,] data)
+    {
+        if (_rom is null) throw new InvalidOperationException("未打开 ROM。");
+        var allowed = _rom.SelectableTerrainIdsForStage(CurrentStage).ToHashSet();
+        foreach (var id in data)
+            if (!allowed.Contains(id))
+                throw new InvalidOperationException($"选区中包含目标关卡不能使用的地形 ${id:X2}。");
+    }
+
+    private void WriteMapBlock(int[,] data, Point target)
+    {
+        if (_rom is null) return;
+        for (var row = 0; row < data.GetLength(0); row++)
+        for (var col = 0; col < data.GetLength(1); col++)
+            _rom.SetCell(CurrentStage, target.Y + row, target.X + col, data[row, col]);
+    }
+
+    private void RefreshMapAfterSelectionEdit(string message)
+    {
+        if (_rom is null) return;
+        MarkDirty();
+        _stageCanvas.Invalidate();
+        _gameSettings.RefreshMapVisuals();
+        SetStatus(message, false);
+    }
+
+    private void CopyMapSelection(bool cut)
+    {
+        if (_rom is null || !_stageCanvas.SelectionMode || _stageCanvas.SelectionCells is not Rectangle selection) return;
+        try
+        {
+            _mapClipboard = ReadMapRegion(selection);
+            if (!cut)
+            {
+                SetStatus($"已复制 {selection.Width}×{selection.Height} 地图选区。可切换关卡后粘贴。", false);
+                return;
+            }
+
+            PushUndo();
+            for (var row = selection.Top; row < selection.Bottom; row++)
+            for (var col = selection.Left; col < selection.Right; col++)
+                _rom.SetCell(CurrentStage, row, col, 0x0D);
+            RefreshMapAfterSelectionEdit($"已剪切 {selection.Width}×{selection.Height} 地图选区；原位置已填充 $0D 空白。" );
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, cut ? "剪切失败" : "复制失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void PasteMapSelection()
+    {
+        if (_rom is null || !_stageCanvas.SelectionMode || _mapClipboard is null) return;
+        try
+        {
+            ValidateMapBlockForCurrentStage(_mapClipboard);
+            var h = _mapClipboard.GetLength(0);
+            var w = _mapClipboard.GetLength(1);
+            var anchor = _stageCanvas.SelectionCells?.Location ?? Point.Empty;
+            var x = Math.Clamp(anchor.X, 0, 13 - w);
+            var y = Math.Clamp(anchor.Y, 0, 13 - h);
+            PushUndo();
+            WriteMapBlock(_mapClipboard, new Point(x, y));
+            var target = new Rectangle(x, y, w, h);
+            _stageCanvas.SetSelection(target, false);
+            RefreshMapAfterSelectionEdit($"已粘贴 {w}×{h} 地图选区。" );
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, "粘贴失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void DeleteMapSelection()
+    {
+        if (_rom is null || !_stageCanvas.SelectionMode || _stageCanvas.SelectionCells is not Rectangle selection) return;
+        try
+        {
+            PushUndo();
+            for (var row = selection.Top; row < selection.Bottom; row++)
+            for (var col = selection.Left; col < selection.Right; col++)
+                _rom.SetCell(CurrentStage, row, col, 0x0D);
+            RefreshMapAfterSelectionEdit($"已清空 {selection.Width}×{selection.Height} 地图选区。" );
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, "清空选区失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void StageCanvas_SelectionMoveRequested(object? sender, MapSelectionMoveEventArgs e)
+    {
+        if (_rom is null || !_stageCanvas.SelectionMode) return;
+        try
+        {
+            var data = ReadMapRegion(e.Source);
+            ValidateMapBlockForCurrentStage(data);
+            PushUndo();
+            if (!e.Copy)
+            {
+                for (var row = e.Source.Top; row < e.Source.Bottom; row++)
+                for (var col = e.Source.Left; col < e.Source.Right; col++)
+                    _rom.SetCell(CurrentStage, row, col, 0x0D);
+            }
+            WriteMapBlock(data, e.Target);
+            RefreshMapAfterSelectionEdit(e.Copy ? "已复制并放置地图选区。" : "已移动地图选区。" );
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, "移动选区失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void NudgeMapSelection(int dx, int dy)
+    {
+        if (_stageCanvas.SelectionCells is not Rectangle source) return;
+        var x = Math.Clamp(source.X + dx, 0, 13 - source.Width);
+        var y = Math.Clamp(source.Y + dy, 0, 13 - source.Height);
+        if (x == source.X && y == source.Y) return;
+        StageCanvas_SelectionMoveRequested(_stageCanvas, new MapSelectionMoveEventArgs(source, new Point(x, y), false));
+        _stageCanvas.SetSelection(new Rectangle(x, y, source.Width, source.Height), false);
     }
 
     private void ConvertToExpanded()
@@ -1383,6 +1661,19 @@ public sealed class MainForm : Form
             Redo();
             return true;
         }
+
+        if (_stageCanvas.Focused && _stageCanvas.SelectionMode)
+        {
+            if (keyData == (Keys.Control | Keys.C)) { CopyMapSelection(false); return true; }
+            if (keyData == (Keys.Control | Keys.X)) { CopyMapSelection(true); return true; }
+            if (keyData == (Keys.Control | Keys.V)) { PasteMapSelection(); return true; }
+            if (keyData == Keys.Delete || keyData == Keys.Back) { DeleteMapSelection(); return true; }
+            if (keyData == Keys.Left) { NudgeMapSelection(-1, 0); return true; }
+            if (keyData == Keys.Right) { NudgeMapSelection(1, 0); return true; }
+            if (keyData == Keys.Up) { NudgeMapSelection(0, -1); return true; }
+            if (keyData == Keys.Down) { NudgeMapSelection(0, 1); return true; }
+            if (keyData == Keys.Escape) { _stageCanvas.ClearSelection(); return true; }
+        }
         return base.ProcessCmdKey(ref msg, keyData);
     }
 
@@ -1392,6 +1683,10 @@ public sealed class MainForm : Form
         _saveMenu.Enabled = enabled;
         _saveAsMenu.Enabled = enabled;
         _saveToolButton.Enabled = enabled;
+        _importStageMenu.Enabled = enabled;
+        _exportStageMenu.Enabled = enabled;
+        _importStageToolButton.Enabled = enabled;
+        _exportStageToolButton.Enabled = enabled;
         _convertMenu.Enabled = enabled && _rom is { CanConvertToOverlay: true };
         UpdateHistoryMenus();
     }

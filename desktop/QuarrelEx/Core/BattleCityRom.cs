@@ -880,6 +880,114 @@ public sealed class BattleCityRom
     public IReadOnlyList<int> SelectableTerrainIdsForStage(int stage)
         => IsDemoStage(stage) ? Enumerable.Range(0, 14).ToArray() : SelectableTerrainIds;
 
+    public QuarrelExStagePackage ExportStagePackage(int stage)
+    {
+        ValidateStage(stage);
+        var allowed = SelectableTerrainIdsForStage(stage).ToHashSet();
+        var used = new SortedSet<int>();
+        var map = Enumerable.Range(0, 13).Select(_ => new int[13]).ToArray();
+        for (var row = 0; row < 13; row++)
+        for (var col = 0; col < 13; col++)
+        {
+            var id = GetCell(stage, row, col);
+            if (!allowed.Contains(id))
+                throw new InvalidDataException($"Stage {(IsDemoStage(stage) ? "Demo" : stage)} ({row + 1},{col + 1}) 含内部/不可导出的地形 ${id:X2}。");
+            map[row][col] = id;
+            used.Add(id);
+        }
+
+        var package = new QuarrelExStagePackage { SourceStage = stage, Map = map };
+        foreach (var id in used)
+        {
+            package.Terrain.Add(new TerrainDefinitionConfig
+            {
+                Id = id,
+                Attr = GetTerrainAttribute(id) & 3,
+                Tiles = GetTerrainTiles(id).Select(x => (int)x).ToArray()
+            });
+        }
+        return package;
+    }
+
+    public ConfigValidationResult ValidateStagePackage(QuarrelExStagePackage? package, int targetStage)
+    {
+        var result = new ConfigValidationResult();
+        void Error(string text) => result.Errors.Add(text);
+        void Warn(string text) => result.Warnings.Add(text);
+
+        try { ValidateStage(targetStage); }
+        catch (Exception ex) { Error(ex.Message); return result; }
+        if (package is null) { Error("关卡配置为空。"); return result; }
+        if (!string.Equals(package.Schema, "QuarrelExStage", StringComparison.Ordinal))
+            Error("关卡配置缺少有效的 Schema=QuarrelExStage。");
+        if (package.Version != 1) Error($"不支持的关卡配置版本 Version={package.Version}；当前只支持 Version=1。");
+
+        if (package.Map is null || package.Map.Length != 13)
+            Error("Map 必须正好包含 13 行。");
+        else
+        {
+            var allowed = SelectableTerrainIdsForStage(targetStage).ToHashSet();
+            for (var row = 0; row < 13; row++)
+            {
+                if (package.Map[row] is null || package.Map[row].Length != 13)
+                {
+                    Error($"Map 第 {row + 1} 行必须正好包含 13 个地形 ID。");
+                    continue;
+                }
+                for (var col = 0; col < 13; col++)
+                {
+                    var id = package.Map[row][col];
+                    if (!allowed.Contains(id))
+                        Error($"Map ({row + 1},{col + 1}) 的地形 ${id:X2} 不能用于目标关卡。");
+                }
+            }
+        }
+
+        var seen = new HashSet<int>();
+        var targetAllowed = SelectableTerrainIdsForStage(targetStage).ToHashSet();
+        if (package.Terrain is null) Error("Terrain 必须是数组。");
+        foreach (var td in package.Terrain ?? [])
+        {
+            if (!seen.Add(td.Id)) { Error($"Terrain ${td.Id:X2} 重复定义。"); continue; }
+            if (!targetAllowed.Contains(td.Id)) Error($"Terrain ${td.Id:X2} 不能用于目标关卡。");
+            if (td.Attr is < 0 or > 3) Error($"Terrain ${td.Id:X2} 的 Attr={td.Attr}，只能是 0~3。");
+            if (td.Tiles is null || td.Tiles.Length != 4) Error($"Terrain ${td.Id:X2} 必须包含 4 个 TSA Tile。");
+            else if (td.Tiles.Any(x => x is < 0 or > 255)) Error($"Terrain ${td.Id:X2} 的 TSA Tile 必须是 0~255。");
+        }
+
+        if (package.Map is { Length: 13 } && package.Map.All(r => r is { Length: 13 }))
+        {
+            var used = package.Map.SelectMany(r => r).Distinct().ToArray();
+            foreach (var id in used)
+                if (!seen.Contains(id)) Error($"Map 使用了 Terrain ${id:X2}，但关卡配置没有携带该地形的 TSA/Attr 定义。");
+        }
+
+        if (package.SourceStage > 0 && package.SourceStage != targetStage)
+            Warn($"来源为 Stage {package.SourceStage}；将导入到当前 Stage {(IsDemoStage(targetStage) ? "Demo" : targetStage.ToString())}。");
+        if ((package.Terrain?.Count ?? 0) > 0)
+            Warn("Terrain 的 TSA/Attr 表属于 ROM 全局数据；导入会更新配置中携带的地形 ID，其他使用相同 ID 的关卡外观也会同步变化。");
+        return result;
+    }
+
+    public List<string> ApplyStagePackage(QuarrelExStagePackage package, int targetStage)
+    {
+        var validation = ValidateStagePackage(package, targetStage);
+        if (!validation.IsValid) throw new InvalidDataException(validation.FormatErrors());
+
+        // Apply map first: placing an extended terrain ID can promote a legacy 16KB Ex ROM
+        // to the 32KB overlay layout, which also relocates the editable TSA/Attr tables.
+        for (var row = 0; row < 13; row++)
+        for (var col = 0; col < 13; col++)
+            SetCell(targetStage, row, col, package.Map[row][col]);
+        foreach (var td in package.Terrain)
+        {
+            SetTerrainAttribute(td.Id, (byte)td.Attr);
+            for (var q = 0; q < 4; q++) SetTerrainTile(td.Id, q, (byte)td.Tiles[q]);
+        }
+
+        return validation.Warnings.ToList();
+    }
+
     public QuarrelExSharedConfig ExportSharedConfig()
     {
         var cfg = new QuarrelExSharedConfig();

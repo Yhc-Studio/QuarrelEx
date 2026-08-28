@@ -16,6 +16,19 @@ public sealed class QuarrelExSharedConfig
     public ScreensConfig? Screens { get; set; }
 }
 
+
+public sealed class QuarrelExStagePackage
+{
+    public string Schema { get; set; } = "QuarrelExStage";
+    public int Version { get; set; } = 1;
+    // Informational only. Import always targets the stage currently selected in the editor.
+    public int SourceStage { get; set; }
+    public int[][] Map { get; set; } = Enumerable.Range(0, 13).Select(_ => new int[13]).ToArray();
+    // Only terrain definitions referenced by Map are included. TSA/Attr tables are ROM-global,
+    // so importing these definitions may also change other stages that use the same terrain IDs.
+    public List<TerrainDefinitionConfig> Terrain { get; set; } = new();
+}
+
 public sealed class GameplayConfig
 {
     public int StartingLives { get; set; } = 3;

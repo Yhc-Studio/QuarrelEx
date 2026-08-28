@@ -8,7 +8,7 @@
 <style>
 :root{font-family:"Segoe UI","Microsoft YaHei",Arial,sans-serif;color:#202124;background:#eef1f4;--line:#d8dde4;--blue:#1a73e8;--panel:#fff;--muted:#66717f}*{box-sizing:border-box}body{margin:0;min-height:100vh}.appbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:8px;margin-right:8px}.brand img{width:30px;height:30px}.brand strong{font-size:18px}.version{font-size:12px;color:var(--muted)}button,.btn,select,input{font:inherit}.btn,button{border:1px solid #aeb6c1;background:#fff;border-radius:6px;padding:6px 10px;cursor:pointer}.btn:hover,button:hover:not(:disabled){background:#f1f4f8}.primary{background:var(--blue);border-color:var(--blue);color:#fff}.primary:hover:not(:disabled){background:#155fc0}button:disabled,input:disabled{opacity:.48;cursor:not-allowed}.status{font-size:13px;color:var(--muted);min-width:160px;flex:1}.status.ok{color:#14733c}.status.bad{color:#b3261e}.status.warn{color:#946200}.dirty{color:#b3261e;font-weight:600}
 .menu{position:relative}.menu>summary{list-style:none;border:1px solid #aeb6c1;border-radius:6px;padding:6px 10px;cursor:pointer;background:#fff}.menu>summary::-webkit-details-marker{display:none}.menu[open]>summary{background:#f1f4f8}.menupop{position:absolute;right:0;top:calc(100% + 4px);min-width:250px;background:#fff;border:1px solid var(--line);box-shadow:0 6px 20px #0002;border-radius:7px;padding:5px;z-index:30}.menupop button{width:100%;border:0;text-align:left;background:transparent}.menupop .sep{height:1px;background:var(--line);margin:4px}
-main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(480px,650px) minmax(420px,1fr);gap:12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;min-width:0}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.muted{color:var(--muted);font-size:13px}.ok{color:#14733c}.warn{color:#946200}.bad{color:#b3261e}.mono{font-family:Consolas,"SFMono-Regular",monospace}.kbd{font-family:Consolas,monospace;border:1px solid #bbb;border-bottom-width:2px;border-radius:4px;padding:1px 4px;background:#fafafa}.mapwrap{margin-top:8px;background:#e3e7ec;border-radius:6px;padding:8px;display:flex;justify-content:center;align-items:center;overflow:hidden}.mapframe{width:min(100%,416px);aspect-ratio:1/1}#map{display:block;width:100%;height:100%;image-rendering:pixelated;background:#111;border:1px solid #8c959f;cursor:crosshair;touch-action:none}.terrain-title{margin:12px 0 4px}.terrain{display:grid;grid-template-columns:repeat(6,minmax(72px,1fr));gap:6px}.tilebtn{min-width:0;border:2px solid transparent;background:#f7f8fa;border-radius:6px;padding:4px;cursor:pointer;text-align:center}.tilebtn:hover{background:#eef2f7}.tilebtn.sel{border-color:var(--blue);background:#e8f0fe}.tilebtn canvas{width:32px;height:32px;image-rendering:pixelated;display:block;margin:0 auto}.tilebtn span{display:block;font:12px Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tabs{display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:8px}.tab.active{background:#e8f0fe;border-color:#7aa7e8}.tabpane.hidden{display:none}.tabpane{min-height:480px}.scroll{overflow:auto;max-height:70vh}table{width:100%;border-collapse:collapse}th,td{padding:6px;border-bottom:1px solid #e5e8ec;text-align:left;vertical-align:middle}th{position:sticky;top:0;background:#fafbfc;z-index:1}td input{width:76px;padding:4px 5px;border:1px solid #bbc2cb;border-radius:4px}.tsa-table input{width:58px}.feature-group{border:1px solid var(--line);border-radius:7px;padding:10px;margin:10px 0}.feature-group legend{font-weight:600;padding:0 5px}.checkline{display:flex;align-items:center;gap:7px;margin:8px 0}.subcheck{margin-left:25px}.feature-meta{background:#f7f8fa;border-radius:6px;padding:8px;font:13px Consolas,monospace;white-space:pre-wrap}.info-box{white-space:pre-wrap;font:13px Consolas,monospace;background:#f7f8fa;border-radius:6px;padding:10px;min-height:250px}.help-inline{margin-left:auto}.modal{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:100;padding:18px}.modal.hidden{display:none}.modalbox{width:min(980px,96vw);height:min(82vh,820px);background:#fff;border-radius:9px;box-shadow:0 14px 40px #0005;display:grid;grid-template-rows:auto 1fr}.modalhead{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}.modalhead h2{font-size:17px;margin:0;flex:1}.modalbody{padding:12px;overflow:auto}.modalbody pre{margin:0;white-space:pre-wrap;font:14px/1.55 Consolas,"Microsoft YaHei",monospace}.rom-badge{font-size:12px;background:#eef2f7;border:1px solid #d3d8df;border-radius:999px;padding:2px 7px}.footer-note{font-size:12px;color:var(--muted);margin-top:8px}
+main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(480px,650px) minmax(420px,1fr);gap:12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;min-width:0}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.muted{color:var(--muted);font-size:13px}.ok{color:#14733c}.warn{color:#946200}.bad{color:#b3261e}.mono{font-family:Consolas,"SFMono-Regular",monospace}.kbd{font-family:Consolas,monospace;border:1px solid #bbb;border-bottom-width:2px;border-radius:4px;padding:1px 4px;background:#fafafa}.mapwrap{margin-top:8px;background:#e3e7ec;border-radius:6px;padding:8px;display:flex;justify-content:center;align-items:center;overflow:hidden}.mapframe{width:min(100%,416px);aspect-ratio:1/1}#map{display:block;width:100%;height:100%;image-rendering:pixelated;background:#111;border:1px solid #8c959f;cursor:crosshair;touch-action:none}.terrain-title{margin:12px 0 4px}.terrain{display:grid;grid-template-columns:repeat(6,minmax(72px,1fr));gap:6px}.tilebtn{min-width:0;border:2px solid transparent;background:#f7f8fa;border-radius:6px;padding:4px;cursor:pointer;text-align:center}.tilebtn:hover{background:#eef2f7}.tilebtn.sel{border-color:var(--blue);background:#e8f0fe}.tilebtn canvas{width:32px;height:32px;image-rendering:pixelated;display:block;margin:0 auto}.tilebtn span{display:block;font:12px Consolas,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tilebtn.selecttool{grid-column:1/-1;min-height:38px;font-weight:600}.map-actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}.tabs{display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:8px}.tab.active{background:#e8f0fe;border-color:#7aa7e8}.tabpane.hidden{display:none}.tabpane{min-height:480px}.scroll{overflow:auto;max-height:70vh}table{width:100%;border-collapse:collapse}th,td{padding:6px;border-bottom:1px solid #e5e8ec;text-align:left;vertical-align:middle}th{position:sticky;top:0;background:#fafbfc;z-index:1}td input{width:76px;padding:4px 5px;border:1px solid #bbc2cb;border-radius:4px}.tsa-table input{width:58px}.feature-group{border:1px solid var(--line);border-radius:7px;padding:10px;margin:10px 0}.feature-group legend{font-weight:600;padding:0 5px}.checkline{display:flex;align-items:center;gap:7px;margin:8px 0}.subcheck{margin-left:25px}.feature-meta{background:#f7f8fa;border-radius:6px;padding:8px;font:13px Consolas,monospace;white-space:pre-wrap}.info-box{white-space:pre-wrap;font:13px Consolas,monospace;background:#f7f8fa;border-radius:6px;padding:10px;min-height:250px}.help-inline{margin-left:auto}.modal{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:100;padding:18px}.modal.hidden{display:none}.modalbox{width:min(980px,96vw);height:min(82vh,820px);background:#fff;border-radius:9px;box-shadow:0 14px 40px #0005;display:grid;grid-template-rows:auto 1fr}.modalhead{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}.modalhead h2{font-size:17px;margin:0;flex:1}.modalbody{padding:12px;overflow:auto}.modalbody pre{margin:0;white-space:pre-wrap;font:14px/1.55 Consolas,"Microsoft YaHei",monospace}.rom-badge{font-size:12px;background:#eef2f7;border:1px solid #d3d8df;border-radius:999px;padding:2px 7px}.footer-note{font-size:12px;color:var(--muted);margin-top:8px}
 .drop-overlay{position:fixed;inset:0;z-index:140;background:#1a73e81c;border:4px dashed #1a73e8;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s ease,visibility .12s ease}.drop-overlay.show{opacity:1;visibility:visible}.drop-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 24px;box-shadow:0 12px 36px #0003;text-align:center;max-width:min(90vw,520px)}.drop-card b{display:block;font-size:18px;margin-bottom:5px}.confirmbox{width:min(520px,94vw);background:#fff;border-radius:9px;box-shadow:0 14px 40px #0005;padding:16px}.confirmbox h2{font-size:18px;margin:0 0 8px}.confirmbox p{margin:0 0 16px;line-height:1.55}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}.confirm-actions button{min-width:92px}
 @media(max-width:1050px){main{grid-template-columns:1fr}.tabpane{min-height:0}.scroll{max-height:none}}@media(max-width:620px){.terrain{grid-template-columns:repeat(4,minmax(65px,1fr))}.appbar{padding:6px}.brand strong{font-size:16px}.panel{padding:8px}}
 
@@ -63,9 +63,9 @@ main{max-width:1500px;margin:0 auto;padding:12px;display:grid;grid-template-colu
 <div id="dropOverlay" class="drop-overlay" aria-hidden="true"><div class="drop-card"><b>拖放 NES ROM 到这里打开</b><span class="muted">支持 .nes；如果当前 ROM 有未保存修改，会先询问是否保存。</span></div></div>
 <main>
   <section class="panel">
-    <div class="row"><b>关卡</b><select id="stageSelect" disabled></select><span id="mapNote" class="muted"></span></div>
-    <div class="mapwrap"><div class="mapframe"><canvas id="map" width="416" height="416"></canvas></div></div>
-    <div class="row" style="margin-top:8px"><span class="muted">左键/拖动：绘制　右键：吸取　<span class="kbd">Ctrl+Z</span>：撤销　<span class="kbd">Ctrl+Y</span>：重做。地图完整显示 13×13。</span></div>
+    <div class="row"><b>关卡</b><select id="stageSelect" disabled></select><button id="importStageBtn" disabled>导入本关</button><button id="exportStageBtn" disabled>导出本关</button><input id="stageConfigInput" type="file" accept=".qexstage.json,.json" hidden><span id="mapNote" class="muted"></span></div>
+    <div class="mapwrap"><div class="mapframe"><canvas id="map" width="416" height="416" tabindex="0"></canvas></div></div>
+    <div class="row" style="margin-top:8px"><span class="muted">绘制模式：左键/拖动绘制、右键吸取。选择模式：单击/拖框选择，拖动选区移动，Ctrl+拖动复制，<span class="kbd">Ctrl+C/X/V</span>、<span class="kbd">Delete</span> 可编辑选区。</span></div>
     <h3 class="terrain-title">地形</h3>
     <div id="terrain" class="terrain"></div>
   </section>
@@ -1265,6 +1265,12 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   let redoHistory = [];
   let savedBytes = null;
   let selectedTerrain = 0x0D;
+  let mapSelection = null;
+  let mapSelectAnchor = null;
+  let mapMoveAnchor = null;
+  let mapMoveSource = null;
+  let mapMovePreview = null;
+  let mapClipboard = null;
   let painting = false;
   let dirty = false;
   let tileCache = new Map();
@@ -1299,13 +1305,13 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   function clearCaches(){tileCache=new Map();}
 
   function resetUiBeforeLoad() {
-    painting=false; lastPaintCell=''; chrPickTarget=null; screenSelected=null; history=[]; redoHistory=[]; savedBytes=null; fileHandle=null; model=null; clearCaches();
+    painting=false; lastPaintCell=''; mapSelection=null; mapSelectAnchor=null; mapMoveAnchor=null; mapMoveSource=null; mapMovePreview=null; mapClipboard=null; chrPickTarget=null; screenSelected=null; history=[]; redoHistory=[]; savedBytes=null; fileHandle=null; model=null; clearCaches();
     $('stageSelect').innerHTML=''; $('stageSelect').disabled=true;
     $('terrain').innerHTML=''; $('enemyRows').innerHTML=''; $('tsaRows').innerHTML=''; $('paletteGrid').innerHTML=''; $('flagGrid').innerHTML=''; $('fortGrid').innerHTML=''; $('spawnRows').innerHTML=''; $('customSpawnRows').innerHTML='';
     $('enemyCounterDisplay').disabled=true;$('enemyCounterDisplay').value='Icons';$('enemyCounterNote').textContent='';
     $('enemySum').textContent=''; $('mapNote').textContent=''; $('infoBox').textContent='打开 ROM 后显示格式信息。';
     $('romBadge').textContent='未打开 ROM'; $('screenSelection').textContent='未打开 ROM'; const sctx=$('screenCanvas').getContext('2d');sctx.fillStyle='#000';sctx.fillRect(0,0,512,480);
-    $('saveBtn').disabled=true; $('saveAsBtn').disabled=true; $('importConfigBtn').disabled=true; $('exportConfigBtn').disabled=true; $('undoBtn').disabled=true; $('redoBtn').disabled=true;
+    $('saveBtn').disabled=true; $('saveAsBtn').disabled=true; $('importConfigBtn').disabled=true; $('exportConfigBtn').disabled=true; $('importStageBtn').disabled=true; $('exportStageBtn').disabled=true; $('undoBtn').disabled=true; $('redoBtn').disabled=true;
     $('convertOverlayBtn').disabled=true; $('validateBtn').disabled=true;
     const ctx=$('map').getContext('2d'); ctx.fillStyle='#111';ctx.fillRect(0,0,416,416);
     $('chrModal')?.classList.add('hidden'); $('paletteModal')?.classList.add('hidden');
@@ -1430,6 +1436,16 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   }
   function drawChrTile(ctx,tile,attr,dx=0,dy=0,scale=4){drawChrTilePalette(ctx,tile,'Level',attr,dx,dy,scale);}
 
+  function drawMapSelection(ctx,sel,preview=false){
+    if(!sel)return;
+    ctx.save();
+    ctx.fillStyle=preview?'rgba(255,165,0,.18)':'rgba(30,144,255,.22)';
+    ctx.strokeStyle=preview?'#ff9800':'#00bfff';ctx.lineWidth=3;
+    if(preview)ctx.setLineDash([7,5]);
+    ctx.fillRect(sel.x*32+1,sel.y*32+1,sel.w*32-2,sel.h*32-2);
+    ctx.strokeRect(sel.x*32+1.5,sel.y*32+1.5,sel.w*32-3,sel.h*32-3);
+    ctx.restore();
+  }
   function renderMap() {
     const cv=$('map'),ctx=cv.getContext('2d'); ctx.imageSmoothingEnabled=false;ctx.fillStyle='#111';ctx.fillRect(0,0,416,416);
     if(!model)return;
@@ -1440,6 +1456,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     }
     ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;
     for(let i=0;i<=13;i++){ctx.beginPath();ctx.moveTo(i*32+.5,0);ctx.lineTo(i*32+.5,416);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*32+.5);ctx.lineTo(416,i*32+.5);ctx.stroke();}
+    if(selectedTerrain===null){drawMapSelection(ctx,mapSelection,false);if(mapMovePreview&&(!mapSelection||mapMovePreview.x!==mapSelection.x||mapMovePreview.y!==mapSelection.y))drawMapSelection(ctx,mapMovePreview,true);}
     if(model.isDemoStage(stage))$('mapNote').textContent='Demo 地图使用原版4-bit地图槽：可编辑地形仅 $00~$0D；Enemy Type/Count 与 Stage 35 共用。';
     else if(model.isOriginal)$('mapNote').textContent='Battle City 原版：Stage 1~35 使用独立地图。';
     else if(model.hasIndependentMaps)$('mapNote').textContent=`BCEX v2 32KB：Stage 1~70 地图全部独立，00~${hex(model.terrainCount-1)} 直接保存。`;
@@ -1447,15 +1464,17 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     else $('mapNote').textContent='Stage 1~35 使用独立地图。';
   }
 
+  function setMapSelectionTool(){selectedTerrain=null;painting=false;lastPaintCell='';buildTerrain();renderMap();$('map').focus();setStatus('地图选择模式：拖框选择；拖动选区移动，Ctrl+拖动复制；Ctrl+C/X/V 可编辑选区。','ok');}
   function buildTerrain() {
     const box=$('terrain');box.innerHTML='';if(!model)return;
     const ids=model.selectableTerrainIdsForStage(currentStage());
-    if(!ids.includes(selectedTerrain)) selectedTerrain=ids.includes(0x0D)?0x0D:ids[0];
+    if(selectedTerrain!==null&&!ids.includes(selectedTerrain)) selectedTerrain=ids.includes(0x0D)?0x0D:ids[0];
+    const sel=document.createElement('button');sel.type='button';sel.className='tilebtn selecttool'+(selectedTerrain===null?' sel':'');sel.textContent='▣  选择 / 移动工具';sel.title='不选择地形；在地图上单击或拖框选择块';sel.addEventListener('click',setMapSelectionTool);box.appendChild(sel);
     ids.forEach(id=>{
       const b=document.createElement('button');b.type='button';b.className='tilebtn'+(id===selectedTerrain?' sel':'');b.title=`ID $${hex(id)} ${TERRAIN_NAMES[id]||''}`;
       const c=document.createElement('canvas');c.width=32;c.height=32;drawBlock(c.getContext('2d'),id,0,0,2);
       const sp=document.createElement('span');sp.textContent=`${hex(id)} ${TERRAIN_NAMES[id]||'地形'}`;
-      b.append(c,sp);b.addEventListener('click',()=>{selectedTerrain=id;buildTerrain();});box.appendChild(b);
+      b.append(c,sp);b.addEventListener('click',()=>{selectedTerrain=id;mapSelection=null;mapMovePreview=null;buildTerrain();renderMap();});box.appendChild(b);
     });
   }
 
@@ -1725,6 +1744,72 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     }
   }
 
+  function currentStageName(){return model?.isDemoStage(currentStage())?'Demo':`Stage ${currentStage()}`;}
+  function makeStagePackage(stage=currentStage()){
+    if(!model)throw new Error('请先打开 ROM。');
+    const allowed=new Set(model.selectableTerrainIdsForStage(stage)),used=new Set(),Map=[];
+    for(let r=0;r<13;r++){const row=[];for(let c=0;c<13;c++){const id=model.getCell(stage,r,c);if(!allowed.has(id))throw new Error(`Map (${r+1},${c+1}) 含不可导出的地形 $${hex(id)}。`);row.push(id);used.add(id);}Map.push(row);}
+    const Terrain=[...used].sort((a,b)=>a-b).map(Id=>({Id,Attr:model.getTerrainAttribute(Id)&3,Tiles:model.getTerrainTiles(Id)}));
+    return {Schema:'QuarrelExStage',Version:1,SourceStage:stage,Map,Terrain};
+  }
+  function validateStagePackage(pkg,targetStage,rom=model){
+    const errors=[],warnings=[];
+    if(!rom){errors.push('未打开目标 ROM。');return {errors,warnings};}
+    if(!pkg||typeof pkg!=='object'||Array.isArray(pkg)){errors.push('关卡配置根节点必须是 JSON 对象。');return {errors,warnings};}
+    if(pkg.Schema!=='QuarrelExStage')errors.push('关卡配置缺少有效的 Schema=QuarrelExStage。');
+    if(pkg.Version!==1)errors.push(`不支持的关卡配置版本 Version=${pkg.Version}；当前只支持 Version=1。`);
+    const allowed=new Set(rom.selectableTerrainIdsForStage(targetStage));
+    if(!Array.isArray(pkg.Map)||pkg.Map.length!==13)errors.push('Map 必须正好包含 13 行。');
+    else for(let r=0;r<13;r++){
+      if(!Array.isArray(pkg.Map[r])||pkg.Map[r].length!==13){errors.push(`Map 第 ${r+1} 行必须正好包含 13 个地形 ID。`);continue;}
+      for(let c=0;c<13;c++){const id=Number(pkg.Map[r][c]);if(!Number.isInteger(id)||!allowed.has(id))errors.push(`Map (${r+1},${c+1}) 的地形 $${hex(Number.isFinite(id)?id:0)} 不能用于目标关卡。`);}
+    }
+    const terrain=Array.isArray(pkg.Terrain)?pkg.Terrain:[],seen=new Set();
+    if(!Array.isArray(pkg.Terrain))errors.push('Terrain 必须是数组。');
+    for(const td of terrain){
+      const id=Number(td?.Id),attr=Number(td?.Attr),tiles=td?.Tiles;
+      if(!Number.isInteger(id)){errors.push('Terrain 存在无效 ID。');continue;}
+      if(seen.has(id)){errors.push(`Terrain $${hex(id)} 重复定义。`);continue;}seen.add(id);
+      if(!allowed.has(id))errors.push(`Terrain $${hex(id)} 不能用于目标关卡。`);
+      if(!Number.isInteger(attr)||attr<0||attr>3)errors.push(`Terrain $${hex(id)} 的 Attr=${td?.Attr}，只能是 0~3。`);
+      if(!Array.isArray(tiles)||tiles.length!==4)errors.push(`Terrain $${hex(id)} 必须包含 4 个 TSA Tile。`);
+      else if(tiles.some(x=>!Number.isInteger(Number(x))||Number(x)<0||Number(x)>255))errors.push(`Terrain $${hex(id)} 的 TSA Tile 必须是 0~255。`);
+    }
+    if(Array.isArray(pkg.Map)&&pkg.Map.length===13&&pkg.Map.every(r=>Array.isArray(r)&&r.length===13)){
+      const used=new Set(pkg.Map.flat().map(Number));for(const id of used)if(!seen.has(id))errors.push(`Map 使用了 Terrain $${hex(id)}，但关卡配置没有携带该地形的 TSA/Attr 定义。`);
+    }
+    if(Number.isInteger(Number(pkg.SourceStage))&&Number(pkg.SourceStage)>0&&Number(pkg.SourceStage)!==targetStage)warnings.push(`来源为 Stage ${pkg.SourceStage}；将导入到当前 ${currentStageName()}。`);
+    if(terrain.length)warnings.push('Terrain 的 TSA/Attr 表属于 ROM 全局数据；导入会更新配置中携带的地形 ID，其他使用相同 ID 的关卡外观也会同步变化。');
+    return {errors,warnings};
+  }
+  function applyStagePackageTo(rom,pkg,targetStage){
+    const v=validateStagePackage(pkg,targetStage,rom);if(v.errors.length)throw new Error('关卡配置检查失败：\n- '+v.errors.join('\n- '));
+    // Map first: extended IDs may promote a legacy 16KB Ex ROM to the 32KB overlay layout.
+    for(let r=0;r<13;r++)for(let c=0;c<13;c++)rom.setCell(targetStage,r,c,Number(pkg.Map[r][c]));
+    for(const td of pkg.Terrain){rom.setTerrainAttribute(Number(td.Id),Number(td.Attr));for(let q=0;q<4;q++)rom.setTerrainTile(Number(td.Id),q,Number(td.Tiles[q]));}
+    return v.warnings;
+  }
+  function exportStagePackage(){
+    if(!model)return;
+    try{
+      const pkg=makeStagePackage(),blob=new Blob([JSON.stringify(pkg,null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=u;a.download=`${(filename.replace(/\.nes$/i,'')||'BattleCity')}_${currentStageName().replace(/ /g,'_')}.qexstage.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
+      setStatus(`${currentStageName()} 地图与地形配置已导出。`,'ok');
+    }catch(e){setStatus('导出关卡失败：'+e.message,'bad');alert('导出关卡失败：\n'+e.message);}
+  }
+  async function importStagePackageFile(file){
+    if(!model)return;
+    try{
+      const pkg=JSON.parse(await file.text()),target=currentStage(),staging=new BattleCityRom(model.cloneBytes());
+      const v=validateStagePackage(pkg,target,staging);if(v.errors.length)throw new Error('关卡配置检查失败：\n- '+v.errors.join('\n- '));
+      const source=Number(pkg.SourceStage)>0&&Number(pkg.SourceStage)!==target?`来源：Stage ${pkg.SourceStage}\n`:'';
+      const ok=confirm(`${source}将导入到当前 ${currentStageName()}。\n\n注意：TSA/Attr 地形定义在 ROM 中是全局共享的；其他使用相同地形 ID 的关卡外观也可能改变。\n\n继续导入？`);if(!ok)return;
+      const notes=applyStagePackageTo(staging,pkg,target);
+      snapshot();model=staging;clearCaches();mapSelection=null;mapMovePreview=null;markDirty();refreshAll();
+      const extra=notes.length?'\n\n提示：\n- '+notes.join('\n- '):'';alert(`已导入到 ${currentStageName()}。`+extra);setStatus(`${currentStageName()} 地图与地形配置已导入。`,'ok');
+    }catch(e){setStatus('导入关卡失败：'+e.message,'bad');alert('导入关卡失败：\n'+e.message);}
+  }
+
   function stagePacingAvailable(){return !!model?.supportsFinalRulesV3&&currentStage()>=1&&currentStage()<=70;}
   function refreshStagePacing(){
     const available=stagePacingAvailable(),ids=['pacing1Interval','pacing2Interval','pacing1Active','pacing2Active','pacingStage35','pacingOriginal'];ids.forEach(id=>$(id).disabled=!available);
@@ -1788,6 +1873,40 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     const cv=$('map'),r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*416/r.width,y=(e.clientY-r.top)*416/r.height;
     return {c:Math.max(0,Math.min(12,Math.floor(x/32))),r:Math.max(0,Math.min(12,Math.floor(y/32)))};
   }
+  function mapSelectionContains(sel,rc){return !!sel&&rc.c>=sel.x&&rc.c<sel.x+sel.w&&rc.r>=sel.y&&rc.r<sel.y+sel.h;}
+  function mapSelectionRect(a,b){const x=Math.min(a.c,b.c),y=Math.min(a.r,b.r);return {x,y,w:Math.abs(a.c-b.c)+1,h:Math.abs(a.r-b.r)+1};}
+  function readMapSelection(sel){const out=[];for(let r=0;r<sel.h;r++){const row=[];for(let c=0;c<sel.w;c++)row.push(model.getCell(currentStage(),sel.y+r,sel.x+c));out.push(row);}return out;}
+  function validateMapClipboard(data){const allowed=new Set(model.selectableTerrainIdsForStage(currentStage()));for(const row of data)for(const id of row)if(!allowed.has(id))throw new Error(`选区中包含目标关卡不能使用的地形 $${hex(id)}。`);}
+  function writeMapClipboard(data,x,y){for(let r=0;r<data.length;r++)for(let c=0;c<data[r].length;c++)model.setCell(currentStage(),y+r,x+c,data[r][c]);}
+  function refreshMapSelectionEdit(message){markDirty();renderMap();renderSpawnEditor();refreshStagePlayerSpawnSettings();refreshCustomSpawnSettings();setStatus(message,'ok');}
+  function copyMapSelection(cut=false){
+    if(!model||selectedTerrain!==null||!mapSelection)return false;
+    try{
+      mapClipboard=readMapSelection(mapSelection);
+      if(!cut){setStatus(`已复制 ${mapSelection.w}×${mapSelection.h} 地图选区；可切换关卡后粘贴。`,'ok');return true;}
+      snapshot();for(let r=0;r<mapSelection.h;r++)for(let c=0;c<mapSelection.w;c++)model.setCell(currentStage(),mapSelection.y+r,mapSelection.x+c,0x0D);
+      refreshMapSelectionEdit(`已剪切 ${mapSelection.w}×${mapSelection.h} 地图选区；原位置已填充 $0D。`);return true;
+    }catch(e){setStatus((cut?'剪切':'复制')+'失败：'+e.message,'bad');return true;}
+  }
+  function pasteMapSelection(){
+    if(!model||selectedTerrain!==null||!mapClipboard)return false;
+    try{
+      validateMapClipboard(mapClipboard);const h=mapClipboard.length,w=mapClipboard[0].length,anchor=mapSelection||{x:0,y:0};const x=Math.max(0,Math.min(13-w,anchor.x)),y=Math.max(0,Math.min(13-h,anchor.y));
+      snapshot();writeMapClipboard(mapClipboard,x,y);mapSelection={x,y,w,h};refreshMapSelectionEdit(`已粘贴 ${w}×${h} 地图选区。`);return true;
+    }catch(e){setStatus('粘贴失败：'+e.message,'bad');return true;}
+  }
+  function deleteMapSelection(){
+    if(!model||selectedTerrain!==null||!mapSelection)return false;
+    try{snapshot();for(let r=0;r<mapSelection.h;r++)for(let c=0;c<mapSelection.w;c++)model.setCell(currentStage(),mapSelection.y+r,mapSelection.x+c,0x0D);refreshMapSelectionEdit(`已清空 ${mapSelection.w}×${mapSelection.h} 地图选区。`);return true;}catch(e){setStatus('清空选区失败：'+e.message,'bad');return true;}
+  }
+  function moveMapSelection(source,target,copy=false){
+    if(!model)return;
+    const data=readMapSelection(source);validateMapClipboard(data);snapshot();
+    if(!copy)for(let r=0;r<source.h;r++)for(let c=0;c<source.w;c++)model.setCell(currentStage(),source.y+r,source.x+c,0x0D);
+    writeMapClipboard(data,target.x,target.y);mapSelection={x:target.x,y:target.y,w:source.w,h:source.h};refreshMapSelectionEdit(copy?'已复制并放置地图选区。':'已移动地图选区。');
+  }
+  function nudgeMapSelection(dx,dy){if(!mapSelection)return;const x=Math.max(0,Math.min(13-mapSelection.w,mapSelection.x+dx)),y=Math.max(0,Math.min(13-mapSelection.h,mapSelection.y+dy));if(x===mapSelection.x&&y===mapSelection.y)return;try{moveMapSelection({...mapSelection},{x,y},false);}catch(e){setStatus('移动选区失败：'+e.message,'bad');}}
+
   function paintAt(e){
     if(!model)return;const rc=mapRC(e),key=`${rc.r},${rc.c}`;if(key===lastPaintCell)return;lastPaintCell=key;
     try{
@@ -1803,7 +1922,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
       // Only detach the previous document after the new ROM has passed validation.
       resetUiBeforeLoad();
       model=next;filename=file.name||'Battle_City.nes';fileHandle=handle;history=[];redoHistory=[];savedBytes=model.cloneBytes();dirty=false;selectedTerrain=0x0D;clearCaches();
-      populateStages(1);$('saveBtn').disabled=false;$('saveAsBtn').disabled=false;$('importConfigBtn').disabled=false;$('exportConfigBtn').disabled=false;updateHistoryButtons();refreshAll();refreshTitle();
+      populateStages(1);$('saveBtn').disabled=false;$('saveAsBtn').disabled=false;$('importConfigBtn').disabled=false;$('exportConfigBtn').disabled=false;$('importStageBtn').disabled=false;$('exportStageBtn').disabled=false;updateHistoryButtons();refreshAll();refreshTitle();
       setStatus(`已打开 ${filename}。`,'ok');
     }catch(err){setStatus('无法打开 ROM：'+err.message,'bad');}
     finally{$('fileInput').value='';}
@@ -1949,6 +2068,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   $('clearStageBtn').addEventListener('click',()=>{if(!model||!confirm('确定清空当前关卡为 $0D 空白吗？'))return;snapshot();model.clearStage(currentStage());markDirty();renderMap();renderSpawnEditor();refreshStagePlayerSpawnSettings();refreshCustomSpawnSettings();});
   $('clearAllBtn').addEventListener('click',()=>{if(!model||!confirm('确定清空全部可编辑关卡吗？'))return;snapshot();model.clearAllStages();markDirty();renderMap();renderSpawnEditor();refreshStagePlayerSpawnSettings();refreshCustomSpawnSettings();});
   $('exportConfigBtn').addEventListener('click',exportConfig);$('importConfigBtn').addEventListener('click',()=>$('configInput').click());$('configInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f)importConfigFile(f);e.target.value='';});
+  $('exportStageBtn').addEventListener('click',exportStagePackage);$('importStageBtn').addEventListener('click',()=>$('stageConfigInput').click());$('stageConfigInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(f)importStagePackageFile(f);e.target.value='';});
 
   // Build enemy-effect controls once.
   enemyEffects.forEach(([flag,label])=>{
@@ -1973,7 +2093,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   $('saveBtn').addEventListener('click',saveRom);$('saveAsBtn').addEventListener('click',saveAsRom);$('undoBtn').addEventListener('click',undo);$('redoBtn').addEventListener('click',redo);
   $('convertOverlayBtn').addEventListener('click',()=>{closeMenus();convertOverlay();});
   $('validateBtn').addEventListener('click',()=>{closeMenus();if(!model)return;try{model.validate();refreshAll();setStatus('ROM 结构重新检查通过。','ok');}catch(err){setStatus(err.message,'bad');}});
-  $('stageSelect').addEventListener('change',()=>{renderMap();buildTerrain();refreshEnemy();refreshGameSettings();refreshFlagTsa();});
+  $('stageSelect').addEventListener('change',()=>{mapSelection=null;mapSelectAnchor=null;mapMoveAnchor=null;mapMoveSource=null;mapMovePreview=null;renderMap();buildTerrain();refreshEnemy();refreshGameSettings();refreshFlagTsa();});
   document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tabpane').forEach(x=>x.classList.add('hidden'));b.classList.add('active');$(b.dataset.tab).classList.remove('hidden');}));
   document.querySelectorAll('[data-help]').forEach(b=>b.addEventListener('click',()=>showHelp(b.dataset.help)));
   document.querySelectorAll('[data-about]').forEach(b=>b.addEventListener('click',showAbout));
@@ -1997,15 +2117,40 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
   $('customSpawnCanvas').tabIndex=0;
   $('customSpawnCanvas').addEventListener('keydown',e=>{if(!customSpawnAvailable()||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();snapshot();const p=model.getCustomEnemySpawnPoint(currentStage(),customSpawnSelected),step=16;let x=p.X,y=p.Y;if(e.key==='ArrowLeft')x-=step;if(e.key==='ArrowRight')x+=step;if(e.key==='ArrowUp')y-=step;if(e.key==='ArrowDown')y+=step;setCustomSpawnPointUi(customSpawnSelected,x,y,true);});
 
-  $('map').addEventListener('contextmenu',e=>{e.preventDefault();if(!model)return;const rc=mapRC(e),id=model.getCell(currentStage(),rc.r,rc.c);if(!model.selectableTerrainIdsForStage(currentStage()).includes(id)){setStatus(`地形 $${hex(id)} 为内部保留值，未吸取。`,'warn');return;}selectedTerrain=id;buildTerrain();});
-  $('map').addEventListener('pointerdown',e=>{if(!model||e.button!==0)return;snapshot();painting=true;lastPaintCell='';$('map').setPointerCapture(e.pointerId);paintAt(e);});
-  $('map').addEventListener('pointermove',e=>{if(painting)paintAt(e);});
-  $('map').addEventListener('pointerup',()=>{painting=false;lastPaintCell='';});$('map').addEventListener('pointercancel',()=>{painting=false;lastPaintCell='';});
+  $('map').addEventListener('contextmenu',e=>{e.preventDefault();if(!model)return;const rc=mapRC(e),id=model.getCell(currentStage(),rc.r,rc.c);if(!model.selectableTerrainIdsForStage(currentStage()).includes(id)){setStatus(`地形 $${hex(id)} 为内部保留值，未吸取。`,'warn');return;}selectedTerrain=id;mapSelection=null;mapMovePreview=null;buildTerrain();renderMap();setStatus(`已吸取地形 $${hex(id)}。`,'ok');});
+  $('map').addEventListener('pointerdown',e=>{
+    if(!model||e.button!==0)return;$('map').focus();const rc=mapRC(e);$('map').setPointerCapture(e.pointerId);
+    if(selectedTerrain!==null){snapshot();painting=true;lastPaintCell='';paintAt(e);return;}
+    if(mapSelectionContains(mapSelection,rc)){mapMoveAnchor=rc;mapMoveSource={...mapSelection};mapMovePreview={...mapSelection};}
+    else{mapSelectAnchor=rc;mapSelection={x:rc.c,y:rc.r,w:1,h:1};mapMovePreview=null;renderMap();}
+  });
+  $('map').addEventListener('pointermove',e=>{
+    if(painting){paintAt(e);return;}if(selectedTerrain!==null||!model)return;const rc=mapRC(e);
+    if(mapMoveAnchor&&mapMoveSource){const dx=rc.c-mapMoveAnchor.c,dy=rc.r-mapMoveAnchor.r;mapMovePreview={x:Math.max(0,Math.min(13-mapMoveSource.w,mapMoveSource.x+dx)),y:Math.max(0,Math.min(13-mapMoveSource.h,mapMoveSource.y+dy)),w:mapMoveSource.w,h:mapMoveSource.h};renderMap();}
+    else if(mapSelectAnchor){mapSelection=mapSelectionRect(mapSelectAnchor,rc);renderMap();}
+  });
+  $('map').addEventListener('pointerup',e=>{
+    if(painting){painting=false;lastPaintCell='';return;}
+    if(selectedTerrain===null&&mapMoveSource&&mapMovePreview&&(mapMovePreview.x!==mapMoveSource.x||mapMovePreview.y!==mapMoveSource.y)){
+      try{moveMapSelection(mapMoveSource,{x:mapMovePreview.x,y:mapMovePreview.y},e.ctrlKey||e.metaKey);}catch(err){setStatus('移动选区失败：'+err.message,'bad');}
+    }else if(selectedTerrain===null&&mapSelection)setStatus(`已选择 ${mapSelection.w}×${mapSelection.h}（${mapSelection.w*mapSelection.h} 块）。`,'ok');
+    mapSelectAnchor=null;mapMoveAnchor=null;mapMoveSource=null;mapMovePreview=null;renderMap();
+  });
+  $('map').addEventListener('pointercancel',()=>{painting=false;lastPaintCell='';mapSelectAnchor=null;mapMoveAnchor=null;mapMoveSource=null;mapMovePreview=null;renderMap();});
 
   document.addEventListener('keydown',e=>{
     const k=e.key.toLowerCase();
     const mod=e.ctrlKey||e.metaKey;
-    if(mod&&e.shiftKey&&k==='z'){e.preventDefault();redo();}
+    const mapActive=document.activeElement===$('map')&&selectedTerrain===null;
+    if(mapActive&&mod&&k==='c'){e.preventDefault();copyMapSelection(false);}
+    else if(mapActive&&mod&&k==='x'){e.preventDefault();copyMapSelection(true);}
+    else if(mapActive&&mod&&k==='v'){e.preventDefault();pasteMapSelection();}
+    else if(mapActive&&(e.key==='Delete'||e.key==='Backspace')){e.preventDefault();deleteMapSelection();}
+    else if(mapActive&&e.key==='ArrowLeft'){e.preventDefault();nudgeMapSelection(-1,0);}
+    else if(mapActive&&e.key==='ArrowRight'){e.preventDefault();nudgeMapSelection(1,0);}
+    else if(mapActive&&e.key==='ArrowUp'){e.preventDefault();nudgeMapSelection(0,-1);}
+    else if(mapActive&&e.key==='ArrowDown'){e.preventDefault();nudgeMapSelection(0,1);}
+    else if(mod&&e.shiftKey&&k==='z'){e.preventDefault();redo();}
     else if(mod&&k==='y'){e.preventDefault();redo();}
     else if(mod&&k==='z'){e.preventDefault();undo();}
     else if(mod&&k==='o'){e.preventDefault();openRom();}
@@ -2013,7 +2158,7 @@ Changing TSA can affect more than appearance: Battle City collision and destruct
     else if(mod&&k==='s'){e.preventDefault();saveRom();}
     else if(e.key==='F1'&&e.shiftKey){e.preventDefault();showHelp('en');}
     else if(e.key==='F1'){e.preventDefault();showHelp('zh');}
-    else if(e.key==='Escape'){if(!$('unsavedModal').classList.contains('hidden'))finishUnsavedPrompt('cancel');else{hideHelp();hideChrPicker();hidePalettePicker();}}
+    else if(e.key==='Escape'){if(!$('unsavedModal').classList.contains('hidden'))finishUnsavedPrompt('cancel');else if(mapActive&&mapSelection){mapSelection=null;renderMap();setStatus('已取消地图选区。','');}else{hideHelp();hideChrPicker();hidePalettePicker();}}
   });
   window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
   document.addEventListener('click',e=>{if(!e.target.closest('details.menu'))closeMenus();});

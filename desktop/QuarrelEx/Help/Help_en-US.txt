@@ -50,6 +50,14 @@ BCEX v2 32KB / 70 Independent Maps:
 - Editing Stage 36 does not edit Stage 1.
 - Phase 5 Terrain64 can store IDs $00-$3F directly.
 
+
+Map selection editing:
+- Choose **Select / Move** at the top of the terrain list to enter selection mode.
+- Click for one cell or drag to select a rectangle.
+- Drag the selected area to move it; Ctrl+drag copies it.
+- With the map focused, Ctrl+C / Ctrl+X / Ctrl+V copy, cut and paste; Delete clears to $0D; arrow keys nudge the selection.
+- Right-clicking the map picks a terrain and returns to paint mode.
+
 5. Enemy editor
 ---------------
 Every stage has four Type bytes and four Count bytes. Type is hexadecimal; Count is decimal.
@@ -127,7 +135,9 @@ Restores visual Flag and Fort TSA editing. Each definition is a 6x4 CHR tile gri
 
 17. Shared configuration
 -----------------------
-File -> Export Config / Import Config uses the shared `QuarrelExConfig` v3 JSON (`.qexcfg.json`), and only v3 is accepted by the formal release. v3 includes global settings plus stage maps and per-stage enemy data. Ex exports Stage 1-70; original ROM exports Stage 1-35. Each stage stores a 13x13 Map, four raw EnemyTypes, four EnemyCounts, and EnemyTotal (the count sum, used as an integrity check). Enemy Type bit2 ($04) is the flashing/bonus flag: common bases are $80/$A0/$C0/$E0 and forced-flashing forms are $84/$A4/$C4/$E4. The original game also adds $04 automatically to the 4th, 11th and 18th spawned enemies.
+File -> Export Config / Import Config uses the shared `QuarrelExConfig` v3 JSON (`.qexcfg.json`), and only v3 is accepted by the formal release.
+
+The currently selected stage can also be exported/imported as `.qexstage.json` (Schema=`QuarrelExStage`, Version=1). It contains only the 13x13 map plus the TSA/Attr definitions referenced by that map. Terrain definitions are ROM-global, so importing a stage package can also change the appearance of other stages that use the same terrain IDs. v3 includes global settings plus stage maps and per-stage enemy data. Ex exports Stage 1-70; original ROM exports Stage 1-35. Each stage stores a 13x13 Map, four raw EnemyTypes, four EnemyCounts, and EnemyTotal (the count sum, used as an integrity check). Enemy Type bit2 ($04) is the flashing/bonus flag: common bases are $80/$A0/$C0/$E0 and forced-flashing forms are $84/$A4/$C4/$E4. The original game also adds $04 automatically to the 4th, 11th and 18th spawned enemies.
 
 18. Game Settings
 -----------------

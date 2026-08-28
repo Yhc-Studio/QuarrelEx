@@ -4,6 +4,8 @@
 
 ### Desktop 1.1.7 / Web 1.6.7
 
+- Added per-stage `.qexstage.json` import/export for the 13x13 map plus referenced TSA/Attr terrain definitions.
+- Added map selection editing: single-cell/rectangle select, drag move, Ctrl+drag copy, Ctrl+C/X/V, Delete and arrow-key nudge.
 - Drag-and-drop ROM opening with Save / Don't Save / Cancel.
 - Shared QuarrelExConfig v3 with strict validation.
 - Screen raw bytes support `$00-$FF`, preserving `$FF` string terminators.

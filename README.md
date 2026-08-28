@@ -44,6 +44,8 @@
 - Skip ON returns through the correct GAME OVER cleanup path without a one-frame stage-map flash.
 - Demo is isolated from per-stage QXR overrides and keeps original/global player spawn, original enemy spawn cycle, original pacing and the original near-HQ no-fire behavior.
 - Hold-B auto fire, Pistol/Lv4, downgrade on hit, faster movement, random enemy order, no friendly fire, enemy item pickup and locked initial player state.
+- Per-stage `.qexstage.json` import/export containing the current 13x13 map plus the TSA/Attr terrain definitions actually referenced by that map.
+- Map **Select / Move** tool with single-cell/rectangle selection, drag-to-move, Ctrl+drag copy, and Ctrl+C / Ctrl+X / Ctrl+V / Delete.
 - Shared Config v3 between Desktop and Web.
 - Save / Save As, Undo / Redo.
 - Drag-and-drop `.nes` opening with **Save / Don't Save / Cancel** when the current ROM is dirty.
