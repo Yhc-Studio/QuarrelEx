@@ -51,16 +51,6 @@
 - 支持拖拽打开 `.nes`；当前 ROM 未保存时提供 **保存 / 不保存 / 取消**。
 - 主地图修改后，Game Settings 中所有依赖地图的可视化立即刷新。
 
-## Mid City2 兼容
-
-兼容补丁放在：
-
-```text
-patches/compatibility/
-```
-
-应用以后，**Mid City2** 和 **Mid City2 PS** 可以直接被当前 QuarrelEx 读取，并开放相同的 QXR1 v5 参数，同时保留各自原有地图、图形和改版特点。
-
 ## 仓库结构
 
 ```text
@@ -70,7 +60,6 @@ QuarrelEx/
 ├─ patches/
 │  ├─ 16KB/
 │  ├─ 32KB/
-│  └─ compatibility/
 ├─ docs/
 ├─ examples/
 ├─ .github/workflows/

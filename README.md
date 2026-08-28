@@ -51,16 +51,6 @@
 - Drag-and-drop `.nes` opening with **Save / Don't Save / Cancel** when the current ROM is dirty.
 - Main stage-map edits immediately refresh all map-backed Game Settings views.
 
-## Mid City2 compatibility
-
-Dedicated compatibility IPS files are included under:
-
-```text
-patches/compatibility/
-```
-
-After patching, **Mid City2** and **Mid City2 PS** can be opened directly by the current QuarrelEx and expose the same QXR1 v5 editing options while preserving their variant-specific content.
-
 ## Repository layout
 
 ```text
@@ -70,7 +60,6 @@ QuarrelEx/
 ├─ patches/
 │  ├─ 16KB/
 │  ├─ 32KB/
-│  └─ compatibility/
 ├─ docs/
 ├─ examples/
 ├─ .github/workflows/
