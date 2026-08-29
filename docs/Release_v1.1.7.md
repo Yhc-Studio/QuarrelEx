@@ -18,6 +18,7 @@ Compared with v1.1, this release substantially expands the 32KB BCEX runtime and
 | QuarrelEx | **1.1.7** |
 | Desktop Editor | **1.1.7** |
 | Web Editor | **1.6.7** |
+| Mobile Web UI | **1.0 (Core 1.6.7)** |
 | Config Format | **QuarrelExConfig v3** |
 | 32KB BCEX Runtime | **Runtime 6.9.3 / QXR1 v5** |
 | 16KB BCEX Runtime | **Unchanged from v1.1** |
@@ -86,6 +87,26 @@ Desktop 与 Web 现在都可以针对**当前选择的单个关卡**导入或导
 - 移动、剪切、粘贴均纳入现有 Undo / Redo
 
 地图右键吸取地形后会重新进入绘制模式，因此原来的“左键绘制 / 右键吸取”操作保持兼容。
+
+---
+
+
+## 编辑器新增：独立 Mobile Web UI
+
+新增单独文件：
+
+`web/QuarrelEx_Mobile.html`
+
+Mobile UI **不会与现有桌面向 Web 页面合并**。它复用 Web 1.6.7 的同一套 ROM / Config / Stage / Runtime 编辑核心，但针对手机重新组织界面：
+
+- 顶部：打开、保存、撤销、重做、更多
+- 底部固定导航：地图 / 敌人 / TSA / 设置 / 更多
+- “更多”底部抽屉：调色板、Flag TSA、Ex、Screen、ROM 信息、Config/单关卡导入导出、帮助
+- 更大的触控按钮和输入框
+- 手机安全区域（safe area）适配
+- 窄屏单列布局以及移动端表格/画布优化
+
+原有 `QuarrelEx.html` 与 `QuarrelEx_Standalone.html` 保持桌面向界面，不受 Mobile UI 影响。
 
 ---
 
@@ -559,6 +580,25 @@ Supported operations include:
 - Move / Cut / Paste operations participate in the existing Undo / Redo history
 
 Right-click terrain pickup returns the map to paint mode, preserving the existing left-paint / right-pick workflow.
+
+---
+
+
+## Editor Addition: Separate Mobile Web UI
+
+A new standalone entry is provided:
+
+`web/QuarrelEx_Mobile.html`
+
+The Mobile UI is **not merged into the existing desktop-oriented Web page**. It reuses the same Web 1.6.7 ROM/Config/Stage/Runtime editing core while presenting a phone-first shell:
+
+- Compact Open / Save / Undo / Redo / More actions
+- Fixed bottom navigation: Map / Enemy / TSA / Settings / More
+- Bottom tool drawer for Palette, Flag TSA, Ex options, Screen Editor, ROM Info, Config/Stage import-export and Help
+- Larger touch targets and phone-safe-area support
+- Single-column narrow-screen forms and mobile-optimized canvases/tables
+
+The existing `QuarrelEx.html` and `QuarrelEx_Standalone.html` remain desktop-oriented and unchanged by the Mobile UI.
 
 ---
 

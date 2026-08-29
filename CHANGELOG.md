@@ -2,6 +2,14 @@
 
 ## QuarrelEx v1.1.7
 
+### Mobile Web UI 1.0 (Core Web 1.6.7)
+
+- Added a separate `web/QuarrelEx_Mobile.html`; the existing desktop-oriented Web HTML files are not merged or replaced.
+- Added phone-first top actions and fixed bottom navigation for Map / Enemy / TSA / Settings / More.
+- Added a mobile bottom tool drawer for Palette, Flag TSA, Ex options, Screen Editor, ROM Info, Config/Stage import-export and Help.
+- Reuses the same Web 1.6.7 ROM core, QuarrelExConfig v3, QuarrelExStage v1, Runtime 6.9.3 support and map-selection workflow.
+- Added touch-size controls, safe-area padding and single-column mobile layouts.
+
 ### Desktop 1.1.7 / Web 1.6.7
 
 - Added per-stage `.qexstage.json` import/export for the 13x13 map plus referenced TSA/Attr terrain definitions.

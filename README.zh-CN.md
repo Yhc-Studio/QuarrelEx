@@ -18,6 +18,7 @@
 | QuarrelEx | 1.1.7 |
 | Desktop | 1.1.7 |
 | Web | 1.6.7 |
+| Mobile Web UI | 1.0（Core 1.6.7） |
 | Config | QuarrelExConfig v3 |
 | 32KB BCEX Runtime | Runtime 6.9.3 / QXR1 v5 |
 
@@ -46,6 +47,7 @@
 - 按住 B 连发、手枪/Lv4、受击降级、我方加速、随机敌人顺序、取消队友互伤、敌人拾取道具、锁定初始状态等。
 - 每关可单独导入 / 导出 `.qexstage.json`：包含当前 13×13 地图和该地图实际引用的 TSA/Attr 地形定义。
 - 地图新增“选择 / 移动工具”：支持单块/矩形框选、拖动移动、Ctrl+拖动复制，以及 Ctrl+C / Ctrl+X / Ctrl+V / Delete。
+- 新增独立的触控优先 **Mobile Web UI**（`web/QuarrelEx_Mobile.html`）：采用底部导航和手机工具抽屉，复用 Web 1.6.7 的编辑核心，不替换桌面向 Web 页面。
 - Web / Desktop 共用 Config v3。
 - Save / Save As、Undo / Redo。
 - 支持拖拽打开 `.nes`；当前 ROM 未保存时提供 **保存 / 不保存 / 取消**。
@@ -59,7 +61,7 @@ QuarrelEx/
 ├─ web/
 ├─ patches/
 │  ├─ 16KB/
-│  ├─ 32KB/
+│  └─ 32KB/
 ├─ docs/
 ├─ examples/
 ├─ .github/workflows/
@@ -101,7 +103,10 @@ desktop/QuarrelEx.sln
 ```text
 web/QuarrelEx.html
 web/QuarrelEx_Standalone.html
+web/QuarrelEx_Mobile.html      # 独立的 Mobile UI
 ```
+
+`QuarrelEx_Mobile.html` 与桌面向 Web 界面保持独立，不合并。手机端采用“地图 / 敌人 / TSA / 设置 / 更多”底部导航，同时继续使用相同的 ROM、Config v3、单关卡 `.qexstage.json` 和 Runtime 6.9.3 逻辑。
 
 ## Config v3
 

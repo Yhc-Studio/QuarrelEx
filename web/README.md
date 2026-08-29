@@ -1,9 +1,22 @@
 # QuarrelEx Web 1.6.7
 
 - `QuarrelEx.html`: regular build.
-- `QuarrelEx_Standalone.html`: byte-identical single-file build.
+- `QuarrelEx_Standalone.html`: byte-identical single-file desktop-oriented build.
+- `QuarrelEx_Mobile.html`: separate touch-first Mobile UI (Mobile UI 1.0, core Web 1.6.7).
 - Current runtime target: **Runtime 6.9.3 / QXR1 v5**.
 - Full-project format: **QuarrelExConfig v3** (`*.qexcfg.json`).
+
+
+## Mobile UI
+
+`QuarrelEx_Mobile.html` is intentionally a separate HTML entry rather than a responsive merge of the desktop page. It reuses the same editor core and file formats but presents a phone-first shell:
+
+- Compact top bar for Open / Save / Undo / Redo / More.
+- Fixed bottom navigation: Map / Enemy / TSA / Settings / More.
+- Bottom tool drawer for Palette, Flag TSA, Ex options, Screen Editor, ROM Info, Config and Stage import/export, and Help.
+- Larger touch targets and single-column forms/tables for narrow screens.
+- Safe-area padding for modern phones.
+- The normal `QuarrelEx.html` and `QuarrelEx_Standalone.html` remain unchanged.
 
 ## New stage editing workflow
 

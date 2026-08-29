@@ -18,6 +18,7 @@
 | QuarrelEx | 1.1.7 |
 | Desktop | 1.1.7 |
 | Web | 1.6.7 |
+| Mobile Web UI | 1.0 (Core 1.6.7) |
 | Config | QuarrelExConfig v3 |
 | 32KB BCEX runtime | Runtime 6.9.3 / QXR1 v5 |
 
@@ -46,6 +47,7 @@
 - Hold-B auto fire, Pistol/Lv4, downgrade on hit, faster movement, random enemy order, no friendly fire, enemy item pickup and locked initial player state.
 - Per-stage `.qexstage.json` import/export containing the current 13x13 map plus the TSA/Attr terrain definitions actually referenced by that map.
 - Map **Select / Move** tool with single-cell/rectangle selection, drag-to-move, Ctrl+drag copy, and Ctrl+C / Ctrl+X / Ctrl+V / Delete.
+- Separate touch-first **Mobile Web UI** (`web/QuarrelEx_Mobile.html`) with bottom navigation and a mobile tool drawer; it reuses the same Web 1.6.7 editing core without replacing the desktop-oriented Web page.
 - Shared Config v3 between Desktop and Web.
 - Save / Save As, Undo / Redo.
 - Drag-and-drop `.nes` opening with **Save / Don't Save / Cancel** when the current ROM is dirty.
@@ -59,7 +61,7 @@ QuarrelEx/
 ├─ web/
 ├─ patches/
 │  ├─ 16KB/
-│  ├─ 32KB/
+│  └─ 32KB/
 ├─ docs/
 ├─ examples/
 ├─ .github/workflows/
@@ -105,7 +107,10 @@ Use either:
 ```text
 web/QuarrelEx.html
 web/QuarrelEx_Standalone.html
+web/QuarrelEx_Mobile.html      # separate touch-first Mobile UI
 ```
+
+`QuarrelEx_Mobile.html` is intentionally kept separate from the desktop-oriented Web UI. It uses a phone-first shell (Map / Enemy / TSA / Settings / More bottom navigation) while keeping the same ROM, Config v3, Stage package and Runtime 6.9.3 logic.
 
 ## Config v3
 
