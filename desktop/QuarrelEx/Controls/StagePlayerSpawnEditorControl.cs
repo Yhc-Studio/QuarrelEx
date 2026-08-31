@@ -1,6 +1,7 @@
 using System.Drawing.Drawing2D;
 using QuarrelEx.Core;
 using QuarrelEx.Rendering;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx.Controls;
 
@@ -69,9 +70,7 @@ public sealed class StagePlayerSpawnEditorControl : Control
 
         if (!IsAvailable || _rom is null || _renderer is null)
         {
-            var text = _rom?.SupportsFinalRulesV5 == true
-                ? "Demo 不使用逐关玩家出生点"
-                : "需要 QXR1 v5 / Runtime 6.9";
+            var text = I18n.T(_rom?.SupportsFinalRulesV5 == true ? "player_spawn.demo" : "player_spawn.require");
             TextRenderer.DrawText(e.Graphics, text, Font, Rectangle.Round(view), Color.Gainsboro,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             return;
@@ -84,7 +83,7 @@ public sealed class StagePlayerSpawnEditorControl : Control
 
         var footer = new Rectangle(ClientRectangle.Left + 4, ClientRectangle.Bottom - 21, Math.Max(0, ClientRectangle.Width - 8), 18);
         TextRenderer.DrawText(e.Graphics,
-            "P1 / P2：实色=Custom，半透明虚线=Original/global；拖拽会自动切换为 Custom。",
+            I18n.T("player_spawn.legend"),
             Font, footer, Color.Gainsboro, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
     }
 

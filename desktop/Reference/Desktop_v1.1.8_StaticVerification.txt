@@ -1,0 +1,20 @@
+QuarrelEx Desktop v1.1.8 static verification
+============================================
+
+- Project Version/FileVersion: 1.1.8 / 1.1.8.0.
+- Runtime target remains 6.9.3 / QXR1 v5; this localization fix does not modify the runtime/IPS.
+- Desktop shares repository-level locale catalogs with Web/Mobile: zh-CN / en-US / ja-JP (804 keys each).
+- Locale JSON files are copied to the output Locales/ directory by the project file.
+- Fixed the duplicated local declaration in I18n.BuildSourcePatterns().
+- Locale reverse binding now recognizes unique strings from all three languages rather than Chinese source text only.
+- Repeated template placeholders use a single named capture plus back-reference, avoiding duplicate-capture construction failures.
+- SetLanguage always raises LanguageChanged so the current language can be reapplied to dynamically-created controls.
+- ApplyLanguage refreshes ROM-dependent dynamic labels, terrain buttons, enemy display, Ex information, game settings and stage/HQ information immediately.
+- Lazy-created tool windows are translated as soon as they are constructed.
+- Flag/Fort TSA and Title/Game Over tool-window labels/titles/tooltips now have explicit zh-CN / en-US / ja-JP keys.
+- First launch follows the Windows UI culture; manual selection is saved separately under local application data.
+- Language preference is not stored in ROM data or QuarrelExConfig v3.
+- Japanese Help and TSA Help resources are included alongside Chinese and English resources.
+- tools/check_i18n.py passes key parity, placeholder parity, empty-value and direct-key-reference checks.
+- No ROM image, emulator save, build output or user-specific Visual Studio file is included.
+- .NET SDK/MSBuild is not installed in this packaging environment, so final Windows compilation must be verified by Visual Studio 2022 or GitHub Actions.

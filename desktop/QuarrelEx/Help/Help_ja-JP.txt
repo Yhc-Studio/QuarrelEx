@@ -1,0 +1,95 @@
+Quarrel Ex Desktop - 日本語ヘルプ
+================================
+
+1. 概要
+-------
+Quarrel Ex は NES/Famicom 版 Battle City 用の ROM エディタです。
+Original 16KB、Legacy Ex、BCEX v2 32KB / 70-map 形式を扱えます。
+
+主な編集機能:
+- Stage 1～70 のマップ編集
+- Enemy Type / Count / Total
+- TSA / Attr / CHR Tile
+- Palette、Flag / Fort TSA
+- P1/P2・敵の出現位置
+- Enemy Pacing、Base Exists、Enemy Counter
+- Title / Game Over Screen
+- Final Rules と各種 Ex 機能
+- QuarrelExConfig v3 と単一ステージの import / export
+- Undo / Redo、ドラッグ＆ドロップで ROM を開く
+
+2. ROM を開く / 保存する
+-----------------------
+File -> Open ROM、または Ctrl+O で ROM を開きます。
+Ctrl+S で保存、Ctrl+Shift+S で名前を付けて保存します。
+.nes ファイルをウィンドウへドラッグ＆ドロップすることもできます。
+未保存の変更がある場合は、保存 / 保存しない / キャンセルを選択できます。
+
+3. マップ編集
+-------------
+マップは 13×13 セルです。
+通常モードでは左クリック/ドラッグで描画、右クリックで地形を取得します。
+「選択 / 移動ツール」では範囲選択、移動、Ctrl+ドラッグによるコピー、Ctrl+C/X/V が使えます。
+$0E/$0F は内部予約地形のため、通常の編集対象から除外されます。
+
+4. Enemy Type / Count
+---------------------
+1 ステージにつき 4 種類の Enemy Type / Count を設定できます。
+一般的な Type は $80 / $A0 / $C0 / $E0 です。
+bit2 ($04) は点滅/ボーナスフラグで、$84 / $A4 / $C4 / $E4 のように指定できます。
+対応 Runtime では 4 つの Count 合計を 1～255 に設定できます。
+Enemy Counter は Icons / Number をステージごとに設定でき、総数が 51 以上の場合は Number が強制されます。
+
+5. TSA / Attr
+-------------
+1 つの 16×16 地形は Attr と TL/TR/BL/BR の 4 個の 8×8 CHR Tile で構成されます。
+Attr は 0～3 です。各 Tile をクリックすると CHR Tile Picker が開きます。
+詳しくは TSA / 属性ガイドを参照してください。
+
+6. Palette / Flag TSA
+---------------------
+Palette Editor では NES の各パレットグループを編集できます。
+Flag / Fort TSA Editor では 6×4 の CHR Tile 配列を編集します。
+対応 Runtime では Stage 1～70 ごとに HQ/Base の有無を指定できます。
+
+7. Game Settings
+----------------
+以下を編集できます。
+- Starting Lives / Initial Tank Level
+- Lock Initial State
+- Original/global P1/P2・敵出現位置
+- Stage 1～70 の P1/P2 個別出現位置
+- Stage 1～70 の 1～8 個カスタム敵出現位置
+- 1P/2P Enemy Pacing
+- Final GAME OVER Skip
+- Extra Life rule
+- 2P Bonus / Win Streak
+- Armored Tank mode
+- A+B+Start cheat lives
+
+8. Ex Options
+-------------
+BCEX v2 対応 ROM では、B ボタン連射、Pistol/Lv4、被弾時レベルダウン、
+Player Fast Movement、Random Enemy、Tree Destroy、Enemy Item Pickup、
+No Friendly Fire などを切り替えられます。
+利用できる項目は ROM Runtime / LayoutFlags によって異なります。
+
+9. Title / Game Over Screen
+---------------------------
+Title と Game Over の既存文字列/タイルを視覚的に編集できます。
+BATTLE/CITY/GAME/OVER の大文字はオリジナルの 32×32 描画方式を使用します。
+
+10. 言語
+--------
+Language メニューから次を選択できます。
+- 简体中文
+- English
+- 日本語
+
+選択した言語は QuarrelExConfig には保存されません。
+Desktop ではローカルの UI 設定として記憶され、ROM データにも影響しません。
+
+11. 注意
+--------
+ROM を編集する前にバックアップを作成してください。
+Quarrel Ex は ROM イメージを配布しません。利用者自身が適法に取得した対応 ROM を使用してください。

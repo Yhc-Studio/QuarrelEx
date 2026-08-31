@@ -4,6 +4,7 @@ using QuarrelEx.Config;
 using QuarrelEx.Controls;
 using QuarrelEx.Core;
 using QuarrelEx.Rendering;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx;
 
@@ -20,6 +21,8 @@ public sealed class MainForm : Form
     private readonly Stack<byte[]> _redo = new();
     private byte[]? _savedBytes;
     private bool _refreshing;
+    private bool _stageCanvasFitPending;
+    private bool _terrainButtonResizePending;
     private readonly Dictionary<EditorToolKind, ToolWindowForm> _toolWindows = new();
     private readonly Dictionary<EditorToolKind, ToolStripMenuItem> _toolWindowMenuItems = new();
     private readonly HashSet<Control> _romDropControls = new();
@@ -36,7 +39,14 @@ public sealed class MainForm : Form
     private readonly ComboBox _stageCombo = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 115 };
     private readonly StageCanvas _stageCanvas = new();
     private readonly Panel _mapViewport = new() { Dock = DockStyle.Fill, BackColor = SystemColors.ControlDark, Padding = new Padding(4) };
-    private readonly FlowLayoutPanel _terrainPanel = new() { Dock = DockStyle.Fill, AutoScroll = true, WrapContents = true, Padding = new Padding(6) };
+    private readonly FlowLayoutPanel _terrainPanel = new()
+    {
+        Dock = DockStyle.Fill,
+        AutoScroll = true,
+        WrapContents = true,
+        FlowDirection = FlowDirection.LeftToRight,
+        Padding = new Padding(6)
+    };
     private readonly DataGridView _enemyGrid = new();
     private readonly Label _enemySum = new() { AutoSize = true, MaximumSize = new Size(520, 0), Padding = new Padding(6) };
     private readonly ComboBox _enemyCounterDisplay = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 150 };
@@ -60,7 +70,7 @@ public sealed class MainForm : Form
     private readonly ToolStripButton _importStageToolButton = new("导入关卡") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "把 .qexstage.json 导入到当前关卡", Enabled = false };
     private readonly ToolStripButton _exportStageToolButton = new("导出关卡") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "导出当前地图及其引用的 TSA/Attr 地形定义", Enabled = false };
     private readonly ToolStripMenuItem _convertMenu = new("转换为 32KB Ex Overlay（Legacy）") { Enabled = false };
-    private readonly Label _mapNote = new() { AutoSize = true, ForeColor = Color.DimGray, Padding = new Padding(3) };
+    private readonly Label _mapNote = new() { AutoSize = false, AutoEllipsis = true, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, ForeColor = Color.DimGray, Padding = new Padding(3) };
 
     private readonly CheckBox _autoFireCheck = new() { Text = "按住 B 键自动连发", AutoSize = true };
     private readonly CheckBox _pistolLv4Check = new() { Text = "启用手枪 / Lv4（手枪直升 Lv3）", AutoSize = true };
@@ -117,6 +127,8 @@ public sealed class MainForm : Form
         ConfigureTsaEditor();
         ConfigureExOptions();
         RefreshExOptions();
+        I18n.LanguageChanged += I18n_LanguageChanged;
+        ApplyLanguage();
 
         _stageCanvas.CellPaintRequested += StageCanvas_CellPaintRequested;
         _stageCanvas.CellPickRequested += StageCanvas_CellPickRequested;
@@ -124,10 +136,11 @@ public sealed class MainForm : Form
         _stageCanvas.SelectionMoveRequested += StageCanvas_SelectionMoveRequested;
         _stageCombo.SelectedIndexChanged += (_, _) => { _stageCanvas.ClearSelection(false); RefreshStageView(); };
         FormClosing += MainForm_FormClosing;
-        Shown += (_, _) => { FitToWorkingArea(); FitStageCanvasToViewport(); };
+        FormClosed += (_, _) => I18n.LanguageChanged -= I18n_LanguageChanged;
+        Shown += (_, _) => { FitToWorkingArea(); ScheduleFitStageCanvasToViewport(); };
         Resize += (_, _) =>
         {
-            if (WindowState != FormWindowState.Minimized) FitStageCanvasToViewport();
+            if (WindowState != FormWindowState.Minimized) ScheduleFitStageCanvasToViewport();
         };
         DpiChanged += (_, _) =>
         {
@@ -135,7 +148,7 @@ public sealed class MainForm : Form
             BeginInvoke(new Action(() =>
             {
                 if (_renderer is not null) BuildTerrainButtons();
-                FitStageCanvasToViewport();
+                ScheduleFitStageCanvasToViewport();
             }));
         };
     }
@@ -216,27 +229,32 @@ public sealed class MainForm : Form
         tools.DropDownItems.Add(_convertMenu);
 
         var window = BuildWindowMenu();
+        var language = BuildLanguageMenu();
 
         var help = new ToolStripMenuItem("帮助(&H)");
         var helpZh = new ToolStripMenuItem("中文帮助(&C)") { ShortcutKeys = Keys.F1 };
         helpZh.Click += (_, _) => OpenHelp("zh-CN");
         var helpEn = new ToolStripMenuItem("English Help(&E)") { ShortcutKeys = Keys.Shift | Keys.F1 };
         helpEn.Click += (_, _) => OpenHelp("en-US");
+        var helpJa = new ToolStripMenuItem("日本語ヘルプ(&J)");
+        helpJa.Click += (_, _) => OpenHelp("ja-JP");
         var tsaHelpZh = new ToolStripMenuItem("TSA / 属性说明（中文）(&T)");
         tsaHelpZh.Click += (_, _) => OpenTsaHelp("zh-CN");
         var tsaHelpEn = new ToolStripMenuItem("TSA / Attribute Guide (English)(&G)");
         tsaHelpEn.Click += (_, _) => OpenTsaHelp("en-US");
+        var tsaHelpJa = new ToolStripMenuItem("TSA / 属性ガイド（日本語）(&J)");
+        tsaHelpJa.Click += (_, _) => OpenTsaHelp("ja-JP");
         var about = new ToolStripMenuItem("关于 Quarrel Ex(&A)");
         about.Click += (_, _) => ShowAbout();
         help.DropDownItems.AddRange([
-            helpZh, helpEn,
+            helpZh, helpEn, helpJa,
             new ToolStripSeparator(),
-            tsaHelpZh, tsaHelpEn,
+            tsaHelpZh, tsaHelpEn, tsaHelpJa,
             new ToolStripSeparator(),
             about
         ]);
 
-        menu.Items.AddRange([file, edit, tools, window, help]);
+        menu.Items.AddRange([file, edit, tools, window, language, help]);
         menu.Dock = DockStyle.Fill;
         return menu;
     }
@@ -305,7 +323,7 @@ public sealed class MainForm : Form
             RowCount = 1,
             Padding = new Padding(4),
             Margin = Padding.Empty,
-            AutoScroll = true
+            AutoScroll = false
         };
         // v0.9.3 returns to the original Quarrel workflow: the main form is
         // dedicated to map + terrain, while data editors are independent
@@ -314,12 +332,33 @@ public sealed class MainForm : Form
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));
 
         var mapBox = new GroupBox { Text = "地图 13×13", Dock = DockStyle.Fill, MinimumSize = new Size(360, 0), Margin = new Padding(2) };
-        var mapLayout = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 2, ColumnCount = 1 };
-        mapLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-        mapLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        var mapLayout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            RowCount = 2,
+            ColumnCount = 1,
+            AutoSize = false,
+            GrowStyle = TableLayoutPanelGrowStyle.FixedSize,
+            Margin = Padding.Empty,
+            Padding = Padding.Empty
+        };
+        // The map note can become much wider in English/Japanese. Without an
+        // explicit 100% column, TableLayoutPanel may size its only column from
+        // the AutoSize label's PreferredSize. That silently makes the map
+        // viewport wider than the visible GroupBox; centering the canvas in
+        // that oversized viewport then appears as a large rightward offset.
+        mapLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        mapLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        mapLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
         _mapViewport.Controls.Add(_stageCanvas);
-        _mapViewport.Resize += (_, _) => FitStageCanvasToViewport();
+        // StageCanvas is positioned manually. Anchor=None causes WinForms to
+        // re-center the control when the parent is resized, which fights the
+        // explicit Location below and can shift the map far to the right.
+        _stageCanvas.Dock = DockStyle.None;
+        _stageCanvas.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+        _mapViewport.Resize += (_, _) => ScheduleFitStageCanvasToViewport();
         mapLayout.Controls.Add(_mapViewport, 0, 0);
+        _mapNote.Margin = Padding.Empty;
         mapLayout.Controls.Add(_mapNote, 0, 1);
         mapBox.Controls.Add(mapLayout);
 
@@ -331,10 +370,88 @@ public sealed class MainForm : Form
             Margin = new Padding(2)
         };
         terrainBox.Controls.Add(_terrainPanel);
+        _terrainPanel.ClientSizeChanged += (_, _) => ScheduleTerrainButtonResize();
 
         layout.Controls.Add(mapBox, 0, 0);
         layout.Controls.Add(terrainBox, 1, 0);
         return layout;
+    }
+
+    private ToolStripMenuItem BuildLanguageMenu()
+    {
+        var menu = new ToolStripMenuItem(I18n.T("app.language"));
+        foreach (var (code, nativeName) in I18n.Languages)
+        {
+            var item = new ToolStripMenuItem(nativeName)
+            {
+                CheckOnClick = false,
+                Checked = string.Equals(code, I18n.CurrentLanguage, StringComparison.OrdinalIgnoreCase),
+                Tag = code
+            };
+            item.Click += (_, _) =>
+            {
+                // SetLanguage broadcasts one global refresh. Avoid applying the
+                // same control tree twice on every menu click.
+                I18n.SetLanguage(code);
+            };
+            menu.DropDownItems.Add(item);
+        }
+        return menu;
+    }
+
+    private void I18n_LanguageChanged(object? sender, EventArgs e)
+    {
+        if (IsDisposed) return;
+        if (InvokeRequired) { BeginInvoke(new Action(ApplyLanguage)); return; }
+        ApplyLanguage();
+    }
+
+    private void ApplyLanguage()
+    {
+        SuspendLayout();
+        var openWindows = _toolWindows.Values.Where(w => !w.IsDisposed).ToArray();
+        foreach (var window in openWindows) window.SuspendLayout();
+        try
+        {
+            I18n.TranslateControlTree(this);
+        if (MainMenuStrip is not null)
+        {
+            I18n.TranslateToolStrip(MainMenuStrip);
+            foreach (ToolStripMenuItem top in MainMenuStrip.Items.OfType<ToolStripMenuItem>())
+            {
+                if (top.DropDownItems.OfType<ToolStripMenuItem>().Any(x => x.Tag is string code && I18n.Languages.Any(l => l.Code == code)))
+                {
+                    top.Text = I18n.T("app.language");
+                    foreach (ToolStripMenuItem item in top.DropDownItems.OfType<ToolStripMenuItem>())
+                        if (item.Tag is string code) item.Checked = string.Equals(code, I18n.CurrentLanguage, StringComparison.OrdinalIgnoreCase);
+                }
+            }
+        }
+        foreach (var window in _toolWindows.Values.Where(w => !w.IsDisposed))
+            I18n.TranslateControlTree(window);
+
+        // Rebuild texts that are produced dynamically from ROM/runtime state.  A plain
+        // control-tree pass cannot update values that were assigned with I18n.T(...)
+        // after the original binding was created.
+        if (_rom is not null && _renderer is not null)
+        {
+            BuildTerrainButtons();
+            RefreshEnemyGrid();
+            RefreshExOptions();
+            _gameSettings.RefreshValues();
+            _flagTsaEditor.Rebuild();
+            _stageCanvas.Invalidate();
+            _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
+            RefreshStageNote();
+            I18n.TranslateControlTree(_gameSettings);
+            I18n.TranslateControlTree(_flagTsaEditor);
+        }
+        }
+        finally
+        {
+            foreach (var window in openWindows) window.ResumeLayout(true);
+            ResumeLayout(true);
+        }
     }
 
     private ToolStripMenuItem BuildWindowMenu()
@@ -378,6 +495,7 @@ public sealed class MainForm : Form
         if (!_toolWindows.TryGetValue(kind, out var window) || window.IsDisposed)
         {
             window = CreateToolWindow(kind);
+            I18n.TranslateControlTree(window);
             EnableRomDropRecursive(window);
             _toolWindows[kind] = window;
             window.VisibleChanged += (_, _) => UpdateToolWindowMenuChecks();
@@ -522,34 +640,125 @@ public sealed class MainForm : Form
         UpdateToolWindowMenuChecks();
     }
 
+    private void ScheduleFitStageCanvasToViewport()
+    {
+        if (!IsHandleCreated || IsDisposed || _stageCanvasFitPending) return;
+        _stageCanvasFitPending = true;
+        BeginInvoke(new Action(() =>
+        {
+            try
+            {
+                if (!IsDisposed && WindowState != FormWindowState.Minimized)
+                    FitStageCanvasToViewport();
+            }
+            finally
+            {
+                _stageCanvasFitPending = false;
+            }
+        }));
+    }
+
     private void FitStageCanvasToViewport()
     {
-        if (_mapViewport.ClientSize.Width <= 0 || _mapViewport.ClientSize.Height <= 0) return;
-        _stageCanvas.FitToViewport(_mapViewport.ClientSize);
-        _stageCanvas.Location = new Point(
-            Math.Max(_mapViewport.Padding.Left, (_mapViewport.ClientSize.Width - _stageCanvas.Width) / 2),
-            Math.Max(_mapViewport.Padding.Top, (_mapViewport.ClientSize.Height - _stageCanvas.Height) / 2));
+        var client = _mapViewport.ClientRectangle;
+        var padding = _mapViewport.Padding;
+        var content = new Rectangle(
+            client.Left + padding.Left,
+            client.Top + padding.Top,
+            Math.Max(0, client.Width - padding.Horizontal),
+            Math.Max(0, client.Height - padding.Vertical));
+        if (content.Width <= 0 || content.Height <= 0) return;
+
+        // Keep one owner for StageCanvas bounds. In particular, never use
+        // Anchor=None here: WinForms' DefaultLayout will then move an
+        // unanchored child again as the parent changes size.
+        _mapViewport.SuspendLayout();
+        try
+        {
+            _stageCanvas.Dock = DockStyle.None;
+            _stageCanvas.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            _stageCanvas.FitToViewport(content.Size);
+            var x = content.Left + Math.Max(0, (content.Width - _stageCanvas.Width) / 2);
+            var y = content.Top + Math.Max(0, (content.Height - _stageCanvas.Height) / 2);
+            _stageCanvas.SetBounds(x, y, _stageCanvas.Width, _stageCanvas.Height, BoundsSpecified.All);
+        }
+        finally
+        {
+            _mapViewport.ResumeLayout(false);
+        }
+    }
+
+    private void ScheduleTerrainButtonResize()
+    {
+        if (!IsHandleCreated || IsDisposed || _terrainButtonResizePending) return;
+        _terrainButtonResizePending = true;
+        BeginInvoke(new Action(() =>
+        {
+            try
+            {
+                if (!IsDisposed) ResizeTerrainButtonsToPanel();
+            }
+            finally
+            {
+                _terrainButtonResizePending = false;
+            }
+        }));
+    }
+
+    private void ResizeTerrainButtonsToPanel()
+    {
+        if (_terrainPanel.ClientSize.Width <= 0 || _terrainPanel.Controls.Count == 0) return;
+
+        // Reserve room for the vertical scrollbar even before it becomes
+        // visible. This prevents FlowLayoutPanel from creating a horizontal
+        // scrollbar after the 64 terrain buttons are populated.
+        var available = _terrainPanel.ClientSize.Width
+                        - _terrainPanel.Padding.Horizontal
+                        - SystemInformation.VerticalScrollBarWidth
+                        - ScaleForDpiCompact(8, Math.Max(96, _terrainPanel.DeviceDpi));
+        if (available <= 0) return;
+
+        var dpi = Math.Max(96, _terrainPanel.DeviceDpi);
+        var gap = ScaleForDpiCompact(4, dpi);
+        var minimumButton = ScaleForDpiCompact(72, dpi);
+        var twoColumns = available >= minimumButton * 2 + gap;
+        var terrainWidth = twoColumns ? Math.Max(minimumButton, (available - gap) / 2) : available;
+
+        _terrainPanel.SuspendLayout();
+        try
+        {
+            foreach (Control control in _terrainPanel.Controls)
+            {
+                if (control is not Button button) continue;
+                button.Width = button.Tag is int ? terrainWidth : available;
+            }
+            _terrainPanel.AutoScrollMinSize = Size.Empty;
+        }
+        finally
+        {
+            _terrainPanel.ResumeLayout(false);
+        }
     }
 
     private void OpenHelp(string language)
     {
-        var fileName = language.Equals("en-US", StringComparison.OrdinalIgnoreCase)
-            ? "Help_en-US.txt"
+        var fileName = language.Equals("ja-JP", StringComparison.OrdinalIgnoreCase) ? "Help_ja-JP.txt"
+            : language.Equals("en-US", StringComparison.OrdinalIgnoreCase) ? "Help_en-US.txt"
             : "Help_zh-CN.txt";
-        var title = language.Equals("en-US", StringComparison.OrdinalIgnoreCase)
-            ? "Quarrel Ex - English Help"
-            : "Quarrel Ex - 中文帮助";
+        var title = language.Equals("ja-JP", StringComparison.OrdinalIgnoreCase) ? I18n.T("help.window.ja")
+            : language.Equals("en-US", StringComparison.OrdinalIgnoreCase) ? I18n.T("help.window.en")
+            : I18n.T("help.window.zh");
         OpenHelpDocument(title, fileName);
     }
 
     private void OpenTsaHelp(string language)
     {
-        var fileName = language.Equals("en-US", StringComparison.OrdinalIgnoreCase)
-            ? "TSA_Help_en-US.txt"
+        var fileName = language.Equals("ja-JP", StringComparison.OrdinalIgnoreCase) ? "TSA_Help_ja-JP.txt"
+            : language.Equals("en-US", StringComparison.OrdinalIgnoreCase) ? "TSA_Help_en-US.txt"
             : "TSA_Help_zh-CN.txt";
-        var title = language.Equals("en-US", StringComparison.OrdinalIgnoreCase)
-            ? "Quarrel Ex - TSA / Attribute Guide"
-            : "Quarrel Ex - TSA / 属性说明";
+        var title = language.Equals("ja-JP", StringComparison.OrdinalIgnoreCase) ? I18n.T("help.window.tsa_ja")
+            : language.Equals("en-US", StringComparison.OrdinalIgnoreCase) ? I18n.T("help.window.tsa_en")
+            : I18n.T("help.window.tsa");
         OpenHelpDocument(title, fileName);
     }
 
@@ -562,12 +771,8 @@ public sealed class MainForm : Form
 
     private void ShowAbout()
     {
-        MessageBox.Show(this,
-            "Quarrel Ex v1.1.7\r\nBattle City / Battle City Ex Editor\r\n\r\n" +
-            "Web/Desktop 继续共用 QuarrelExConfig v3；关卡地图、Enemy Type / Count / Total、Demo、Screen 与 Runtime 扩展均可互通。\r\n" +
-            "Runtime 6.9.3 / QXR1 v5：Stage 1~70 独立 P1/P2 玩家出生点、右上敌人数 Icons/Number、压缩逐关规则表、Skip ON 无关卡闪帧；Demo 保持原版出生/节奏/近老巢停火逻辑。\r\n" +
-            "支持把 .nes ROM 直接拖入窗口打开；有未保存修改时会显示“是/否/取消”，选择“是”会先保存/另存为成功后再打开。\r\n保留 Runtime 6.5 Final Rules、自定义 1~8 出生点、GAME OVER Skip、加命规则、2P Win Streak 与装甲坦克耐久；地图修改会同步刷新游戏设置中的两个出生点地图。",
-            "关于 Quarrel Ex", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show(this, I18n.T("about.desktop.text"), I18n.T("common.about"),
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private Control BuildExOptionsPanel()
@@ -644,8 +849,8 @@ public sealed class MainForm : Form
         _enemyPickupCheck.CheckedChanged += (_, _) => FeatureCheckChanged(_enemyPickupCheck, ExFeature.EnemyPowerUpPickup);
         _noFriendlyFireCheck.CheckedChanged += (_, _) => FeatureCheckChanged(_noFriendlyFireCheck, ExFeature.NoFriendlyFire);
         _lockInitialCheck.CheckedChanged += (_, _) => LockInitialChanged();
-        _presetOriginalButton.Click += (_, _) => ApplyFeaturePreset(0x00, "已切换为原版行为预设（已实现的 Ex 功能全部关闭）。");
-        _presetRecommendedButton.Click += (_, _) => ApplyFeaturePreset(0xA7, "已应用推荐 Ex 预设：B连发 + 手枪/Lv4 + 逐级掉级 + Lv4消树 + 取消队友互伤；加速移动保持关闭，可单独启用。");
+        _presetOriginalButton.Click += (_, _) => ApplyFeaturePreset(0x00, I18n.T("status.preset_original"));
+        _presetRecommendedButton.Click += (_, _) => ApplyFeaturePreset(0xA7, I18n.T("status.preset_recommended"));
     }
 
     private void FeatureCheckChanged(CheckBox box, ExFeature feature)
@@ -657,7 +862,7 @@ public sealed class MainForm : Form
             _rom.SetFeature(feature, box.Checked);
             MarkDirty();
             RefreshExOptions();
-            _infoBox.Text = _rom.Describe();
+            _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
             SetStatus($"Ex FeatureFlags = ${_rom.FeatureFlags:X2}", false);
         }
         catch (Exception ex) { SetStatus(ex.Message, true); }
@@ -672,7 +877,7 @@ public sealed class MainForm : Form
             _rom.SetLockInitialState(_lockInitialCheck.Checked);
             MarkDirty();
             _gameSettings.RefreshValues();
-            _infoBox.Text = _rom.Describe();
+            _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
             SetStatus("锁定初始状态已更新。", false);
         }
         catch (Exception ex) { SetStatus(ex.Message, true); RefreshExOptions(); }
@@ -684,7 +889,7 @@ public sealed class MainForm : Form
         try
         {
             PushUndo(); _rom.SetEnemyItemEffect(effect, box.Checked); MarkDirty();
-            _infoBox.Text = _rom.Describe(); SetStatus($"EnemyItemFlags = ${_rom.EnemyItemFlags:X2}", false);
+            _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe()); SetStatus($"EnemyItemFlags = ${_rom.EnemyItemFlags:X2}", false);
         }
         catch (Exception ex) { SetStatus(ex.Message, true); }
     }
@@ -698,7 +903,7 @@ public sealed class MainForm : Form
             _rom.SetFeatureFlags(flags);
             MarkDirty();
             RefreshExOptions();
-            _infoBox.Text = _rom.Describe();
+            _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
             SetStatus(message, false);
         }
         catch (Exception ex) { SetStatus(ex.Message, true); }
@@ -736,16 +941,16 @@ public sealed class MainForm : Form
             _presetRecommendedButton.Enabled = hasV2;
 
             if (_rom is null)
-                _exOptionsInfo.Text = "打开 ROM 后显示功能状态。";
+                _exOptionsInfo.Text = I18n.T("ex.open_note");
             else if (_rom.IsOriginal)
-                _exOptionsInfo.Text = "Battle City 原版 ROM：没有 BCEX v2 配置块，Ex 功能不可用。";
+                _exOptionsInfo.Text = I18n.T("ex.info.original");
             else if (!hasV2)
-                _exOptionsInfo.Text = "Legacy Ex ROM：未检测到 BCEX v2 配置块。请使用 Battle City Ex v2 ROM；不能只写 Flag，因为旧 ROM 中没有对应功能程序。";
+                _exOptionsInfo.Text = I18n.T("ex.info.legacy");
             else
-                _exOptionsInfo.Text = $"BCEX v2 / FeatureFlags=${_rom.FeatureFlags:X2} / LayoutFlags=${_rom.LayoutFlags:X2}。功能开关只修改配置字节，不会 NOP/JMP 改写程序本体。" +
-                    (_rom!.SupportsCustomEnemyTotal ? " 当前ROM支持每关1~255总敌人数。" : string.Empty) +
-                    (_rom.SupportsEnemyPowerUpPickup ? $" 32KB EnemyItemFlags=${_rom.EnemyItemFlags:X2}。" : string.Empty) +
-                    (_rom.SupportsPlayerFastMove ? " 支持我方坦克加速移动。" : string.Empty);
+                _exOptionsInfo.Text = I18n.T("ex.info.flags", _rom.FeatureFlags.ToString("X2"), _rom.LayoutFlags.ToString("X2")) +
+                    (_rom!.SupportsCustomEnemyTotal ? I18n.T("ex.info.custom_total") : string.Empty) +
+                    (_rom.SupportsEnemyPowerUpPickup ? I18n.T("ex.info.enemy_items", _rom.EnemyItemFlags.ToString("X2")) : string.Empty) +
+                    (_rom.SupportsPlayerFastMove ? I18n.T("ex.info.fast_move") : string.Empty);
         }
         finally { _refreshing = oldRefreshing; }
     }
@@ -766,7 +971,7 @@ public sealed class MainForm : Form
         _enemyGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         _enemyGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
         _enemyGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        _enemyGrid.Columns.Add("slot", "槽位");
+        _enemyGrid.Columns.Add("slot", I18n.T("enemy.slot.desktop"));
         _enemyGrid.Columns.Add("type", "Type (Hex)");
         _enemyGrid.Columns.Add("count", "数量");
         _enemyGrid.Columns[0].ReadOnly = true;
@@ -789,20 +994,20 @@ public sealed class MainForm : Form
     private void ConfigureTsaEditor()
     {
         _tsaEditor.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
-        _tsaEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange("TSA / 属性已更新。");
+        _tsaEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange(I18n.T("status.updated.tsa"));
         _paletteEditor.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
-        _paletteEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange("调色板已更新。");
+        _paletteEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange(I18n.T("status.updated.palette"));
         _flagTsaEditor.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
-        _flagTsaEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange("Flag / Fort TSA 已更新。");
+        _flagTsaEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange(I18n.T("status.updated.flag"));
         _gameSettings.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
         _gameSettings.DataChanged += (_, _) =>
         {
-            RefreshAfterDataEditorChange("游戏设置已更新。");
+            RefreshAfterDataEditorChange(I18n.T("status.updated.settings"));
             _gameSettings.RefreshValues();
             RefreshExOptions();
         };
         _screenEditor.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
-        _screenEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange("Title / Game Over 画面已更新。");
+        _screenEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange(I18n.T("status.updated.screen"));
     }
 
     private void RefreshAfterDataEditorChange(string message)
@@ -814,7 +1019,7 @@ public sealed class MainForm : Form
         _stageCanvas.Invalidate();
         _gameSettings.RefreshValues();
         _screenEditor.RefreshView();
-        _infoBox.Text = _rom.Describe();
+        _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
         SetStatus(message, false);
     }
 
@@ -847,7 +1052,7 @@ public sealed class MainForm : Form
     private void OpenRom()
     {
         if (!PromptSaveIfDirty()) return;
-        using var dlg = new OpenFileDialog { Filter = "NES ROM (*.nes)|*.nes|所有文件 (*.*)|*.*", Title = "打开 Battle City / Battle City Ex ROM" };
+        using var dlg = new OpenFileDialog { Filter = I18n.T("dialog.filter.nes"), Title = I18n.T("dialog.open_rom.title") };
         if (dlg.ShowDialog(this) != DialogResult.OK) return;
         OpenRomPath(dlg.FileName);
     }
@@ -873,21 +1078,21 @@ public sealed class MainForm : Form
             RefreshAll();
             var openStatus = _rom.Kind switch
             {
-                BattleCityRomKind.Original16K => "已打开 Battle City 原版 ROM：Stage 1~35 + Demo，TSA 表 00~0F（编辑器屏蔽 0E/0F）。",
+                BattleCityRomKind.Original16K => I18n.T("status.open.original"),
                 BattleCityRomKind.Ex16K => _rom.HasExV2Config
-                    ? $"已打开 16KB BCEX v2；FeatureFlags=${_rom.FeatureFlags:X2}。"
-                    : "已打开 16KB Legacy Ex；放置 10~17 时会自动扩容为 32KB。",
+                    ? I18n.T("status.open.v2_16", _rom.FeatureFlags.ToString("X2"))
+                    : I18n.T("status.open.legacy16"),
                 BattleCityRomKind.Ex32KOverlay => _rom.HasExV2Config
-                    ? $"已打开 32KB BCEX v2 Overlay；FeatureFlags=${_rom.FeatureFlags:X2}。"
-                    : "已打开 32KB Quarrel Ex Overlay ROM。",
-                _ => $"已打开 BCEX v2 32KB / 70独立地图；Terrain={_rom.TerrainCount}，FeatureFlags=${_rom.FeatureFlags:X2}。"
+                    ? I18n.T("status.open.v2_overlay", _rom.FeatureFlags.ToString("X2"))
+                    : I18n.T("status.open.overlay"),
+                _ => I18n.T("status.open.maps70", _rom.TerrainCount, _rom.FeatureFlags.ToString("X2"))
             };
             SetStatus(openStatus, false);
             UpdateTitle();
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "无法打开 ROM", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.open_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -919,7 +1124,7 @@ public sealed class MainForm : Form
     {
         var path = GetDroppedRomPath(e.Data);
         e.Effect = path is null ? DragDropEffects.None : DragDropEffects.Copy;
-        if (path is not null) SetStatus($"释放以打开 {Path.GetFileName(path)}。", false);
+        if (path is not null) SetStatus(I18n.T("status.drop.release", Path.GetFileName(path)), false);
     }
 
     private void RomDrop_DragDrop(object? sender, DragEventArgs e)
@@ -927,13 +1132,13 @@ public sealed class MainForm : Form
         var path = GetDroppedRomPath(e.Data);
         if (path is null)
         {
-            SetStatus("拖入的文件不是 .nes ROM。", true);
+            SetStatus(I18n.T("status.drop.not_nes"), true);
             return;
         }
 
         if (!PromptSaveIfDirty())
         {
-            SetStatus("已取消打开拖入的 ROM。", false);
+            SetStatus(I18n.T("status.drop.cancelled"), false);
             return;
         }
 
@@ -944,7 +1149,7 @@ public sealed class MainForm : Form
     {
         if (_rom is null)
         {
-            MessageBox.Show(this, "请先打开 ROM。", "导出配置", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, I18n.T("dialog.config.export_open_first"), I18n.T("dialog.config.export_title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
@@ -969,17 +1174,17 @@ public sealed class MainForm : Form
             var json = JsonSerializer.Serialize(cfg, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(dlg.FileName, json);
 
-            SetStatus("QuarrelExConfig v3 已导出。", false);
+            SetStatus(I18n.T("status.config.exported"), false);
             MessageBox.Show(
                 this,
-                $"配置导出成功。{Environment.NewLine}{dlg.FileName}{Environment.NewLine}{Environment.NewLine}该 v3 文件可在 Web / Desktop 间通用。",
-                "配置导出成功",
+                I18n.T("dialog.config.export_success", Environment.NewLine, dlg.FileName),
+                I18n.T("dialog.config.export_success_title"),
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "导出配置失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.export_config_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -987,14 +1192,14 @@ public sealed class MainForm : Form
     {
         if (_rom is null)
         {
-            MessageBox.Show(this, "请先打开目标 ROM。", "导入配置", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, I18n.T("dialog.config.import_open_first"), I18n.T("common.import_config"), MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
         using var dlg = new OpenFileDialog
         {
             Filter = "QuarrelExConfig v3 (*.qexcfg.json)|*.qexcfg.json",
-            Title = "导入 QuarrelExConfig v3"
+            Title = I18n.T("dialog.config.import_title")
         };
         if (dlg.ShowDialog(this) != DialogResult.OK) return;
 
@@ -1005,17 +1210,17 @@ public sealed class MainForm : Form
             {
                 var root = doc.RootElement;
                 if (root.ValueKind != JsonValueKind.Object)
-                    throw new InvalidDataException("配置文件根节点必须是 JSON 对象。");
+                    throw new InvalidDataException(I18n.T("error.config.root_object"));
                 if (!root.TryGetProperty("Schema", out var schemaNode) || schemaNode.ValueKind != JsonValueKind.String || schemaNode.GetString() != "QuarrelExConfig")
-                    throw new InvalidDataException("配置文件缺少有效的 Schema=QuarrelExConfig。");
+                    throw new InvalidDataException(I18n.T("error.config.schema_missing"));
                 if (!root.TryGetProperty("Version", out var versionNode) || versionNode.ValueKind != JsonValueKind.Number || !versionNode.TryGetInt32(out var version) || version != 3)
-                    throw new InvalidDataException("正式版只接受明确标记为 Version=3 的 QuarrelExConfig v3 文件。");
+                    throw new InvalidDataException(I18n.T("error.config.version3_only"));
             }
 
             var cfg = JsonSerializer.Deserialize<QuarrelExSharedConfig>(
                           jsonText,
                           new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
-                      ?? throw new InvalidDataException("配置文件为空或 JSON 结构错误。");
+                      ?? throw new InvalidDataException(I18n.T("error.config.empty_json"));
 
             // Transactional import: validate and apply to a temporary ROM first.
             // The active ROM is not touched at all when a hard validation error occurs.
@@ -1033,24 +1238,24 @@ public sealed class MainForm : Form
             RefreshAll();
 
             var warningText = notes.Count > 0
-                ? Environment.NewLine + Environment.NewLine + "兼容性提示：" + Environment.NewLine + "- " + string.Join(Environment.NewLine + "- ", notes)
+                ? Environment.NewLine + Environment.NewLine + I18n.T("dialog.compatibility_notes") + Environment.NewLine + "- " + string.Join(Environment.NewLine + "- ", notes)
                 : string.Empty;
 
             MessageBox.Show(
                 this,
-                "QuarrelExConfig v3 已检查并导入成功。" + warningText,
-                "配置导入成功",
+                I18n.T("dialog.config.import_success") + warningText,
+                I18n.T("dialog.config.import_success_title"),
                 MessageBoxButtons.OK,
                 notes.Count > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
-            SetStatus("QuarrelExConfig v3 已检查并导入。", false);
+            SetStatus(I18n.T("status.config.imported"), false);
         }
         catch (JsonException ex)
         {
-            MessageBox.Show(this, "JSON 格式错误：" + ex.Message, "导入配置失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.T("dialog.json_error") + ex.Message, I18n.T("dialog.import_config_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "导入配置失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.import_config_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -1061,7 +1266,7 @@ public sealed class MainForm : Form
     {
         if (_rom is null)
         {
-            MessageBox.Show(this, "请先打开 ROM。", "导出关卡", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, I18n.T("dialog.stage.export_open_first"), I18n.T("common.export_stage"), MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
@@ -1080,14 +1285,14 @@ public sealed class MainForm : Form
             var validation = _rom.ValidateStagePackage(package, CurrentStage);
             if (!validation.IsValid) throw new InvalidDataException(validation.FormatErrors());
             File.WriteAllText(dlg.FileName, JsonSerializer.Serialize(package, new JsonSerializerOptions { WriteIndented = true }));
-            SetStatus($"{CurrentStageDisplayName()} 地图与地形配置已导出。", false);
+            SetStatus(I18n.T("status.stage.exported", CurrentStageDisplayName()), false);
             MessageBox.Show(this,
-                $"{CurrentStageDisplayName()} 导出成功。{Environment.NewLine}{dlg.FileName}{Environment.NewLine}{Environment.NewLine}文件包含 13×13 地图和该地图实际引用的 TSA/Attr 地形定义。",
-                "关卡导出成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                I18n.T("dialog.stage.export_success", CurrentStageDisplayName(), Environment.NewLine, dlg.FileName),
+                I18n.T("dialog.stage.export_success_title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "导出关卡失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.export_stage_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -1095,14 +1300,14 @@ public sealed class MainForm : Form
     {
         if (_rom is null)
         {
-            MessageBox.Show(this, "请先打开目标 ROM，并选择要导入到的关卡。", "导入关卡", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(this, I18n.T("dialog.stage.import_open_first"), I18n.T("common.import_stage"), MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
         using var dlg = new OpenFileDialog
         {
             Filter = "QuarrelEx Stage (*.qexstage.json)|*.qexstage.json|JSON (*.json)|*.json",
-            Title = $"导入到 {CurrentStageDisplayName()}"
+            Title = I18n.T("dialog.stage.import_title", CurrentStageDisplayName())
         };
         if (dlg.ShowDialog(this) != DialogResult.OK) return;
 
@@ -1110,18 +1315,18 @@ public sealed class MainForm : Form
         {
             var jsonText = File.ReadAllText(dlg.FileName);
             var package = JsonSerializer.Deserialize<QuarrelExStagePackage>(jsonText, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
-                          ?? throw new InvalidDataException("关卡配置为空或 JSON 结构错误。");
+                          ?? throw new InvalidDataException(I18n.T("error.stage_package.empty"));
 
             var staging = new BattleCityRom(_rom.GetBytesCopy(), _cfg);
             var validation = staging.ValidateStagePackage(package, CurrentStage);
             if (!validation.IsValid) throw new InvalidDataException(validation.FormatErrors());
             var notes = staging.ApplyStagePackage(package, CurrentStage);
 
-            var terrainWarning = "注意：TSA/Attr 地形定义在 ROM 中是全局共享的。导入文件中携带的地形 ID 会被更新，因此其他使用相同地形 ID 的关卡外观也可能改变。";
-            var confirmText = $"将把关卡包导入到当前 {CurrentStageDisplayName()}。{Environment.NewLine}{Environment.NewLine}{terrainWarning}";
+            var terrainWarning = I18n.T("dialog.stage.terrain_warning");
+            var confirmText = I18n.T("dialog.stage.import_confirm", CurrentStageDisplayName(), Environment.NewLine, terrainWarning);
             if (package.SourceStage > 0 && package.SourceStage != CurrentStage)
-                confirmText = $"关卡包来源：Stage {package.SourceStage}{Environment.NewLine}" + confirmText;
-            if (MessageBox.Show(this, confirmText, "确认导入关卡", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return;
+                confirmText = I18n.T("dialog.stage.source", package.SourceStage, Environment.NewLine) + confirmText;
+            if (MessageBox.Show(this, confirmText, I18n.T("dialog.stage.confirm_title"), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return;
 
             PushUndo();
             _rom.RestoreBytes(staging.GetBytesCopy());
@@ -1131,18 +1336,18 @@ public sealed class MainForm : Form
             RefreshAll();
 
             var warningText = notes.Count > 0
-                ? Environment.NewLine + Environment.NewLine + "提示：" + Environment.NewLine + "- " + string.Join(Environment.NewLine + "- ", notes)
+                ? Environment.NewLine + Environment.NewLine + I18n.T("dialog.notes") + Environment.NewLine + "- " + string.Join(Environment.NewLine + "- ", notes)
                 : string.Empty;
-            MessageBox.Show(this, $"已导入到 {CurrentStageDisplayName()}。" + warningText, "关卡导入成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            SetStatus($"{CurrentStageDisplayName()} 地图与地形配置已导入。", false);
+            MessageBox.Show(this, I18n.T("dialog.stage.import_success", CurrentStageDisplayName()) + warningText, I18n.T("dialog.stage.import_success_title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+            SetStatus(I18n.T("status.stage.imported", CurrentStageDisplayName()), false);
         }
         catch (JsonException ex)
         {
-            MessageBox.Show(this, "JSON 格式错误：" + ex.Message, "导入关卡失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.T("dialog.json_error") + ex.Message, I18n.T("dialog.import_stage_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "导入关卡失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.import_stage_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -1172,12 +1377,12 @@ public sealed class MainForm : Form
             _savedBytes = _rom.GetBytesCopy();
             _dirty = false;
             UpdateTitle();
-            SetStatus(forceSaveAs ? "ROM 已另存为。" : "ROM 已保存。", false);
+            SetStatus(forceSaveAs ? I18n.T("status.saved_as") : I18n.T("status.saved"), false);
             return true;
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.save_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
         }
     }
@@ -1213,11 +1418,12 @@ public sealed class MainForm : Form
             _gameSettings.Bind(_rom, _renderer, () => CurrentStage);
             _screenEditor.Bind(_rom, _renderer);
             RefreshExOptions();
-            _infoBox.Text = _rom.Describe();
+            _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
             RefreshStageNote();
             _convertMenu.Enabled = _rom.CanConvertToOverlay;
         }
         finally { _refreshing = false; }
+        ScheduleFitStageCanvasToViewport();
     }
 
     private void RefreshStageView()
@@ -1229,6 +1435,8 @@ public sealed class MainForm : Form
         RefreshEnemyGrid();
         _gameSettings.RefreshValues();
         _flagTsaEditor.Rebuild();
+        I18n.TranslateControlTree(_gameSettings);
+        I18n.TranslateControlTree(_flagTsaEditor);
         RefreshStageNote();
     }
 
@@ -1237,16 +1445,16 @@ public sealed class MainForm : Form
         if (_rom is null) return;
         string baseText;
         if (_rom.IsDemoStage(CurrentStage))
-            baseText = "Demo 地图使用原版 4-bit 地图槽：可编辑地形仅 $00~$0D；Enemy Type/Count 与 Stage 35 共用。";
+            baseText = I18n.T("map.note.demo");
         else if (_rom.IsOriginal)
-            baseText = "Battle City 原版模式：Stage 1~35 使用独立地图。";
+            baseText = I18n.T("map.note.original");
         else if (_rom.HasIndependentMaps)
-            baseText = $"BCEX v2 32KB：Stage 1~70 地图全部独立，地形 $00~${_rom.TerrainCount - 1:X2} 可直接保存。";
+            baseText = I18n.T("map.note.independent", (_rom.TerrainCount - 1).ToString("X2"));
         else if (CurrentStage > 35)
-            baseText = $"Stage {CurrentStage} 的地图与 Stage {CurrentStage - 35} 共用；敌人 Type/Count 独立。";
+            baseText = I18n.T("map.note.shared", CurrentStage, CurrentStage - 35);
         else
-            baseText = "Stage 1~35 使用独立地图。";
-        _mapNote.Text = baseText + "  选择‘选择 / 移动工具’后可框选、拖移、复制、剪切和粘贴地图块。";
+            baseText = I18n.T("map.note.first35");
+        _mapNote.Text = baseText + I18n.T("map.note.selection_suffix");
     }
 
     private void BuildTerrainButtons()
@@ -1262,7 +1470,7 @@ public sealed class MainForm : Form
                 Width = ScaleForDpiCompact(188, dpi),
                 Height = ScaleForDpiCompact(38, dpi),
                 Margin = new Padding(ScaleForDpiCompact(2, dpi)),
-                Text = "▣  选择 / 移动工具",
+                Text = I18n.T("map.selection_mode"),
                 TextAlign = ContentAlignment.MiddleCenter,
                 FlatStyle = FlatStyle.Flat,
                 UseVisualStyleBackColor = false,
@@ -1275,7 +1483,7 @@ public sealed class MainForm : Form
                 _stageCanvas.SelectionMode = true;
                 _stageCanvas.Focus();
                 BuildTerrainButtons();
-                SetStatus("地图选择模式：拖框选择；拖动选区可移动，Ctrl+拖动复制；Ctrl+C/X/V 可复制/剪切/粘贴。", false);
+                SetStatus(I18n.T("map.selection.status"), false);
             };
             _terrainPanel.Controls.Add(selectButton);
 
@@ -1310,13 +1518,14 @@ public sealed class MainForm : Form
             }
         }
         finally { _terrainPanel.ResumeLayout(); }
+        ScheduleTerrainButtonResize();
     }
 
     private static string GetTerrainName(int id)
     {
-        if (TerrainNames.TryGetValue(id, out var name)) return name;
-        if (id is >= 0x20 and <= 0x3F) return $"自定义 {id:X2}";
-        return "地形";
+        if (TerrainNames.TryGetValue(id, out var name)) return I18n.FromSource(name);
+        if (id is >= 0x20 and <= 0x3F) return I18n.T("terrain.custom", id.ToString("X2"));
+        return I18n.T("common.terrain");
     }
 
     private static int ScaleForDpiCompact(int logicalPixels, int dpi)
@@ -1342,14 +1551,14 @@ public sealed class MainForm : Form
             if (_rom.SupportsCustomEnemyTotal)
             {
                 var good = sum is >= 1 and <= 255;
-                _enemySum.Text = $"总敌人数：{sum} / 1~255{(good ? "（有效）" : "（超出范围）")}\r\n四个 Count 的合计就是本关实际敌人总数；单个槽允许 0~255。";
+                _enemySum.Text = I18n.T("enemy.total.custom", sum, I18n.T(good ? "enemy.total.valid" : "enemy.total.invalid")) + Environment.NewLine + I18n.T("enemy.total.custom_help");
                 _enemySum.ForeColor = good ? Color.DarkGreen : Color.DarkRed;
             }
             else
             {
                 _enemySum.Text = sum == 20
-                    ? "数量合计：20（原版有效）\r\n当前 ROM 没有自定义总敌人数运行支持。"
-                    : $"数量合计：{sum}（建议保持20）\r\n当前 ROM 的运行程序仍按20辆规格设计。";
+                    ? I18n.T("enemy.total.original20")
+                    : I18n.T("enemy.total.legacy", sum);
                 _enemySum.ForeColor = sum == 20 ? Color.DarkGreen : Color.DarkOrange;
             }
 
@@ -1360,15 +1569,15 @@ public sealed class MainForm : Form
                 _enemyCounterDisplay.Enabled = !forced;
                 _enemyCounterDisplay.SelectedIndex = forced ? 1 : (prefNumber ? 1 : 0);
                 _enemyCounterNote.Text = forced
-                    ? $"EnemyTotal={sum} > 50：运行时强制 Number；已保存偏好为 {(prefNumber ? "Number" : "Icons")}。"
-                    : "EnemyTotal 1~50 可逐关选择 Icons / Number；51~255 自动强制 Number。";
+                    ? I18n.T("enemy.counter.forced", sum, prefNumber ? "Number" : "Icons")
+                    : I18n.T("enemy.counter.normal");
                 _enemyCounterNote.ForeColor = forced ? Color.DarkOrange : Color.DimGray;
             }
             else
             {
                 _enemyCounterDisplay.Enabled = false;
                 _enemyCounterDisplay.SelectedIndex = 0;
-                _enemyCounterNote.Text = "逐关敌人数显示模式需要 QXR1 v5 / Runtime 6.9.3。";
+                _enemyCounterNote.Text = I18n.T("enemy.counter.requires");
                 _enemyCounterNote.ForeColor = Color.DimGray;
             }
         }
@@ -1413,7 +1622,7 @@ public sealed class MainForm : Form
             if (converted)
             {
                 _renderer.InvalidateCache();
-                _infoBox.Text = _rom.Describe();
+                _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
                 _convertMenu.Enabled = false;
                 SetStatus("已自动转换为 32KB Ex Overlay；请另存 ROM。", false);
             }
@@ -1424,7 +1633,7 @@ public sealed class MainForm : Form
             // immediately while the main 13x13 map is painted.
             _gameSettings.RefreshMapVisuals();
         }
-        catch (Exception ex) { MessageBox.Show(this, ex.Message, "写入地图失败", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        catch (Exception ex) { MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.map_write_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error); }
     }
 
     private void StageCanvas_CellPickRequested(object? sender, CellPickEventArgs e)
@@ -1505,7 +1714,7 @@ public sealed class MainForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, cut ? "剪切失败" : "复制失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), cut ? I18n.T("dialog.cut_failed") : I18n.T("dialog.copy_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -1528,7 +1737,7 @@ public sealed class MainForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "粘贴失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.paste_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -1545,7 +1754,7 @@ public sealed class MainForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "清空选区失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.clear_selection_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -1568,7 +1777,7 @@ public sealed class MainForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "移动选区失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.move_selection_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -1596,7 +1805,7 @@ public sealed class MainForm : Form
                 SetStatus("已转换为 32KB Quarrel Ex Overlay 格式；请另存 ROM。", false);
             }
         }
-        catch (Exception ex) { MessageBox.Show(this, ex.Message, "转换失败", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        catch (Exception ex) { MessageBox.Show(this, I18n.FromSource(ex.Message), I18n.T("dialog.convert_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error); }
     }
 
     private static void TrimHistory(Stack<byte[]> stack, int max = 50)
@@ -1637,7 +1846,7 @@ public sealed class MainForm : Form
         UpdateHistoryMenus();
         UpdateDirtyFromSavedState();
         RefreshAll();
-        SetStatus("已撤销。", false);
+        SetStatus(I18n.T("status.undo"), false);
     }
 
     private void Redo()
@@ -1651,7 +1860,7 @@ public sealed class MainForm : Form
         UpdateHistoryMenus();
         UpdateDirtyFromSavedState();
         RefreshAll();
-        SetStatus("已重做。", false);
+        SetStatus(I18n.T("status.redo"), false);
     }
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -1714,14 +1923,14 @@ public sealed class MainForm : Form
 
     private void SetStatus(string text, bool error)
     {
-        _status.Text = text;
+        _status.Text = I18n.FromSource(text);
         _status.ForeColor = error ? Color.DarkRed : SystemColors.ControlText;
     }
 
     private bool PromptSaveIfDirty()
     {
         if (!_dirty || _rom is null) return true;
-        var result = MessageBox.Show(this, "当前 ROM 有未保存修改，是否先保存？", "Quarrel Ex", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+        var result = MessageBox.Show(this, I18n.T("dialog.dirty_prompt"), "Quarrel Ex", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
         if (result == DialogResult.Cancel) return false;
         if (result == DialogResult.Yes) return SaveRom(false);
         return result == DialogResult.No;

@@ -1,9 +1,0 @@
-QuarrelEx Web v1.6.7 static verification
-========================================
-
-- Normal and Standalone HTML are byte-identical.
-- All three inline JavaScript blocks pass Node.js syntax check.
-- Added QuarrelExStage v1 (*.qexstage.json) per-stage map + referenced Terrain TSA/Attr import/export.
-- Added Select / Move mode with rectangle selection, drag move, Ctrl+drag copy, Ctrl+C/X/V, Delete/Backspace and arrow-key nudge.
-- Stage-package import validates on a temporary BattleCityRom before commit.
-- Existing QuarrelExConfig v3, Runtime 6.9.3 / QXR1 v5 EnemyCounterDisplay, and $FF screen-byte compatibility remain present.

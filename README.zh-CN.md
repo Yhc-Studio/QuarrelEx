@@ -1,13 +1,13 @@
 # QuarrelEx
 
-![Version](https://img.shields.io/badge/release-v1.1.7-blue)
+![Version](https://img.shields.io/badge/release-v1.1.8-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Web-0aa0c0)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **QuarrelEx** 是一个面向《Battle City / 坦克大战》的 ROM 与关卡编辑器，同时提供 Windows 桌面端与 Web 端。当前版本把 70 关 BCEX、TSA/CHR 可视化、游戏规则、拖拽打开、Config v3，以及 32KB Runtime 的参数统一到同一套编辑流程中。
 
-[English](README.md)
+[English](README.md) · UI 语言：**简体中文 / English / 日本語**
 
 > **本仓库不包含游戏 ROM 本体。** IPS 需要用户自己合法取得、并且校验值匹配的基础 ROM。
 
@@ -15,10 +15,10 @@
 
 | 组件 | 版本 |
 |---|---:|
-| QuarrelEx | 1.1.7 |
-| Desktop | 1.1.7 |
-| Web | 1.6.7 |
-| Mobile Web UI | 1.0（Core 1.6.7） |
+| QuarrelEx | 1.1.8 |
+| Desktop | 1.1.8 |
+| Web | 1.6.8 |
+| Mobile Web UI | 1.0（Core 1.6.8） |
 | Config | QuarrelExConfig v3 |
 | 32KB BCEX Runtime | Runtime 6.9.3 / QXR1 v5 |
 
@@ -47,7 +47,7 @@
 - 按住 B 连发、手枪/Lv4、受击降级、我方加速、随机敌人顺序、取消队友互伤、敌人拾取道具、锁定初始状态等。
 - 每关可单独导入 / 导出 `.qexstage.json`：包含当前 13×13 地图和该地图实际引用的 TSA/Attr 地形定义。
 - 地图新增“选择 / 移动工具”：支持单块/矩形框选、拖动移动、Ctrl+拖动复制，以及 Ctrl+C / Ctrl+X / Ctrl+V / Delete。
-- 新增独立的触控优先 **Mobile Web UI**（`web/QuarrelEx_Mobile.html`）：采用底部导航和手机工具抽屉，复用 Web 1.6.7 的编辑核心，不替换桌面向 Web 页面。
+- 新增独立的触控优先 **Mobile Web UI**（`web/QuarrelEx_Mobile.html`）：采用底部导航和手机工具抽屉，复用 Web 1.6.8 的编辑核心，不替换桌面向 Web 页面。
 - Web / Desktop 共用 Config v3。
 - Save / Save As、Undo / Redo。
 - 支持拖拽打开 `.nes`；当前 ROM 未保存时提供 **保存 / 不保存 / 取消**。
@@ -64,6 +64,8 @@ QuarrelEx/
 │  └─ 32KB/
 ├─ docs/
 ├─ examples/
+├─ locales/                 # zh-CN / en-US / ja-JP 共用语言资源
+├─ tools/                   # 本地化同步/校验工具
 ├─ .github/workflows/
 ├─ README.md
 ├─ README.zh-CN.md

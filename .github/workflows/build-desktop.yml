@@ -4,10 +4,14 @@ on:
   push:
     paths:
       - 'desktop/**'
+      - 'locales/**'
+      - 'tools/**'
       - '.github/workflows/build-desktop.yml'
   pull_request:
     paths:
       - 'desktop/**'
+      - 'locales/**'
+      - 'tools/**'
       - '.github/workflows/build-desktop.yml'
 
 jobs:
@@ -18,6 +22,14 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Verify generated Desktop localization
+        run: |
+          python tools/generate_desktop_i18n.py
+          git diff --exit-code -- desktop/QuarrelEx/Localization/BuiltInCatalogs.g.cs
+          python tools/check_i18n.py
       - name: Restore
         run: dotnet restore desktop/QuarrelEx.sln
       - name: Build

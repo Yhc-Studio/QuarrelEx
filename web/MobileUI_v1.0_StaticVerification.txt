@@ -1,40 +1,33 @@
-QuarrelEx Mobile Web UI 1.0 - Static / Browser Verification
-=============================================================
+QuarrelEx Mobile Web UI 1.0 - Static Verification
+==================================================
 
 File: web/QuarrelEx_Mobile.html
-Core: Web 1.6.7
+Core: Web 1.6.8
 Runtime target: 6.9.3 / QXR1 v5
 Config: QuarrelExConfig v3
 Stage package: QuarrelExStage v1
+Languages: zh-CN / en-US / ja-JP
 
 Structure
 ---------
-[OK] Separate HTML entry; QuarrelEx.html and QuarrelEx_Standalone.html remain unchanged.
-[OK] Mobile top actions: Open / Save / Undo / Redo / More.
-[OK] Bottom navigation: Map / Enemy / TSA / Settings / More.
-[OK] More bottom sheet includes Palette, Flag TSA, Ex, Screen, ROM Info, Config/Stage import-export and Help.
-[OK] Mobile safe-area CSS and touch-sized controls are present.
-[OK] Duplicate DOM ids: 0 (none).
+[OK] Separate mobile HTML entry; desktop-oriented Web entries remain separate.
+[OK] Mobile top actions and fixed bottom navigation remain present.
+[OK] More sheet retains Palette, Flag TSA, Ex, Screen, ROM Info, Config/Stage import-export and Help.
+[OK] Mobile language selector uses the shared repository locale catalogs.
+[OK] Language preference is stored in localStorage and is not written to ROM/Config data.
+
+Localization runtime
+--------------------
+[OK] Repeated-placeholder regex crash fixed.
+[OK] Dynamic text can re-bind from Chinese, English, or Japanese.
+[OK] Language changes dispatch quarrelex:languagechange and refresh dynamic editor panels immediately.
+[OK] Raw map.selection_tool fallback is no longer produced by a healthy i18n bootstrap.
 
 JavaScript
 ----------
-[OK] Inline script 1: node --check
-[OK] Inline script 2: node --check
-[OK] Inline script 3: node --check
-[OK] Inline script 4: node --check
+[OK] 5 inline JavaScript blocks pass Node.js v22 --check.
+[OK] tools/check_i18n.py passes catalog/key/placeholder consistency checks.
 
-Headless Chromium mobile smoke test
------------------------------------
-[OK] 360x740, 390x844 and 430x932 viewports: document width equals viewport width.
-[OK] Mobile header visible; desktop appbar hidden.
-[OK] Map page shown initially; tool panel hidden until navigation.
-[OK] Enemy / TSA / Settings bottom-navigation switching works.
-[OK] More bottom sheet opens and navigates to Palette / Screen and other panes.
-[OK] Runtime 6.9.3 QXR1 v5 test ROM opens; 71 stage options (Demo + Stage 1-70) are available.
-[OK] Mobile status and ROM badge synchronize with the original core UI state.
-[OK] Stage export still produces QuarrelExStage v1 with a 13x13 Map.
-[OK] No JavaScript page/console errors observed in the tested flows.
-
-SHA-256
--------
-c7637611b4edc7d38f1b4d99136885e953e92267bd5d44b3e78f4768a72c8f95  web/QuarrelEx_Mobile.html
+Note
+----
+The environment does not provide an interactive end-user browser session, so final device UI smoke testing is still recommended before publishing a tagged release.

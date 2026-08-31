@@ -1,5 +1,6 @@
 using QuarrelEx.Core;
 using QuarrelEx.Rendering;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx.Controls;
 
@@ -140,8 +141,8 @@ public sealed class GameSettingsControl : UserControl
         WirePacingEvents();
         WireFinalRuleEvents();
 
-        _clearStage.Click += (_,_)=>{if(_rom is null||_stageProvider is null)return;if(MessageBox.Show(FindForm(),"确定把当前关卡的13×13地图全部清为空白地形0D？","清空关卡",MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.ClearStage(_stageProvider());RefreshMapVisuals();DataChanged?.Invoke(this,EventArgs.Empty);};
-        _clearAll.Click += (_,_)=>{if(_rom is null)return;if(MessageBox.Show(FindForm(),"确定清空当前ROM的全部可编辑关卡地图？此操作可使用Ctrl+Z撤销一次。","清空全部关卡",MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.ClearAllStages();RefreshMapVisuals();DataChanged?.Invoke(this,EventArgs.Empty);};
+        _clearStage.Click += (_,_)=>{if(_rom is null||_stageProvider is null)return;if(MessageBox.Show(FindForm(),I18n.T("dialog.clear_stage.message"),I18n.T("dialog.clear_stage.title"),MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.ClearStage(_stageProvider());RefreshMapVisuals();DataChanged?.Invoke(this,EventArgs.Empty);};
+        _clearAll.Click += (_,_)=>{if(_rom is null)return;if(MessageBox.Show(FindForm(),I18n.T("dialog.clear_all.message"),I18n.T("dialog.clear_all.title"),MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.ClearAllStages();RefreshMapVisuals();DataChanged?.Invoke(this,EventArgs.Empty);};
     }
 
     private void BuildStagePlayerSpawnBox()
@@ -324,7 +325,7 @@ public sealed class GameSettingsControl : UserControl
             RefreshPacingCore();
             RefreshFinalRulesCore();
         }
-        finally{_refreshing=false;}
+        finally{_refreshing=false; I18n.TranslateControlTree(this);}
     }
 
     private void RefreshStagePlayerSpawnCore()
@@ -349,7 +350,7 @@ public sealed class GameSettingsControl : UserControl
         _stagePlayerX1.Value=p1.X;_stagePlayerY1.Value=p1.Y;_stagePlayerX2.Value=p2.X;_stagePlayerY2.Value=p2.Y;
         _stagePlayerX1.Enabled=_stagePlayerY1.Enabled=p1.IsCustom;_stagePlayerX2.Enabled=_stagePlayerY2.Enabled=p2.IsCustom;
         var c1=_rom.GetStagePlayerSpawnCell(CurrentStage,false);var c2=_rom.GetStagePlayerSpawnCell(CurrentStage,true);
-        _stagePlayerSpawnNote.Text=$"Stage {CurrentStage}：P1 {(p1.IsCustom?"Custom":"Original")} ${p1.X:X2},${p1.Y:X2} / 地形 ${c1.TerrainId:X2}；P2 {(p2.IsCustom?"Custom":"Original")} ${p2.X:X2},${p2.Y:X2} / 地形 ${c2.TerrainId:X2}。拖拽任一标记会自动切换为 Custom。";
+        _stagePlayerSpawnNote.Text=I18n.T("settings.player_stage.status", CurrentStage, p1.IsCustom?"Custom":"Original", p1.X.ToString("X2"), p1.Y.ToString("X2"), c1.TerrainId.ToString("X2"), p2.IsCustom?"Custom":"Original", p2.X.ToString("X2"), p2.Y.ToString("X2"), c2.TerrainId.ToString("X2"));
         _stagePlayerSpawnEditor.Invalidate();
     }
 
@@ -381,7 +382,7 @@ public sealed class GameSettingsControl : UserControl
             tuple.X.Value=p.X;tuple.Y.Value=p.Y;
             var a=_customCount1.SelectedIndex>0&&i<_customCount1.SelectedIndex;
             var b=_customCount2.SelectedIndex>0&&i<_customCount2.SelectedIndex;
-            tuple.Usage.Text=a&&b?"1P / 2P":a?"1P":b?"2P":"未使用";
+            tuple.Usage.Text=a&&b?I18n.T("settings.usage.both"):a?I18n.T("settings.usage.p1"):b?I18n.T("settings.usage.p2"):I18n.T("settings.unused");
             var cell=_rom.GetCustomEnemySpawnCell(CurrentStage,i);
             tuple.Terrain.Text=$"${cell.TerrainId:X2}"+(cell.TerrainId!=0x0D?" ⚠":"");
             tuple.Terrain.ForeColor=cell.TerrainId!=0x0D?Color.DarkOrange:SystemColors.ControlText;
@@ -490,42 +491,42 @@ public sealed class GameSettingsControl : UserControl
     {
         if(_refreshing||_rom is null)return;
         try{BeforeEdit?.Invoke(this,EventArgs.Empty);action();DataChanged?.Invoke(this,EventArgs.Empty);}
-        catch(Exception ex){MessageBox.Show(FindForm(),ex.Message,"设置失败",MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
+        catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.setting_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
     }
 
     private void ApplyStagePlayer(Action action)
     {
         if(_refreshing||_rom is null||!StagePlayerAvailable)return;
         try{BeforeEdit?.Invoke(this,EventArgs.Empty);action();RefreshStagePlayerSpawnCore();DataChanged?.Invoke(this,EventArgs.Empty);}
-        catch(Exception ex){MessageBox.Show(FindForm(),ex.Message,"玩家出生点设置失败",MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
+        catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.player_spawn_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
     }
 
     private void ApplyCustom(Action action)
     {
         if(_refreshing||_rom is null||!CustomAvailable)return;
         try{BeforeEdit?.Invoke(this,EventArgs.Empty);action();RefreshCustomSpawnCore();DataChanged?.Invoke(this,EventArgs.Empty);}
-        catch(Exception ex){MessageBox.Show(FindForm(),ex.Message,"自定义出生点设置失败",MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
+        catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.enemy_spawn_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
     }
 
     private void ApplyPacing(Action action)
     {
         if(_refreshing||_rom is null||!PacingAvailable)return;
         try{BeforeEdit?.Invoke(this,EventArgs.Empty);action();RefreshPacingCore();DataChanged?.Invoke(this,EventArgs.Empty);}
-        catch(Exception ex){MessageBox.Show(FindForm(),ex.Message,"敌人出现节奏设置失败",MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
+        catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.pacing_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
     }
 
     private void ApplyFinalV3(Action action)
     {
         if(_refreshing||_rom?.SupportsFinalRulesV3!=true)return;
         try{BeforeEdit?.Invoke(this,EventArgs.Empty);action();RefreshFinalRulesCore();DataChanged?.Invoke(this,EventArgs.Empty);}
-        catch(Exception ex){MessageBox.Show(FindForm(),ex.Message,"Runtime 6.6 设置失败",MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
+        catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.runtime66_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
     }
 
     private void ApplyFinal(Action action)
     {
         if(_refreshing||_rom?.HasFinalRules!=true)return;
         try{BeforeEdit?.Invoke(this,EventArgs.Empty);action();RefreshFinalRulesCore();DataChanged?.Invoke(this,EventArgs.Empty);}
-        catch(Exception ex){MessageBox.Show(FindForm(),ex.Message,"Final Rules 设置失败",MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
+        catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.rules_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
     }
 
     private static ComboBox ModeCombo()

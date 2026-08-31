@@ -1,5 +1,6 @@
 using QuarrelEx.Core;
 using QuarrelEx.Rendering;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx;
 
@@ -18,7 +19,7 @@ public sealed class ChrTilePickerForm : Form
 
     public ChrTilePickerForm(NesRenderer renderer, byte attr, byte current, string targetName, PaletteKind paletteKind = PaletteKind.Level, bool allowFF = true)
     {
-        Text = $"CHR Tile 选择器 - {targetName}";
+        Text = I18n.T("chr.picker.title", targetName);
         StartPosition = FormStartPosition.CenterParent;
         AutoScaleMode = AutoScaleMode.Dpi;
         AutoScaleDimensions = new SizeF(96F, 96F);
@@ -35,7 +36,7 @@ public sealed class ChrTilePickerForm : Form
         {
             AutoSize = true,
             Padding = new Padding(10),
-            Text = $"Palette = {paletteKind} · Attr = {attr & 3}（背景调色板 {attr & 3}） · 当前 Tile = ${current:X2}。点击任意 8×8 CHR Tile 完成选择。"
+            Text = I18n.T("chr.picker.info", paletteKind, attr & 3, attr & 3, current.ToString("X2"))
         };
         root.Controls.Add(info, 0, 0);
         root.Controls.Add(_tiles, 0, 1);

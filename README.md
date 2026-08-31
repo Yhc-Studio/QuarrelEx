@@ -1,13 +1,13 @@
 # QuarrelEx
 
-![Version](https://img.shields.io/badge/release-v1.1.7-blue)
+![Version](https://img.shields.io/badge/release-v1.1.8-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Web-0aa0c0)
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **QuarrelEx** is a Battle City / Battle City Ex ROM and level editor for Windows and the Web. It combines the classic Quarrel-style workflow with 70-stage BCEX editing, visual TSA/CHR tools, gameplay rules, drag-and-drop ROM opening, shared Config v3 files, and a current 32KB runtime designed to expose those options directly in the editor.
 
-[简体中文](README.zh-CN.md)
+[简体中文](README.zh-CN.md) · UI languages: **简体中文 / English / 日本語**
 
 > **No copyrighted Battle City ROM image is included.** IPS files require a legally obtained copy of the supported source ROM.
 
@@ -15,10 +15,10 @@
 
 | Component | Version |
 |---|---:|
-| QuarrelEx | 1.1.7 |
-| Desktop | 1.1.7 |
-| Web | 1.6.7 |
-| Mobile Web UI | 1.0 (Core 1.6.7) |
+| QuarrelEx | 1.1.8 |
+| Desktop | 1.1.8 |
+| Web | 1.6.8 |
+| Mobile Web UI | 1.0 (Core 1.6.8) |
 | Config | QuarrelExConfig v3 |
 | 32KB BCEX runtime | Runtime 6.9.3 / QXR1 v5 |
 
@@ -47,7 +47,7 @@
 - Hold-B auto fire, Pistol/Lv4, downgrade on hit, faster movement, random enemy order, no friendly fire, enemy item pickup and locked initial player state.
 - Per-stage `.qexstage.json` import/export containing the current 13x13 map plus the TSA/Attr terrain definitions actually referenced by that map.
 - Map **Select / Move** tool with single-cell/rectangle selection, drag-to-move, Ctrl+drag copy, and Ctrl+C / Ctrl+X / Ctrl+V / Delete.
-- Separate touch-first **Mobile Web UI** (`web/QuarrelEx_Mobile.html`) with bottom navigation and a mobile tool drawer; it reuses the same Web 1.6.7 editing core without replacing the desktop-oriented Web page.
+- Separate touch-first **Mobile Web UI** (`web/QuarrelEx_Mobile.html`) with bottom navigation and a mobile tool drawer; it reuses the same Web 1.6.8 editing core without replacing the desktop-oriented Web page.
 - Shared Config v3 between Desktop and Web.
 - Save / Save As, Undo / Redo.
 - Drag-and-drop `.nes` opening with **Save / Don't Save / Cancel** when the current ROM is dirty.
@@ -64,6 +64,8 @@ QuarrelEx/
 │  └─ 32KB/
 ├─ docs/
 ├─ examples/
+├─ locales/                 # zh-CN / en-US / ja-JP shared UI catalogs
+├─ tools/                   # localization sync/validation helpers
 ├─ .github/workflows/
 ├─ README.md
 ├─ README.zh-CN.md

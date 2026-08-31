@@ -1,6 +1,7 @@
 using System.Drawing.Drawing2D;
 using QuarrelEx.Core;
 using QuarrelEx.Rendering;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx.Controls;
 
@@ -66,7 +67,7 @@ public sealed class CustomEnemySpawnEditorControl : Control
         using (var bg = new SolidBrush(Color.FromArgb(18, 21, 24))) e.Graphics.FillRectangle(bg, view);
         if (!IsAvailable || _rom is null || _renderer is null)
         {
-            var text = _rom?.HasFinalRules == true ? "Demo 不使用自定义敌人出生点" : "需要 BCEX 32KB Runtime 6.5/6.6 Final Rules";
+            var text = I18n.T(_rom?.HasFinalRules == true ? "custom_spawn.demo" : "custom_spawn.require");
             TextRenderer.DrawText(e.Graphics, text, Font, Rectangle.Round(view), Color.Gainsboro,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             return;
@@ -77,7 +78,7 @@ public sealed class CustomEnemySpawnEditorControl : Control
         DrawMarkers(e.Graphics, view);
 
         var footer = new Rectangle(ClientRectangle.Left + 4, ClientRectangle.Bottom - 21, Math.Max(0, ClientRectangle.Width - 8), 18);
-        TextRenderer.DrawText(e.Graphics, "S1~S8：蓝=1P/2P共用，紫=仅一种模式，灰=未使用，橙=非空地形警告。",
+        TextRenderer.DrawText(e.Graphics, I18n.T("custom_spawn.legend"),
             Font, footer, Color.Gainsboro, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
     }
 

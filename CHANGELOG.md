@@ -1,5 +1,20 @@
 # Changelog
 
+## QuarrelEx v1.1.8
+
+### Desktop 1.1.8 / Web 1.6.8 / Mobile Web UI
+
+- Added unified UI localization keys shared by Desktop, Web, and Mobile Web.
+- Added Simplified Chinese (`zh-CN`), English (`en-US`), and Japanese (`ja-JP`) UI languages.
+- Language selection is stored separately from ROM/Config data; QuarrelExConfig v3 remains language-neutral and fully compatible across all three UI languages.
+- Added Japanese Desktop Help / TSA Guide and localized dynamic status, validation, ROM-info, spawn, Final Rules, TSA, palette, and screen-editor text.
+- Web and Mobile detect the browser language on first use and remember manual selection; Desktop follows the OS UI language on first use and remembers manual selection.
+- Fixed Web/Mobile runtime language switching: repeated `{0}` placeholders no longer break i18n initialization, dynamic map/terrain labels update immediately, and locale lookup can re-bind text created in any of the three languages.
+- Fixed Desktop runtime language switching and lazy tool-window localization; dynamic ROM-dependent labels are refreshed immediately after a language change.
+- Desktop language catalogs are compiled into the application; the external `Locales` directory is now an optional override instead of a runtime requirement.
+- Fixed the Desktop main-map canvas jumping far to the right after opening a ROM. The map/note container now has an explicit 100% column and a fixed one-line note row, so long localized map notes cannot enlarge the hidden layout width used for canvas centering; the canvas remains top-left anchored with one manual bounds calculation. Terrain buttons also adapt to the available width to avoid horizontal scrolling.
+- Web: moved **Clear Current Stage** and **Clear All Stages** next to **Export Stage** in the stage toolbar for faster map-editing access.
+
 ## QuarrelEx v1.1.7
 
 ### Mobile Web UI 1.0 (Core Web 1.6.7)

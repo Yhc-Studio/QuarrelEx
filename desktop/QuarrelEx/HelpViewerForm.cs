@@ -1,4 +1,5 @@
 using System.Text;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx;
 
@@ -36,7 +37,7 @@ public sealed class HelpViewerForm : Form
         }
 
         var top = new ToolStrip { GripStyle = ToolStripGripStyle.Hidden, Dock = DockStyle.Top };
-        var close = new ToolStripButton("关闭 / Close") { Alignment = ToolStripItemAlignment.Right };
+        var close = new ToolStripButton(I18n.T("common.close")) { Alignment = ToolStripItemAlignment.Right };
         close.Click += (_, _) => Close();
         top.Items.Add(close);
 

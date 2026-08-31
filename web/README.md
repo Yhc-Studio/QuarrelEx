@@ -1,11 +1,19 @@
-# QuarrelEx Web 1.6.7
+# QuarrelEx Web 1.6.8
 
 - `QuarrelEx.html`: regular build.
 - `QuarrelEx_Standalone.html`: byte-identical single-file desktop-oriented build.
-- `QuarrelEx_Mobile.html`: separate touch-first Mobile UI (Mobile UI 1.0, core Web 1.6.7).
+- `QuarrelEx_Mobile.html`: separate touch-first Mobile UI (Mobile UI 1.0, core Web 1.6.8).
 - Current runtime target: **Runtime 6.9.3 / QXR1 v5**.
 - Full-project format: **QuarrelExConfig v3** (`*.qexcfg.json`).
 
+
+## Localization
+
+- Shared UI keys come from the repository-level `locales/` directory.
+- Supported languages: Simplified Chinese (`zh-CN`), English (`en-US`), Japanese (`ja-JP`).
+- Web/Mobile choose the browser language on first use and save manual selection in `localStorage`.
+- Run `python tools/sync_i18n.py` from the repository root after editing locale JSON files.
+- Run `python tools/check_i18n.py` before packaging.
 
 ## Mobile UI
 
@@ -16,7 +24,7 @@
 - Bottom tool drawer for Palette, Flag TSA, Ex options, Screen Editor, ROM Info, Config and Stage import/export, and Help.
 - Larger touch targets and single-column forms/tables for narrow screens.
 - Safe-area padding for modern phones.
-- The normal `QuarrelEx.html` and `QuarrelEx_Standalone.html` remain unchanged.
+- The normal `QuarrelEx.html` and `QuarrelEx_Standalone.html` remain the desktop-oriented entries and share the same localization catalogs.
 
 ## New stage editing workflow
 
@@ -32,4 +40,4 @@
 
 ## Other current features
 
-Web 1.6.7 retains Stage 1-70 independent maps on the current 32KB runtime, custom player/enemy spawns, EnemyPacing, BaseExists, Enemy Counter Icons/Number, Final Rules, Demo editing/isolation, Title + Game Over Screen Editor, drag-and-drop ROM opening, Save / Save As and Undo / Redo.
+Web 1.6.8 retains Stage 1-70 independent maps on the current 32KB runtime, custom player/enemy spawns, EnemyPacing, BaseExists, Enemy Counter Icons/Number, Final Rules, Demo editing/isolation, Title + Game Over Screen Editor, drag-and-drop ROM opening, Save / Save As and Undo / Redo.

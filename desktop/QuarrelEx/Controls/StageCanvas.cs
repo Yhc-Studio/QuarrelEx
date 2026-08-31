@@ -58,8 +58,8 @@ public sealed class StageCanvas : Control
 
     public void FitToViewport(Size viewportSize)
     {
-        var usableWidth = Math.Max(GridCells, viewportSize.Width - 8);
-        var usableHeight = Math.Max(GridCells, viewportSize.Height - 8);
+        var usableWidth = Math.Max(GridCells, viewportSize.Width);
+        var usableHeight = Math.Max(GridCells, viewportSize.Height);
         var fitCell = Math.Max(1, Math.Min(usableWidth / GridCells, usableHeight / GridCells));
         var preferred = Math.Max(16, (int)Math.Round(LogicalCellSize * Math.Max(96, DeviceDpi) / 96.0));
         SetCellSize(Math.Min(preferred, fitCell));

@@ -1,8 +1,19 @@
-# QuarrelEx Desktop 1.1.7
+# QuarrelEx Desktop 1.1.8
 
 C# / WinForms / .NET 8 desktop editor. Open `QuarrelEx.sln` in Visual Studio 2022.
 
-Current editor/runtime target: **QuarrelEx 1.1.7 / Runtime 6.9.3 / QXR1 v5**.
+Current editor/runtime target: **QuarrelEx 1.1.8 / Runtime 6.9.3 / QXR1 v5**.
+
+## Localization
+
+Desktop shares the repository-level `locales/` catalogs with Web/Mobile and supports `zh-CN`, `en-US`, and `ja-JP`. The JSON files are the canonical translation source; `tools/generate_desktop_i18n.py` produces `Localization/BuiltInCatalogs.g.cs`, which is compiled as normal C# source so runtime language switching does **not** depend on the loose `Locales` directory. Build/publish output still copies `Locales/*.json` beside the application as optional development/user overrides. On first use the editor follows the OS UI language, then remembers the user's selection under the local application-data folder. Language preference is not stored in ROMs or QuarrelExConfig v3 files.
+
+After editing `/locales/*.json`, run:
+
+```text
+python tools/generate_desktop_i18n.py
+python tools/check_i18n.py
+```
 
 ## Editor workflow
 

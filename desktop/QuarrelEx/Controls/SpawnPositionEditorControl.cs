@@ -1,6 +1,7 @@
 using System.Drawing.Drawing2D;
 using QuarrelEx.Core;
 using QuarrelEx.Rendering;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx.Controls;
 
@@ -64,7 +65,7 @@ public sealed class SpawnPositionEditorControl : Control
 
         if (_rom is null || _renderer is null)
         {
-            TextRenderer.DrawText(e.Graphics, "打开 ROM 后可拖拽编辑出生点", Font, Rectangle.Round(r), Color.Gainsboro,
+            TextRenderer.DrawText(e.Graphics, I18n.T("spawn.open_note"), Font, Rectangle.Round(r), Color.Gainsboro,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             return;
         }
@@ -74,7 +75,7 @@ public sealed class SpawnPositionEditorControl : Control
         foreach (var kind in DrawOrder) DrawSpawn(e.Graphics, r, kind);
 
         var footer = new Rectangle(ClientRectangle.Left + 4, ClientRectangle.Bottom - 22, Math.Max(0, ClientRectangle.Width - 8), 18);
-        TextRenderer.DrawText(e.Graphics, "拖拽坦克修改坐标；P1/P2 使用各自 Sprite Palette，敌人使用敌坦克 CHR。",
+        TextRenderer.DrawText(e.Graphics, I18n.T("spawn.drag_note"),
             Font, footer, Color.Gainsboro, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
     }
 

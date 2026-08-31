@@ -1,5 +1,6 @@
 using QuarrelEx.Core;
 using QuarrelEx.Rendering;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx.Controls;
 
@@ -77,32 +78,30 @@ public sealed class FlagTsaEditorControl : UserControl
             {
                 _baseExists.Checked = true;
                 _baseExists.Enabled = false;
-                _baseNote.Text = "请先打开 ROM。";
+                _baseNote.Text = I18n.T("flag.open_first");
                 return;
             }
             var stage = _stageProvider?.Invoke() ?? 1;
-            _baseExists.Text = stage is >= 1 and <= 70 ? $"Stage {stage} 存在老巢" : "当前关卡存在老巢";
+            _baseExists.Text = stage is >= 1 and <= 70 ? I18n.T("flag.exists_stage", stage) : I18n.T("flag.hq.exists");
             if (!_rom.SupportsFinalRulesV4)
             {
                 _baseExists.Checked = true;
                 _baseExists.Enabled = false;
-                _baseNote.Text = "每关独立老巢开关需要 QXR1 v4+；Runtime 6.9.3 / QXR1 v5 使用压缩逐关规则表。旧 ROM 始终按原版绘制老巢。";
+                _baseNote.Text = I18n.T("flag.requires");
                 return;
             }
             if (stage is < 1 or > 70 || _rom.IsDemoStage(stage))
             {
                 _baseExists.Checked = true;
                 _baseExists.Enabled = false;
-                _baseNote.Text = "Demo 不使用 Stage 1~70 的独立老巢设置。";
+                _baseNote.Text = I18n.T("flag.demo");
                 return;
             }
             _baseExists.Enabled = true;
             _baseExists.Checked = _rom.GetStageBaseExists(stage);
-            _baseNote.Text = _baseExists.Checked
-                ? "ON：进入本关时按原版绘制老巢，并覆盖/占用老巢区域。"
-                : "OFF：Runtime 不绘制普通/铁锹老巢；老巢位置下方的 13×13 地图数据会正常生效，不再被占位。";
+            _baseNote.Text = I18n.T(_baseExists.Checked ? "flag.on_note" : "flag.off_note");
         }
-        finally { _rebuilding = false; }
+        finally { _rebuilding = false; I18n.TranslateControlTree(this); }
     }
 
     private void Build(TableLayoutPanel grid, bool fort)

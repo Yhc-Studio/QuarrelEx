@@ -10,15 +10,26 @@
     <RootNamespace>QuarrelEx</RootNamespace>
     <AssemblyName>QuarrelEx</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.1.7</Version>
-    <FileVersion>1.1.7.0</FileVersion>
+    <Version>1.1.8</Version>
+    <FileVersion>1.1.8.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
+
+    <!-- Optional loose localization overrides. Built-in catalogs are generated
+         into Localization/BuiltInCatalogs.g.cs, so runtime does not depend on
+         this directory. Keeping these copies is useful for translation testing. -->
+    <Content Include="..\..\locales\*.json">
+      <Link>Locales\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <None Update="Data\BattleCityEx.ini" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Help\Help_zh-CN.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Help\Help_en-US.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Help\Help_ja-JP.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Help\TSA_Help_zh-CN.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Help\TSA_Help_en-US.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Help\TSA_Help_ja-JP.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
