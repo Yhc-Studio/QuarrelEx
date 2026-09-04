@@ -56,6 +56,7 @@ Flag / Fort TSA Editor では 6×4 の CHR Tile 配列を編集します。
 ----------------
 以下を編集できます。
 - Starting Lives / Initial Tank Level
+- Runtime 6.9.4 / QXR1 v6 Death Level (Lv0～Lv4)：現在レベルが Death Level 以下なら被弾で撃破、それより上なら1レベル低下して生存。Initial Level とは独立設定です。
 - Lock Initial State
 - Original/global P1/P2・敵出現位置
 - Stage 1～70 の P1/P2 個別出現位置
@@ -93,3 +94,8 @@ Desktop ではローカルの UI 設定として記憶され、ROM データに�
 --------
 ROM を編集する前にバックアップを作成してください。
 Quarrel Ex は ROM イメージを配布しません。利用者自身が適法に取得した対応 ROM を使用してください。
+
+
+エミュレーター表示パレット
+--------------------------
+「パレットエディター」では標準 192-byte .pal ファイル（64 色 × RGB）を読み込めます。読み込み後はマップ、Terrain、TSA/CHR、出現位置の戦車、NES カラーピッカーの表示色が変わりますが、ROM 内のパレット番号は変更されず、ROM の未保存状態にもなりません。「既定に戻す」で QuarrelEx 内蔵パレットに戻せます。

@@ -20,7 +20,7 @@
 | Web | 1.6.8 |
 | Mobile Web UI | 1.0（Core 1.6.8） |
 | Config | QuarrelExConfig v3 |
-| 32KB BCEX Runtime | Runtime 6.9.3 / QXR1 v5 |
+| 32KB BCEX Runtime | Runtime 6.9.4 / QXR1 v6 |
 
 ## 主要功能
 
@@ -44,10 +44,11 @@
 - 修复过关后的下一关地形/场景初始化异常。
 - Skip ON 使用正确的 GAME OVER 清理流程，不再在返回标题前闪一帧关卡地图。
 - Demo 不继承逐关 QXR 参数，保持原版/global 玩家出生、原版敌人出生循环、原版节奏，以及老巢附近停止射击的原版行为。
-- 按住 B 连发、手枪/Lv4、受击降级、我方加速、随机敌人顺序、取消队友互伤、敌人拾取道具、锁定初始状态等。
+- 初始坦克等级可设 Lv0~Lv4；Runtime 6.9.4 / QXR1 v6 新增独立死亡等级 Lv0~Lv4。按住 B 连发、手枪/Lv4、我方加速、随机敌人顺序、取消队友互伤、敌人拾取道具、锁定初始状态等继续保留。
 - 每关可单独导入 / 导出 `.qexstage.json`：包含当前 13×13 地图和该地图实际引用的 TSA/Attr 地形定义。
 - 地图新增“选择 / 移动工具”：支持单块/矩形框选、拖动移动、Ctrl+拖动复制，以及 Ctrl+C / Ctrl+X / Ctrl+V / Delete。
 - 新增独立的触控优先 **Mobile Web UI**（`web/QuarrelEx_Mobile.html`）：采用底部导航和手机工具抽屉，复用 Web 1.6.8 的编辑核心，不替换桌面向 Web 页面。
+- Web 桌面版进一步改为编辑器式工作台：左侧固定 Map 工作区，右侧为独立滚动的 Inspector / Properties；Mobile 则采用全高地图页、地形抽屉和页面式属性面板。
 - Web / Desktop 共用 Config v3。
 - Save / Save As、Undo / Redo。
 - 支持拖拽打开 `.nes`；当前 ROM 未保存时提供 **保存 / 不保存 / 取消**。
@@ -87,7 +88,7 @@ SHA-256: a869aead5b6957fc62002ff9636e048cc34baf0100d629b07dc51aa18f220c0c
 当前 32KB 版本先运行准备脚本，再应用：
 
 ```text
-patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.3.ips
+patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.4.ips
 ```
 
 详细步骤和校验见 [patches/README.md](patches/README.md)。
@@ -103,12 +104,11 @@ desktop/QuarrelEx.sln
 ## Web
 
 ```text
-web/QuarrelEx.html
-web/QuarrelEx_Standalone.html
+web/QuarrelEx.html             # 自包含的桌面向 Web 编辑器
 web/QuarrelEx_Mobile.html      # 独立的 Mobile UI
 ```
 
-`QuarrelEx_Mobile.html` 与桌面向 Web 界面保持独立，不合并。手机端采用“地图 / 敌人 / TSA / 设置 / 更多”底部导航，同时继续使用相同的 ROM、Config v3、单关卡 `.qexstage.json` 和 Runtime 6.9.3 逻辑。
+`QuarrelEx_Mobile.html` 与桌面向 Web 界面保持独立，不合并。手机端采用“地图 / 敌人 / TSA / 设置 / 更多”底部导航，同时继续使用相同的 ROM、Config v3、单关卡 `.qexstage.json` 和 Runtime 6.9.4 逻辑。
 
 ## Config v3
 
@@ -123,3 +123,6 @@ Web / Desktop 使用同一个 `*.qexcfg.json`。Screen 原始字节允许 `$00-$
 ## License
 
 MIT，见 [LICENSE](LICENSE)。
+
+### 模拟器显示调色板
+Web 与 Desktop 端可加载标准 192-byte NES 模拟器 `.pal` 文件（64 个 RGB 颜色），使地图、TSA/CHR、出生点与调色板选择器的预览色调与模拟器保持一致。该功能只属于编辑器显示设置，不修改 ROM 数据，也不写入 QuarrelExConfig v3。

@@ -172,3 +172,32 @@ Optional per-stage field:
   EnemyCounterDisplay: "Icons" | "Number"
 
 The stored preference is used for EnemyTotal 1~50. Runtime forces Number when EnemyTotal is 51~255 without overwriting the stored preference.
+
+
+Optional Web editor metadata
+----------------------------
+EditorMetadata.CustomTerrainNames (optional)
+  Object mapping hexadecimal Terrain IDs `20` through `3F` to user-visible names.
+  These names are editor metadata only and are not written to the NES ROM.
+  Older QuarrelEx builds may ignore this optional field.
+
+### Runtime 6.9.4 / QXR1 v6 PlayerDeathLevel
+
+Config schema remains Version 3. Runtime 6.9.4 adds an optional independent player death threshold.
+
+Gameplay.PlayerDeathLevel (optional integer 0..4 or null)
+  0 = Lv0 is fatal; Lv1-Lv4 downgrade one level and survive
+  1 = Lv0-Lv1 are fatal
+  2 = Lv0-Lv2 are fatal
+  3 = Lv0-Lv3 are fatal; Lv4 downgrades to Lv3
+  4 = every Lv0-Lv4 state is fatal on the next hit
+
+This field is independent of Gameplay.InitialTankLevel.
+- InitialTankLevel controls the starting/respawn base level.
+- PlayerDeathLevel controls the hit/death threshold.
+- If PlayerDeathLevel is absent, older Config v3 files preserve legacy DowngradeOnHit semantics.
+- On a target older than Runtime 6.9.4 / QXR1 v6, PlayerDeathLevel is ignored with a compatibility warning.
+
+Runtime storage:
+  CPU $B56B stores the encoded cutoff: Lv0=$20, Lv1=$40, Lv2=$60, Lv3=$63, Lv4=$64.
+

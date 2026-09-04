@@ -33,6 +33,8 @@ public sealed class GameplayConfig
 {
     public int StartingLives { get; set; } = 3;
     public int InitialTankLevel { get; set; }
+    // Optional Runtime 6.9.4 / QXR1 v6 extension. Null preserves legacy DowngradeOnHit semantics.
+    public int? PlayerDeathLevel { get; set; }
     public bool LockInitialState { get; set; }
     public bool? PlayerFastMove { get; set; }
     public int? FeatureFlags { get; set; }

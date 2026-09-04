@@ -20,7 +20,7 @@
 | Web | 1.6.8 |
 | Mobile Web UI | 1.0 (Core 1.6.8) |
 | Config | QuarrelExConfig v3 |
-| 32KB BCEX runtime | Runtime 6.9.3 / QXR1 v5 |
+| 32KB BCEX runtime | Runtime 6.9.4 / QXR1 v6 |
 
 ## Highlights
 
@@ -44,10 +44,11 @@
 - Correct next-stage terrain/setup after stage clear.
 - Skip ON returns through the correct GAME OVER cleanup path without a one-frame stage-map flash.
 - Demo is isolated from per-stage QXR overrides and keeps original/global player spawn, original enemy spawn cycle, original pacing and the original near-HQ no-fire behavior.
-- Hold-B auto fire, Pistol/Lv4, downgrade on hit, faster movement, random enemy order, no friendly fire, enemy item pickup and locked initial player state.
+- Configurable Initial Tank Level (Lv0-Lv4) and independent Death Level (Lv0-Lv4) on Runtime 6.9.4 / QXR1 v6; Hold-B auto fire, Pistol/Lv4, faster movement, random enemy order, no friendly fire, enemy item pickup and locked initial player state are retained.
 - Per-stage `.qexstage.json` import/export containing the current 13x13 map plus the TSA/Attr terrain definitions actually referenced by that map.
 - Map **Select / Move** tool with single-cell/rectangle selection, drag-to-move, Ctrl+drag copy, and Ctrl+C / Ctrl+X / Ctrl+V / Delete.
 - Separate touch-first **Mobile Web UI** (`web/QuarrelEx_Mobile.html`) with bottom navigation and a mobile tool drawer; it reuses the same Web 1.6.8 editing core without replacing the desktop-oriented Web page.
+- Web desktop now uses an editor-style workbench: a stable left Map workspace plus a right Inspector/Properties panel with independent scrolling; Mobile uses a full-height Map page, Terrain tray, and page-style property inspectors.
 - Shared Config v3 between Desktop and Web.
 - Save / Save As, Undo / Redo.
 - Drag-and-drop `.nes` opening with **Save / Don't Save / Cancel** when the current ROM is dirty.
@@ -87,7 +88,7 @@ SHA-256: a869aead5b6957fc62002ff9636e048cc34baf0100d629b07dc51aa18f220c0c
 For the current 32KB build, run the preparation helper and apply:
 
 ```text
-patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.3.ips
+patches/32KB/QuarrelEx_BCEX_32KB_Runtime6.9.4.ips
 ```
 
 See [patches/README.md](patches/README.md) for exact patching steps and checksums.
@@ -104,15 +105,14 @@ Requirements: Windows 10/11, .NET 8 Desktop Runtime, and Visual Studio 2022 with
 
 ## Web
 
-Use either:
+Use:
 
 ```text
-web/QuarrelEx.html
-web/QuarrelEx_Standalone.html
+web/QuarrelEx.html             # self-contained desktop-oriented Web editor
 web/QuarrelEx_Mobile.html      # separate touch-first Mobile UI
 ```
 
-`QuarrelEx_Mobile.html` is intentionally kept separate from the desktop-oriented Web UI. It uses a phone-first shell (Map / Enemy / TSA / Settings / More bottom navigation) while keeping the same ROM, Config v3, Stage package and Runtime 6.9.3 logic.
+`QuarrelEx_Mobile.html` is intentionally kept separate from the desktop-oriented Web UI. It uses a phone-first shell (Map / Enemy / TSA / Settings / More bottom navigation) while keeping the same ROM, Config v3, Stage package and Runtime 6.9.4 logic.
 
 ## Config v3
 
@@ -127,3 +127,6 @@ This repository contains editor source code and patch files only. It does not di
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+### Emulator display palette
+Web and Desktop can load standard 192-byte NES emulator `.pal` files (64 RGB colors) to match the preview colors used by an emulator. This is an editor-only display preference and does not modify ROM data or QuarrelExConfig v3.

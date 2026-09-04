@@ -1,5 +1,6 @@
 using QuarrelEx.Core;
 using QuarrelEx.Rendering;
+using QuarrelEx.Localization;
 
 namespace QuarrelEx.Controls;
 
@@ -9,6 +10,10 @@ public sealed class PaletteEditorControl : UserControl
     private readonly TableLayoutPanel _grid = new() { ColumnCount = 4, RowCount = 4, AutoSize = false, Dock = DockStyle.None, Anchor = AnchorStyles.Top | AnchorStyles.Left, Padding = new Padding(4), Margin = Padding.Empty };
     private readonly Panel _gridHost = new() { Dock = DockStyle.Fill, AutoScroll = true, Padding = new Padding(6) };
     private readonly Label _hint = new() { AutoSize = true, ForeColor = Color.DimGray, Padding = new Padding(6) };
+    private readonly Label _displayPaletteLabel = new() { AutoSize = true, Padding = new Padding(0, 5, 0, 0) };
+    private readonly Label _displayPaletteStatus = new() { AutoSize = true, ForeColor = Color.DimGray, Padding = new Padding(0, 5, 4, 0) };
+    private readonly Button _loadDisplayPalette = new() { AutoSize = true };
+    private readonly Button _resetDisplayPalette = new() { AutoSize = true };
     private readonly List<Button> _buttons = new();
     private BattleCityRom? _rom;
     private NesRenderer? _renderer;
@@ -16,6 +21,7 @@ public sealed class PaletteEditorControl : UserControl
 
     public event EventHandler? BeforeEdit;
     public event EventHandler? DataChanged;
+    public event EventHandler? DisplayPaletteChanged;
 
     private static readonly (PaletteKind Kind, string Name)[] Sets =
     [
@@ -32,7 +38,8 @@ public sealed class PaletteEditorControl : UserControl
     public PaletteEditorControl()
     {
         Dock = DockStyle.Fill;
-        var root = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 3, ColumnCount = 1, Padding = Padding.Empty };
+        var root = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 4, ColumnCount = 1, Padding = Padding.Empty };
+        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
@@ -44,12 +51,22 @@ public sealed class PaletteEditorControl : UserControl
         _kind.SelectedIndexChanged += (_, _) => Rebuild();
         top.Controls.Add(_kind);
 
+        var displayBar = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, Padding = new Padding(6, 0, 6, 2), WrapContents = true };
+        _loadDisplayPalette.Click += (_, _) => LoadDisplayPaletteFile();
+        _resetDisplayPalette.Click += (_, _) => ResetDisplayPalette();
+        displayBar.Controls.Add(_displayPaletteLabel);
+        displayBar.Controls.Add(_displayPaletteStatus);
+        displayBar.Controls.Add(_loadDisplayPalette);
+        displayBar.Controls.Add(_resetDisplayPalette);
+
         _hint.Text = "每组 16 个 NES 色号（4×4）。点击色块从 64 色 NES Palette 中选择；色块已采用紧凑尺寸。";
         _gridHost.Controls.Add(_grid);
         root.Controls.Add(top, 0, 0);
-        root.Controls.Add(_hint, 0, 1);
-        root.Controls.Add(_gridHost, 0, 2);
+        root.Controls.Add(displayBar, 0, 1);
+        root.Controls.Add(_hint, 0, 2);
+        root.Controls.Add(_gridHost, 0, 3);
         Controls.Add(root);
+        RefreshDisplayPaletteUi();
     }
 
     public void Bind(BattleCityRom? rom, NesRenderer? renderer)
@@ -61,8 +78,64 @@ public sealed class PaletteEditorControl : UserControl
 
     private PaletteKind CurrentKind => Sets[Math.Clamp(_kind.SelectedIndex, 0, Sets.Length - 1)].Kind;
 
+    public void RefreshDisplayPaletteUi()
+    {
+        _displayPaletteLabel.Text = I18n.T("palette.display.label.desktop");
+        _loadDisplayPalette.Text = I18n.T("palette.display.load");
+        _resetDisplayPalette.Text = I18n.T("palette.display.reset");
+        _resetDisplayPalette.Enabled = NesDisplayPalette.IsCustom;
+        _displayPaletteStatus.Text = NesDisplayPalette.IsCustom
+            ? I18n.T("palette.display.custom", NesDisplayPalette.SourceName)
+            : I18n.T("palette.display.default");
+    }
+
+    private void LoadDisplayPaletteFile()
+    {
+        using var dlg = new OpenFileDialog
+        {
+            Title = I18n.T("palette.display.load_title"),
+            Filter = I18n.T("dialog.filter.palette"),
+            CheckFileExists = true,
+            Multiselect = false
+        };
+        if (dlg.ShowDialog(FindForm()) != DialogResult.OK) return;
+
+        try
+        {
+            var length = new FileInfo(dlg.FileName).Length;
+            if (length != NesDisplayPalette.RgbByteLength)
+            {
+                MessageBox.Show(FindForm(), I18n.T("palette.display.invalid_size", length), I18n.T("palette.display.load_failed"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(FindForm(), ex.Message, I18n.T("palette.display.load_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        if (!NesDisplayPalette.TryLoadFile(dlg.FileName, out var error))
+        {
+            MessageBox.Show(FindForm(), error, I18n.T("palette.display.load_failed"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        RefreshDisplayPaletteUi();
+        DisplayPaletteChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void ResetDisplayPalette()
+    {
+        if (!NesDisplayPalette.IsCustom) return;
+        NesDisplayPalette.ResetToDefault();
+        RefreshDisplayPaletteUi();
+        DisplayPaletteChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     public void Rebuild()
     {
+        RefreshDisplayPaletteUi();
         _refreshing = true;
         try
         {

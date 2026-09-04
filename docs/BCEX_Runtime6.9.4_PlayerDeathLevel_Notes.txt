@@ -1,0 +1,50 @@
+BCEX Runtime 6.9.4 / QXR1 v6 - Independent Player Death Level
+================================================================
+
+Purpose
+-------
+Separate the existing Initial Tank Level from the hit/death threshold.
+InitialTankLevel is unchanged. PlayerDeathLevel is new.
+
+Behavior
+--------
+Current level > Death Level:
+  lose one level and survive the hit.
+
+Current level <= Death Level:
+  explode immediately on the hit.
+
+Examples
+--------
+Initial Lv3, Death Lv2:
+  Lv3 -> Lv2 -> death
+
+Initial Lv4, Death Lv0:
+  Lv4 -> Lv3 -> Lv2 -> Lv1 -> Lv0 -> death
+
+Death Lv4:
+  all Lv0-Lv4 states die in one hit.
+
+ROM layout
+----------
+QXR1 version byte: CPU $B563 = $06
+Death cutoff byte: CPU $B56B
+
+Encoding:
+  Lv0 = $20
+  Lv1 = $40
+  Lv2 = $60
+  Lv3 = $63
+  Lv4 = $64
+
+Runtime code
+------------
+CPU $FFA6-$FFC5 is replaced in place. No new PRG bank or mapper is required.
+The 32KB NROM/Mapper-0 layout remains unchanged.
+
+Compatibility
+-------------
+- QXR1 v2-v5 ROMs remain supported by the editors.
+- On older runtimes, the legacy Downgrade On Hit feature remains available.
+- On QXR1 v6, Death Level owns hit/downgrade behavior; the legacy checkbox is shown as managed/read-only.
+- QuarrelExConfig remains Version 3 and adds optional Gameplay.PlayerDeathLevel.

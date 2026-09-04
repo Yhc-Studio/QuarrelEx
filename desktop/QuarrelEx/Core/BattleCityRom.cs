@@ -28,6 +28,7 @@ public sealed class BattleCityRom
     private static readonly byte[] Terrain64TsaReference = [0xBD,0x40,0xB4];
     private static readonly byte[] ExV2Magic = [(byte)'B',(byte)'C',(byte)'E',(byte)'X'];
     private static readonly byte[] FinalRulesMagic = [(byte)'Q',(byte)'X',(byte)'R',(byte)'1'];
+    private static readonly byte[] PlayerDeathLevelHook = [0xBD,0x01,0x01,0xCD,0x6B,0xB5,0x90,0x18];
     private const int FinalRulesConfigCpu = 0xB55F;
     private const int FinalRulesFlagsCpu = 0xB564;
     private const int FinalRulesExtraLifeModeCpu = 0xB565;
@@ -36,6 +37,9 @@ public sealed class BattleCityRom
     private const int FinalRulesArmoredTankCpu = 0xB568;
     private const int FinalRulesCheatP1LivesCpu = 0xB569;
     private const int FinalRulesCheatP2LivesCpu = 0xB56A;
+    // QXR1 v6 / Runtime 6.9.4: first raw tank-state value that survives a hit.
+    // Death Lv0/Lv1/Lv2/Lv3/Lv4 => $20/$40/$60/$63/$64.
+    private const int FinalRulesPlayerDeathCutoffCpu = 0xB56B;
     private const int FinalRulesSpawnStartCpu = 0xB570;
     private const int FinalRulesSpawnRecordSize = 18;
     private const int FinalRulesNormalStartingLivesCpu = 0xBBCE;
@@ -130,13 +134,16 @@ public sealed class BattleCityRom
         {
             if (!HasIndependentMaps || !SpanEquals(FinalRulesConfigOffset, FinalRulesMagic)) return false;
             var version = _data[FinalRulesConfigOffset + 4];
-            return version is >= 0x02 and <= 0x05;
+            return version is >= 0x02 and <= 0x06;
         }
     }
     public byte FinalRulesVersion => HasFinalRules ? _data[FinalRulesConfigOffset + 4] : (byte)0;
     public bool SupportsFinalRulesV3 => HasFinalRules && FinalRulesVersion >= 3;
     public bool SupportsFinalRulesV4 => HasFinalRules && FinalRulesVersion >= 4;
     public bool SupportsFinalRulesV5 => HasFinalRules && FinalRulesVersion >= 5;
+    public bool SupportsFinalRulesV6 => HasFinalRules && FinalRulesVersion >= 6;
+    public bool SupportsPlayerDeathLevel =>
+        SupportsFinalRulesV6 && SpanEquals(Cpu8000FileOffset(0xFFA6), PlayerDeathLevelHook);
     public bool SupportsEnemyCounterDisplay =>
         SupportsFinalRulesV5 &&
         SpanEquals(Cpu8000FileOffset(0xC377), new byte[] { 0x20, 0x6A, 0xC7 }) &&
@@ -233,6 +240,8 @@ public sealed class BattleCityRom
         if (feature == ExFeature.PistolLevel4 && !enabled)
             value = (byte)(value & ~(byte)ExFeature.Level4DestroyTrees);
         _data[ExV2ConfigOffset + 5] = value;
+        if (feature == ExFeature.DowngradeOnHit && SupportsPlayerDeathLevel)
+            WritePlayerDeathLevelRaw(enabled ? 0 : 4);
     }
 
     public void SetFeatureFlags(byte flags)
@@ -247,6 +256,8 @@ public sealed class BattleCityRom
         if (!SupportsPlayerFastMove)
             flags = (byte)(flags & ~(byte)ExFeature.PlayerFastMove);
         _data[ExV2ConfigOffset + 5] = flags;
+        if (SupportsPlayerDeathLevel)
+            WritePlayerDeathLevelRaw((flags & (byte)ExFeature.DowngradeOnHit) != 0 ? 0 : 4);
     }
 
     public bool IsEnemyItemEffectEnabled(EnemyItemEffect effect)
@@ -526,6 +537,7 @@ public sealed class BattleCityRom
     }
 
     private static readonly byte[] LevelToStatus = [0x00, 0x20, 0x40, 0x60, 0x63];
+    private static readonly byte[] DeathLevelToCutoff = [0x20, 0x40, 0x60, 0x63, 0x64];
 
     public int InitialTankLevel
     {
@@ -541,6 +553,36 @@ public sealed class BattleCityRom
             if (value < 0 || value > max) throw new ArgumentOutOfRangeException(nameof(value), $"当前 ROM 初始等级范围为 Lv0~Lv{max}。");
             _data[Offset(_cfg.InitialTankStatus)] = LevelToStatus[value];
         }
+    }
+
+    public int PlayerDeathLevel
+    {
+        get
+        {
+            if (!SupportsPlayerDeathLevel)
+                return IsFeatureEnabled(ExFeature.DowngradeOnHit) ? 0 : 4;
+            var raw = _data[Cpu8000FileOffset(FinalRulesPlayerDeathCutoffCpu)];
+            for (var i = 0; i < DeathLevelToCutoff.Length; i++)
+                if (DeathLevelToCutoff[i] == raw) return i;
+            return IsFeatureEnabled(ExFeature.DowngradeOnHit) ? 0 : 4;
+        }
+        set
+        {
+            EnsureFinalRulesV6();
+            if (value is < 0 or > 4) throw new ArgumentOutOfRangeException(nameof(value), "死亡等级必须在 Lv0~Lv4。");
+            WritePlayerDeathLevelRaw(value);
+            if (HasExV2Config)
+            {
+                var o = ExV2ConfigOffset + 5;
+                _data[o] = value < 4 ? (byte)(_data[o] | (byte)ExFeature.DowngradeOnHit) : (byte)(_data[o] & ~(byte)ExFeature.DowngradeOnHit);
+            }
+        }
+    }
+
+    private void WritePlayerDeathLevelRaw(int level)
+    {
+        if (!SupportsPlayerDeathLevel) return;
+        _data[Cpu8000FileOffset(FinalRulesPlayerDeathCutoffCpu)] = DeathLevelToCutoff[Math.Clamp(level, 0, 4)];
     }
 
     public (byte X, byte Y) GetSpawn(SpawnKind kind)
@@ -993,6 +1035,7 @@ public sealed class BattleCityRom
         var cfg = new QuarrelExSharedConfig();
         cfg.Gameplay.StartingLives = StartingLives;
         cfg.Gameplay.InitialTankLevel = InitialTankLevel;
+        cfg.Gameplay.PlayerDeathLevel = SupportsPlayerDeathLevel ? PlayerDeathLevel : null;
         cfg.Gameplay.LockInitialState = LockInitialState;
         cfg.Gameplay.FeatureFlags = HasExV2Config ? FeatureFlags : null;
         cfg.Gameplay.PlayerFastMove = SupportsPlayerFastMove ? IsFeatureEnabled(ExFeature.PlayerFastMove) : false;
@@ -1135,6 +1178,10 @@ public sealed class BattleCityRom
                 Error($"Gameplay.InitialTankLevel={g.InitialTankLevel}，必须在 0~4。");
             else if (IsOriginal && g.InitialTankLevel == 4)
                 Warn("目标为原版 ROM，不支持 Lv4；InitialTankLevel=4 将按 Lv3 导入。");
+            if (g.PlayerDeathLevel is < 0 or > 4)
+                Error($"Gameplay.PlayerDeathLevel={g.PlayerDeathLevel}，必须在 0~4 或为 null。");
+            else if (g.PlayerDeathLevel.HasValue && !SupportsPlayerDeathLevel)
+                Warn("目标 ROM 不支持独立死亡等级；PlayerDeathLevel 将被忽略。需要 Runtime 6.9.4 / QXR1 v6。");
 
             if (g.FeatureFlags is < 0 or > 255)
                 Error($"Gameplay.FeatureFlags={g.FeatureFlags}，必须在 0~255 或为 null。");
@@ -1172,7 +1219,7 @@ public sealed class BattleCityRom
             {
                 if (!HasFinalRules)
                 {
-                    Warn("目标 ROM 不支持 QXR1 v2~v5 Final Rules；Gameplay.FinalRules 将被忽略。");
+                    Warn("目标 ROM 不支持 QXR1 v2~v6 Final Rules；Gameplay.FinalRules 将被忽略。");
                 }
                 else
                 {
@@ -1347,7 +1394,7 @@ public sealed class BattleCityRom
                 {
                     if (!HasFinalRules)
                     {
-                        Warn($"Stage {sc.Stage} 包含 EnemySpawn，但目标 ROM 不支持 QXR1 v2~v5 Final Rules；这些出生点将被忽略。");
+                        Warn($"Stage {sc.Stage} 包含 EnemySpawn，但目标 ROM 不支持 QXR1 v2~v6 Final Rules；这些出生点将被忽略。");
                     }
                     else
                     {
@@ -1561,6 +1608,11 @@ public sealed class BattleCityRom
 
         if (HasExV2Config && g.FeatureFlags.HasValue)
             SetFeatureFlags((byte)g.FeatureFlags.Value);
+        if (SupportsPlayerDeathLevel && g.PlayerDeathLevel.HasValue)
+            PlayerDeathLevel = g.PlayerDeathLevel.Value;
+        // If an older v3 config has no PlayerDeathLevel but does contain FeatureFlags,
+        // SetFeatureFlags() above already maps legacy DowngradeOnHit ON/OFF to Death Lv0/Lv4.
+        // If both fields are absent, preserve the target ROM's existing death threshold.
         if (SupportsEnemyPowerUpPickup && g.EnemyItemFlags.HasValue)
             SetEnemyItemFlags((byte)g.EnemyItemFlags.Value);
         if (SupportsLockInitialState)
@@ -1784,12 +1836,14 @@ public sealed class BattleCityRom
 
             if (HasFinalRules)
             {
-                var runtime = FinalRulesVersion >= 5 ? "6.9" : FinalRulesVersion >= 4 ? "6.7/6.8" : FinalRulesVersion >= 3 ? "6.6" : "6.5";
+                var runtime = FinalRulesVersion >= 6 ? "6.9.4" : FinalRulesVersion >= 5 ? "6.9.3" : FinalRulesVersion >= 4 ? "6.7/6.8" : FinalRulesVersion >= 3 ? "6.6" : "6.5";
                 lines.Add($"Final Rules: QXR1 v{FinalRulesVersion} / Runtime {runtime}");
                 lines.Add($"Final GAME OVER Skip: {(SkipFinalGameOver ? "ON" : "OFF")}");
                 lines.Add($"Extra Life: mode={ExtraLifeMode}, value={ExtraLifeValue}×10000");
                 lines.Add($"2P Bonus: {(TwoPlayerBonusMode == 0 ? "Original" : "Win Streak")}");
                 lines.Add($"Armored Tank: {(ArmoredTankMode == 0 ? "Original" : FinalRulesVersion >= 4 ? "One Hit（普通装甲=白色1HP；闪光奖励装甲保持原版）" : "One Hit")}");
+                if (SupportsPlayerDeathLevel)
+                    lines.Add($"玩家等级: Initial Lv{InitialTankLevel} / Death Lv{PlayerDeathLevel}（Runtime 6.9.4）");
                 lines.Add("自定义敌人出生点: Stage 1~70 / 1P、2P 各 Original 或 1~8 点");
                 if (SupportsFinalRulesV3)
                 {
@@ -1824,7 +1878,7 @@ public sealed class BattleCityRom
         => Cpu8000FileOffset((twoPlayer ? FinalRulesStageP2SpawnCpu : FinalRulesStageP1SpawnCpu) + stage - 1);
     private void EnsureFinalRules()
     {
-        if (!HasFinalRules) throw new InvalidOperationException("当前 ROM 不支持 QXR1 Final Rules（需要 BCEX 32KB Runtime 6.5~6.9）。");
+        if (!HasFinalRules) throw new InvalidOperationException("当前 ROM 不支持 QXR1 Final Rules（需要 BCEX 32KB Runtime 6.5~6.9.4）。");
     }
     private void EnsureFinalRulesStage(int stage)
     {
@@ -1852,6 +1906,10 @@ public sealed class BattleCityRom
     {
         EnsureFinalRulesV5();
         if (stage is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(stage), "Runtime 6.9 玩家出生点只支持 Stage 1~70，不包含 Demo。");
+    }
+    private void EnsureFinalRulesV6()
+    {
+        if (!SupportsPlayerDeathLevel) throw new InvalidOperationException("独立死亡等级需要 QXR1 v6 / Runtime 6.9.4。");
     }
     private void EnsureEnemyCounterDisplayStage(int stage)
     {

@@ -8,6 +8,8 @@ public sealed class GameSettingsControl : UserControl
 {
     private readonly NumericUpDown _lives = Num(1,255);
     private readonly ComboBox _initial = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=140};
+    private readonly ComboBox _death = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=140};
+    private readonly Label _deathNote = new(){AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray};
     private readonly CheckBox _lock = new(){Text="锁定初始状态（死亡后恢复初始等级；吃星星仍可升级）",AutoSize=true};
     private readonly Dictionary<SpawnKind,(NumericUpDown X,NumericUpDown Y)> _spawns=new();
     private readonly Dictionary<SpawnKind,Label> _spawnLabels=new();
@@ -37,7 +39,7 @@ public sealed class GameSettingsControl : UserControl
     private readonly Label _customSpawnNote=new(){AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray};
 
     // Runtime 6.5/6.6 global final rules.
-    private readonly GroupBox _finalRulesBox = new(){Text="Final Rules 全局规则（QXR1 v2~v5）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8),Margin=new Padding(0,12,0,4)};
+    private readonly GroupBox _finalRulesBox = new(){Text="Final Rules 全局规则（QXR1 v2~v6）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8),Margin=new Padding(0,12,0,4)};
     private readonly CheckBox _skipGameOver = new(){Text="Skip Final GAME OVER（默认 OFF；Hi-Score 保留）",AutoSize=true};
     private readonly ComboBox _bonus2P = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=330};
     private readonly ComboBox _armorMode = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=330};
@@ -71,7 +73,7 @@ public sealed class GameSettingsControl : UserControl
     public GameSettingsControl()
     {
         Dock=DockStyle.Fill;
-        for(int i=0;i<=4;i++)_initial.Items.Add($"Lv{i}");
+        for(int i=0;i<=4;i++){_initial.Items.Add($"Lv{i}");_death.Items.Add($"Lv{i}");}
         _bonus2P.Items.AddRange(["Original：本关击杀较多者 +1000", "Win Streak：连续胜场递增奖励"]);
         _armorMode.Items.AddRange(["Original：装甲坦克原版 4 发耐久", "One Hit：普通400分装甲=白色1HP；闪光奖励装甲仍为原版4HP"]);
         _lifeMode.Items.AddRange(["Original：20,000 分仅 +1 次", "Custom Once：自定义门槛仅 +1 次", "Repeat：固定分数间隔反复 +1", "Disabled：关闭分数加命"]);
@@ -81,6 +83,8 @@ public sealed class GameSettingsControl : UserControl
         root.Controls.Add(_note);
         root.Controls.Add(Line("起始命数 (1~255):",_lives));
         root.Controls.Add(Line("初始坦克等级:",_initial));
+        root.Controls.Add(Line("死亡等级:",_death));
+        root.Controls.Add(_deathNote);
         root.Controls.Add(_lock);
 
         var visualBox=new GroupBox
@@ -123,6 +127,7 @@ public sealed class GameSettingsControl : UserControl
 
         _lives.ValueChanged += (_,_)=>Apply(()=>_rom!.StartingLives=(byte)_lives.Value);
         _initial.SelectedIndexChanged += (_,_)=>Apply(()=>{if(_initial.SelectedIndex>=0)_rom!.InitialTankLevel=_initial.SelectedIndex;});
+        _death.SelectedIndexChanged += (_,_)=>Apply(()=>{if(_death.SelectedIndex>=0&&_rom!.SupportsPlayerDeathLevel)_rom.PlayerDeathLevel=_death.SelectedIndex;});
         _lock.CheckedChanged += (_,_)=>Apply(()=>_rom!.SetLockInitialState(_lock.Checked));
         foreach(var pair in _spawns)
         {
@@ -213,7 +218,7 @@ public sealed class GameSettingsControl : UserControl
     private void BuildFinalRulesBox()
     {
         var flow=new FlowLayoutPanel{FlowDirection=FlowDirection.TopDown,WrapContents=false,AutoSize=true,Padding=new Padding(2)};
-        flow.Controls.Add(new Label{AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray,Text="QXR1 v2~v5 Final Rules；秘籍命数与敌人节奏仅 v3 / Runtime 6.6 可用。Skip 默认 OFF；Win Streak：1胜1000、2胜2000、3胜4000、4胜6000、5胜8000、6胜10000、7胜及以上+1命；平局中断。"});
+        flow.Controls.Add(new Label{AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray,Text="QXR1 v2~v6 Final Rules；Runtime 6.9.4 / v6 新增独立死亡等级。秘籍命数与敌人节奏仅 v3+ 可用。Skip 默认 OFF；Win Streak：1胜1000、2胜2000、3胜4000、4胜6000、5胜8000、6胜10000、7胜及以上+1命；平局中断。"});
         flow.Controls.Add(_skipGameOver);
         flow.Controls.Add(Line("2P 通关奖励:",_bonus2P));
         flow.Controls.Add(Line("400分装甲坦克耐久:",_armorMode));
@@ -313,6 +318,11 @@ public sealed class GameSettingsControl : UserControl
             while(_initial.Items.Count>max+1)_initial.Items.RemoveAt(_initial.Items.Count-1);
             while(_initial.Items.Count<max+1)_initial.Items.Add($"Lv{_initial.Items.Count}");
             _initial.SelectedIndex=Math.Clamp(_rom.InitialTankLevel,0,max);
+            _death.SelectedIndex=Math.Clamp(_rom.PlayerDeathLevel,0,4);
+            _death.Enabled=_rom.SupportsPlayerDeathLevel;
+            _deathNote.Text=_rom.SupportsPlayerDeathLevel
+                ? "等级 ≤ 死亡等级时中弹直接爆炸；等级 > 死亡等级时降低一级并存活。Death Lv4 表示所有等级中弹都直接爆炸。"
+                : "独立死亡等级需要 Runtime 6.9.4 / QXR1 v6；旧 Runtime 继续使用 Ex 选项中的“被击中时逐级降低”。";
             _lock.Enabled=_rom.SupportsLockInitialState;_lock.Checked=_rom.LockInitialState;
             _note.Text=_rom.SupportsLockInitialState
                 ? "锁定只决定死亡后的复活基准等级；本条命中吃星星/手枪仍按正常规则升级。原版全局出生点仍可直接拖拽。"
@@ -364,7 +374,7 @@ public sealed class GameSettingsControl : UserControl
         _customSpawnEditor.ShowUnused=_customShowUnused.Checked;
         if(!supported)
         {
-            _customSpawnNote.Text="当前 ROM 未检测到 QXR1 Final Rules；请使用 32KB Runtime 6.5~6.9 IPS。";
+            _customSpawnNote.Text="当前 ROM 未检测到 QXR1 Final Rules；请使用 32KB Runtime 6.5~6.9.4 IPS。";
             return;
         }
         if(!available)

@@ -247,12 +247,12 @@ CHR选择窗口按照该地形当前Attr的调色板显示，因此可以同时�
 
 17. 通用配置文件
 ----------------
-文件 -> 导出配置 / 导入配置。推荐扩展名 `.qexcfg.json`。桌面与 Web 使用完全相同的 `QuarrelExConfig` v3 JSON，；正式版只接受 v3。
+文件 -> 导出配置 / 导入配置。推荐扩展名 `.qexcfg.json`。桌面与 Web 使用完全相同的 `QuarrelExConfig` v3 JSON；正式版只接受 v3。
 
 当前关卡还可以单独导入 / 导出 `.qexstage.json`（Schema=`QuarrelExStage`, Version=1）。
 该文件只包含当前 13×13 Map，以及地图实际引用到的 Terrain TSA/Attr 定义，不包含敌人、命数、规则、调色板或 Demo 等全局配置。
 注意：TSA/Attr 地形表在 ROM 中是全局共享的，因此导入关卡包时，同 ID 地形也会影响其他使用该 ID 的关卡外观。
-配置包含：命数、初始等级、锁定选项、FeatureFlags、EnemyItemFlags、出生位置、8组调色板、可编辑TSA、Flag/Fort TSA，以及完整关卡数据。
+配置包含：命数、初始等级、可选死亡等级、锁定选项、FeatureFlags、EnemyItemFlags、出生位置、8组调色板、可编辑TSA、Flag/Fort TSA，以及完整关卡数据。
 
 Config v3 的 Stages：
 - Ex：Stage 1~70；原版：Stage 1~35。
@@ -269,6 +269,7 @@ Enemy Type 说明：常用基础值为 $80/$A0/$C0/$E0。运行时 bit2（$04）
 -------------
 - 起始命数 1~255。
 - 初始坦克等级：原版 Lv0~Lv3；Ex Lv0~Lv4。
+- Runtime 6.9.4 / QXR1 v6 死亡等级 Lv0~Lv4：当前等级 <= 死亡等级时中弹直接爆炸；更高等级中弹降低一级并存活。初始等级与死亡等级彼此独立。
 - Phase6 锁定初始状态。
 - 三个敌人出生点和 P1/P2 出生点，X/Y 0~255。
 - 清空当前关卡 / 清空全部关卡，统一写成地形 0D。
@@ -345,3 +346,8 @@ F8  ROM 信息
 【Runtime 6.7 / QXR1 v4】
 - 装甲坦克 One Hit：仅普通 400 分装甲坦克变为白色 1HP；闪光/带道具的 400 分装甲坦克保持原版 4 发耐久和奖励逻辑。
 - Flag TSA Editor 新增 Stage 1~70 独立“存在老巢”开关。关闭后 Runtime 不绘制普通/铁锹老巢，老巢区域下方地图数据正常生效。
+
+
+模拟器显示调色板
+----------------
+在“调色板编辑器”中可以加载标准 192-byte .pal 文件（64 色 × RGB）。加载后地图、Terrain、TSA/CHR、出生点坦克和 NES 颜色选择器会使用该色板显示，但 ROM 中的调色板编号不会改变，也不会产生 ROM 未保存状态。点击“恢复默认”可回到 QuarrelEx 内置色板。

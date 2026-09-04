@@ -414,6 +414,7 @@ public sealed class MainForm : Form
         try
         {
             I18n.TranslateControlTree(this);
+            _paletteEditor.RefreshDisplayPaletteUi();
         if (MainMenuStrip is not null)
         {
             I18n.TranslateToolStrip(MainMenuStrip);
@@ -903,6 +904,7 @@ public sealed class MainForm : Form
             _rom.SetFeatureFlags(flags);
             MarkDirty();
             RefreshExOptions();
+            _gameSettings.RefreshValues();
             _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
             SetStatus(message, false);
         }
@@ -918,7 +920,7 @@ public sealed class MainForm : Form
         {
             _autoFireCheck.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.AutoFireB);
             _pistolLv4Check.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.PistolLevel4);
-            _downgradeCheck.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.DowngradeOnHit);
+            _downgradeCheck.Checked = hasV2 && (_rom!.SupportsPlayerDeathLevel ? _rom.PlayerDeathLevel < 4 : _rom.IsFeatureEnabled(ExFeature.DowngradeOnHit));
             _treeDestroyCheck.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.Level4DestroyTrees);
             _fastMoveCheck.Checked = hasV2 && _rom!.SupportsPlayerFastMove && _rom.IsFeatureEnabled(ExFeature.PlayerFastMove);
             _randomEnemyCheck.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.RandomEnemySpawn);
@@ -929,7 +931,10 @@ public sealed class MainForm : Form
 
             _autoFireCheck.Enabled = hasV2;
             _pistolLv4Check.Enabled = hasV2;
-            _downgradeCheck.Enabled = hasV2;
+            _downgradeCheck.Enabled = hasV2 && !_rom!.SupportsPlayerDeathLevel;
+            _downgradeCheck.Text = hasV2 && _rom!.SupportsPlayerDeathLevel
+                ? "被击中时逐级降低（由游戏设置中的死亡等级控制）"
+                : "被击中时逐级降低（Lv0 才爆炸）";
             _treeDestroyCheck.Enabled = hasV2 && _pistolLv4Check.Checked;
             _fastMoveCheck.Enabled = hasV2 && _rom!.SupportsPlayerFastMove;
             _randomEnemyCheck.Enabled = hasV2;
@@ -997,6 +1002,7 @@ public sealed class MainForm : Form
         _tsaEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange(I18n.T("status.updated.tsa"));
         _paletteEditor.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
         _paletteEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange(I18n.T("status.updated.palette"));
+        _paletteEditor.DisplayPaletteChanged += (_, _) => RefreshAfterDisplayPaletteChange();
         _flagTsaEditor.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
         _flagTsaEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange(I18n.T("status.updated.flag"));
         _gameSettings.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
@@ -1021,6 +1027,23 @@ public sealed class MainForm : Form
         _screenEditor.RefreshView();
         _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
         SetStatus(message, false);
+    }
+
+    private void RefreshAfterDisplayPaletteChange()
+    {
+        _paletteEditor.RefreshDisplayPaletteUi();
+        if (_renderer is null) return;
+        _renderer.InvalidateCache();
+        BuildTerrainButtons();
+        _stageCanvas.Invalidate();
+        _tsaEditor.Rebuild();
+        _flagTsaEditor.Rebuild();
+        _gameSettings.RefreshMapVisuals();
+        _screenEditor.RefreshView();
+        _paletteEditor.Rebuild();
+        SetStatus(NesDisplayPalette.IsCustom
+            ? I18n.T("status.display_palette.loaded", NesDisplayPalette.SourceName)
+            : I18n.T("status.display_palette.default"), false);
     }
 
     private void ClearTerrainButtonImages()

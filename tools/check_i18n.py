@@ -23,7 +23,7 @@ used=set()
 for p in (ROOT/'desktop'/'QuarrelEx').rglob('*.cs'):
     t=p.read_text(encoding='utf-8-sig',errors='ignore')
     used.update(re.findall(r'I18n\.T\(\s*"([^"]+)"',t))
-for p in (ROOT/'web'/'QuarrelEx.html',ROOT/'web'/'QuarrelEx_Standalone.html',ROOT/'web'/'QuarrelEx_Mobile.html'):
+for p in (ROOT/'web'/'QuarrelEx.html',ROOT/'web'/'QuarrelEx_Mobile.html'):
     t=p.read_text(encoding='utf-8')
     t=re.sub(r'<!-- QX_I18N_BEGIN -->.*?<!-- QX_I18N_END -->','',t,flags=re.S)
     used.update(re.findall(r'\b(?:uiT|uiF|qxT|qxFormat)\(\s*["\']([^"\']+)["\']',t))

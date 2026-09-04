@@ -9,11 +9,9 @@ public sealed class NesRenderer : IDisposable
     private readonly Dictionary<(int Id, int Scale), Bitmap> _blockCache = new();
     private readonly Dictionary<(byte Tile, PaletteKind Palette, byte Attr, int Scale), Bitmap> _tileCache = new();
     private readonly Dictionary<(SpawnKind Kind, int Scale), Bitmap> _tankCache = new();
-    private static readonly Color[] NesPalette = BuildPalette();
-
     public NesRenderer(BattleCityRom rom) => _rom = rom;
 
-    public static Color GetNesColor(byte index) => NesPalette[index & 0x3F];
+    public static Color GetNesColor(byte index) => NesDisplayPalette.GetColor(index);
 
     public Bitmap GetBlockBitmap(int terrainId, int scale = 2)
     {
@@ -105,7 +103,7 @@ public sealed class NesRenderer : IDisposable
         {
             var colorIndex = pixels[y * 8 + x];
             var paletteByte = _rom.GetPaletteByte(paletteKind, attr * 4 + colorIndex) & 0x3F;
-            var color = NesPalette[paletteByte];
+            var color = NesDisplayPalette.GetColor(paletteByte);
             for (var sy = 0; sy < scale; sy++)
             for (var sx = 0; sx < scale; sx++)
                 bmp.SetPixel(x * scale + sx, y * scale + sy, color);
@@ -126,7 +124,7 @@ public sealed class NesRenderer : IDisposable
             var colorIndex = pixels[y * 8 + x];
             var color = colorIndex == 0
                 ? Color.Transparent
-                : NesPalette[_rom.GetPaletteByte(PaletteKind.Sprite, palette * 4 + colorIndex) & 0x3F];
+                : NesDisplayPalette.GetColor(_rom.GetPaletteByte(PaletteKind.Sprite, palette * 4 + colorIndex) & 0x3F);
             for (var sy = 0; sy < scale; sy++)
             for (var sx = 0; sx < scale; sx++)
                 bmp.SetPixel(x * scale + sx, y * scale + sy, color);
@@ -151,19 +149,6 @@ public sealed class NesRenderer : IDisposable
         return output;
     }
 
-    private static Color[] BuildPalette()
-    {
-        int[,] rgb =
-        {
-            {84,84,84},{0,30,116},{8,16,144},{48,0,136},{68,0,100},{92,0,48},{84,4,0},{60,24,0},{32,42,0},{8,58,0},{0,64,0},{0,60,0},{0,50,60},{0,0,0},{0,0,0},{0,0,0},
-            {152,150,152},{8,76,196},{48,50,236},{92,30,228},{136,20,176},{160,20,100},{152,34,32},{120,60,0},{84,90,0},{40,114,0},{8,124,0},{0,118,40},{0,102,120},{0,0,0},{0,0,0},{0,0,0},
-            {236,238,236},{76,154,236},{120,124,236},{176,98,236},{228,84,236},{236,88,180},{236,106,100},{212,136,32},{160,170,0},{116,196,0},{76,208,32},{56,204,108},{56,180,204},{60,60,60},{0,0,0},{0,0,0},
-            {236,238,236},{168,204,236},{188,188,236},{212,178,236},{236,174,236},{236,174,212},{236,180,176},{228,196,144},{204,210,120},{180,222,120},{168,226,144},{152,226,180},{160,214,228},{160,162,160},{0,0,0},{0,0,0}
-        };
-        var colors = new Color[64];
-        for (var i = 0; i < 64; i++) colors[i] = Color.FromArgb(rgb[i,0], rgb[i,1], rgb[i,2]);
-        return colors;
-    }
 
     public void Dispose() => InvalidateCache();
 }

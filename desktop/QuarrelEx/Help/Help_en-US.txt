@@ -107,7 +107,7 @@ EnemyItemFlags at CPU $EF7B control Helmet / Clock / Shovel / Star / Grenade / T
 With the feature enabled:
 - Star: Lv0 -> Lv1 -> Lv2 -> Lv3 -> Lv4, capped at Lv4.
 - Pistol: Lv0/Lv1/Lv2 -> Lv3; Lv3 stays Lv3; Lv4 stays Lv4.
-- Downgrade-on-hit: Lv4 -> Lv3 -> Lv2 -> Lv1 -> Lv0 -> next hit explodes.
+- Runtime 6.9.4 / QXR1 v6 separates Initial Tank Level from Death Level. A hit at or below Death Level destroys the player; a higher level loses one level and survives. Death Lv0 gives the classic Lv4 -> Lv3 -> Lv2 -> Lv1 -> Lv0 -> death sequence.
 - If Lv4 tree destruction is enabled, Lv4 player bullets can remove forest tiles.
 
 9. Friendly fire
@@ -124,6 +124,7 @@ Keep a backup of important ROMs. Unknown mapper/layout signatures are rejected t
 - Bonus rewards triggered while another item is active are preserved in a queue and released immediately after the active item is collected. The original engine has one active bonus display slot, so queued rewards appear sequentially.
 - A non-lethal downgrade now plays the normal bullet-hit-tank sound.
 - Lock Initial State is available on Phase 6 ROMs. Stars and the pistol still upgrade the current life; after an actual death, respawn returns to the configured base level.
+- Runtime 6.9.4 / QXR1 v6 adds an independent Death Level (Lv0-Lv4) while keeping Initial Tank Level as the starting/respawn base level.
 
 15. Palette Editor
 ------------------
@@ -212,3 +213,8 @@ This layout is particularly useful on 720p/768p monitors because the map is no l
 [Runtime 6.7 / QXR1 v4]
 - Armored Tank One Hit affects only normal 400-point armored tanks, using the white 1-HP form. Flashing/item armored tanks retain original multi-hit durability and item behavior.
 - Flag TSA Editor adds a per-stage HQ/Base Exists switch for Stage 1-70. When disabled, default/protected HQ drawing is skipped and underlying map terrain remains active.
+
+
+Emulator display palette
+------------------------
+The Palette Editor can load a standard 192-byte .pal file (64 colors × RGB). Map, Terrain, TSA/CHR, spawn-tank and NES color-picker previews use the loaded colors, while ROM palette indices remain unchanged and the ROM is not marked dirty. Use Reset Default to restore the built-in QuarrelEx palette.

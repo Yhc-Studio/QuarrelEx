@@ -2,7 +2,7 @@
 
 C# / WinForms / .NET 8 desktop editor. Open `QuarrelEx.sln` in Visual Studio 2022.
 
-Current editor/runtime target: **QuarrelEx 1.1.8 / Runtime 6.9.3 / QXR1 v5**.
+Current editor/runtime target: **QuarrelEx 1.1.8 / Runtime 6.9.4 / QXR1 v6**.
 
 ## Localization
 
@@ -27,10 +27,13 @@ python tools/check_i18n.py
 
 > Terrain TSA/Attr definitions are ROM-global. Importing a `.qexstage.json` package updates the terrain IDs carried by that package and can therefore affect other stages using the same IDs.
 
-## Runtime 6.9.3 / QXR1 v5
+## Runtime 6.9.4 / QXR1 v6
 
-The editor includes the current Stage 1-70 player/enemy spawn controls, EnemyPacing, BaseExists, Enemy Counter Icons/Number, Final GAME OVER Skip, Extra Life rules, 2P Win-Streak, Armored Tank One-Hit, configurable A+B+Start lives, Demo isolation fixes and Runtime 6.9.3 corrections.
+The editor includes the current Stage 1-70 player/enemy spawn controls, EnemyPacing, BaseExists, Enemy Counter Icons/Number, Final GAME OVER Skip, Extra Life rules, 2P Win-Streak, Armored Tank One-Hit, configurable A+B+Start lives, Demo isolation fixes, configurable Initial Tank Level, and Runtime 6.9.4 / QXR1 v6 independent Death Level (Lv0-Lv4).
 
 The existing Demo editor and `F9` Title + Game Over Screen Editor remain included.
 
 The public repository intentionally does not include copyrighted Battle City ROM images or artwork extracted from the original Quarrel executable.
+
+## Emulator display palette (.pal)
+The Palette editor can load a standard 192-byte NES emulator palette file (`64 colors × RGB`) for editor previews. It affects map, TSA/CHR, spawn sprite and palette-picker colors only and never changes ROM bytes. QuarrelEx keeps a private copy under `%LOCALAPPDATA%\QuarrelEx` so the display palette remains available after restart; **Reset Default** restores the built-in palette.
