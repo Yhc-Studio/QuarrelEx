@@ -8,6 +8,7 @@
 - Desktop, Web and Mobile share the current Config v3 model and maintained BCEX 32KB options.
 - Mobile wide-screen layout now keeps Enemy, TSA, Settings and tool pages at full content width.
 - Web/Desktop ROM detection accepts the current maintained gameplay-extension layout.
+- Fixed Desktop C# build blockers in bonus-tank cadence and ROM information/export code.
 
 ### BCEX 32KB
 

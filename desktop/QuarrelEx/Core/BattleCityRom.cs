@@ -329,8 +329,8 @@ public sealed class BattleCityRom
         var i = stage - 1;
         return new BonusTankCadenceConfig
         {
-            Start = Math.Max(1, _data[Cpu8000FileOffset(BonusTankStartTableCpu) + i]),
-            Interval = Math.Max(1, _data[Cpu8000FileOffset(BonusTankIntervalTableCpu) + i]),
+            Start = Math.Max(1, (int)_data[Cpu8000FileOffset(BonusTankStartTableCpu) + i]),
+            Interval = Math.Max(1, (int)_data[Cpu8000FileOffset(BonusTankIntervalTableCpu) + i]),
             Count = _data[Cpu8000FileOffset(BonusTankCountTableCpu) + i]
         };
     }
@@ -1332,16 +1332,6 @@ public sealed class BattleCityRom
                     .Select(r => Enumerable.Range(0, 13).Select(c => GetCell(stage, r, c)).ToArray())
                     .ToArray()
             };
-            if (HasGameplayExtension)
-            {
-                lines.Add($"Gameplay Extension: {(SupportsBonusTankCadence ? "QXE4" : "QXE3")} / Max Stage {MaxPlayableStage}");
-                lines.Add($"保护罩: 出生 P={PlayerSpawnShieldTicks} / E={EnemySpawnShieldTicks} tick；帽子 P={PlayerHelmetShieldTicks} / E={EnemyHelmetShieldTicks} tick");
-                lines.Add($"敌方 1UP: +{EnemyOneUpAddCount}；炸弹尊重保护罩: {(GrenadesRespectShield ? "ON" : "OFF")}");
-                if (SupportsBonusTankCadence) lines.Add("奖励坦克频率: Stage 1~70 独立 Start / Interval / Count（QXE4）");
-                if (SupportsKeepTreeDestroyAfterBaseDestroyed) lines.Add($"基地被毁后保留消树林: {(KeepTreeDestroyAfterBaseDestroyed ? "ON" : "OFF")}（QXE4 v5）");
-                if (IsFeatureEnabled(ExFeature.RandomEnemySpawn)) lines.Add("随机敌坦克: Type + HP 1~8 真随机；装甲显示/受击阶段同步（BCEX 32KB Final）");
-            }
-
             if (HasFinalRules)
             {
                 sc.EnemySpawn = new EnemySpawnConfig
@@ -2158,6 +2148,16 @@ public sealed class BattleCityRom
                 lines.Add("BCEX v2: 未检测到（Legacy Ex；Feature Flags 不可编辑）");
             }
 
+            if (HasGameplayExtension)
+            {
+                lines.Add($"Gameplay Extension: {(SupportsBonusTankCadence ? "QXE4" : "QXE3")} / Max Stage {MaxPlayableStage}");
+                lines.Add($"保护罩: 出生 P={PlayerSpawnShieldTicks} / E={EnemySpawnShieldTicks} tick；帽子 P={PlayerHelmetShieldTicks} / E={EnemyHelmetShieldTicks} tick");
+                lines.Add($"敌方 1UP: +{EnemyOneUpAddCount}；炸弹尊重保护罩: {(GrenadesRespectShield ? "ON" : "OFF")}");
+                if (SupportsBonusTankCadence) lines.Add("奖励坦克频率: Stage 1~70 独立 Start / Interval / Count");
+                if (SupportsKeepTreeDestroyAfterBaseDestroyed) lines.Add($"基地被毁后保留消树林: {(KeepTreeDestroyAfterBaseDestroyed ? "ON" : "OFF")}");
+                if (IsFeatureEnabled(ExFeature.RandomEnemySpawn)) lines.Add("随机敌坦克: Type + HP 1~8 真随机；装甲显示/受击阶段同步");
+            }
+
             if (HasFinalRules)
             {
                 var runtime = FinalRulesVersion >= 6 ? "6.9.4" : FinalRulesVersion >= 5 ? "6.9.3" : FinalRulesVersion >= 4 ? "6.7/6.8" : FinalRulesVersion >= 3 ? "6.6" : "6.5";
@@ -2177,8 +2177,10 @@ public sealed class BattleCityRom
                 if (SupportsFinalRulesV4)
                     lines.Add("老巢存在: Stage 1~70 独立开关；关闭后地图底层地形不被 HQ 覆盖");
                 if (SupportsFinalRulesV5)
+                {
                     lines.Add("玩家出生点: Stage 1~70 / 1P、2P 各 Original 或独立16px网格位置（Runtime 6.9.3）");
                     lines.Add("敌人数显示: Stage 1~70 Icons / Number；总数 > 50 时运行时强制 Number（Runtime 6.9.3）");
+                }
             }
 
             if (SupportsTerrain64) lines.Add("地形: $00~$3F，共64项；$20~$3F为预留自定义槽。");
