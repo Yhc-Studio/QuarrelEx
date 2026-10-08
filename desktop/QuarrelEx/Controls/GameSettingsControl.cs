@@ -59,6 +59,28 @@ public sealed class GameSettingsControl : UserControl
     private readonly Button _pacingOriginal = new(){Text="恢复本关原版节奏",AutoSize=true};
     private readonly Label _pacingNote = new(){AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray};
 
+    // BCEX 32KB QXE3/QXE4 gameplay extension.
+    private readonly GroupBox _gameplayExtBox = new(){Text="32KB Gameplay Extension（QXE3 / QXE4）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8),Margin=new Padding(0,12,0,4)};
+    private readonly NumericUpDown _maxStage = Num(1,70);
+    private readonly CheckBox _grenadeShield = new(){Text="炸弹尊重保护罩",AutoSize=true};
+    private readonly NumericUpDown _shieldPlayerSpawn = Num(0,255);
+    private readonly NumericUpDown _shieldEnemySpawn = Num(0,255);
+    private readonly NumericUpDown _shieldPlayerHelmet = Num(0,255);
+    private readonly NumericUpDown _shieldEnemyHelmet = Num(0,255);
+    private readonly NumericUpDown _enemyOneUp = Num(0,99);
+    private readonly ComboBox[,] _bulletSpeed = new ComboBox[4,2];
+    private readonly ComboBox _dropMode = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=180};
+    private readonly NumericUpDown[] _dropCounts = Enumerable.Range(0,7).Select(_=>Num(0,8)).ToArray();
+    private readonly Button _dropApply = new(){Text="应用爆率",AutoSize=true};
+    private readonly Label _gameplayExtNote = new(){AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray};
+
+    private readonly GroupBox _bonusCadenceBox = new(){Text="奖励坦克出现频率（Stage 1~70 / QXE4）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8),Margin=new Padding(0,12,0,4)};
+    private readonly NumericUpDown _bonusStart = Num(1,255);
+    private readonly NumericUpDown _bonusInterval = Num(1,255);
+    private readonly NumericUpDown _bonusCount = Num(0,255);
+    private readonly Button _bonusOriginal = new(){Text="恢复原版 4 / 7 / 3",AutoSize=true};
+    private readonly Label _bonusPreview = new(){AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray};
+
     private readonly Button _clearStage=new(){Text="清空当前关卡",AutoSize=true};
     private readonly Button _clearAll=new(){Text="清空全部关卡",AutoSize=true};
     private readonly Label _note=new(){AutoSize=true,MaximumSize=new Size(600,0),ForeColor=Color.DimGray,Padding=new Padding(0,6,0,8)};
@@ -121,6 +143,10 @@ public sealed class GameSettingsControl : UserControl
         root.Controls.Add(_pacingBox);
         BuildFinalRulesBox();
         root.Controls.Add(_finalRulesBox);
+        BuildGameplayExtensionBox();
+        root.Controls.Add(_gameplayExtBox);
+        BuildBonusCadenceBox();
+        root.Controls.Add(_bonusCadenceBox);
 
         var clearFlow=new FlowLayoutPanel{AutoSize=true,Padding=new Padding(0,10,0,0)};clearFlow.Controls.Add(_clearStage);clearFlow.Controls.Add(_clearAll);root.Controls.Add(clearFlow);
         Controls.Add(root);
@@ -145,6 +171,8 @@ public sealed class GameSettingsControl : UserControl
         WireCustomSpawnEvents();
         WirePacingEvents();
         WireFinalRuleEvents();
+        WireGameplayExtensionEvents();
+        WireBonusCadenceEvents();
 
         _clearStage.Click += (_,_)=>{if(_rom is null||_stageProvider is null)return;if(MessageBox.Show(FindForm(),I18n.T("dialog.clear_stage.message"),I18n.T("dialog.clear_stage.title"),MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.ClearStage(_stageProvider());RefreshMapVisuals();DataChanged?.Invoke(this,EventArgs.Empty);};
         _clearAll.Click += (_,_)=>{if(_rom is null)return;if(MessageBox.Show(FindForm(),I18n.T("dialog.clear_all.message"),I18n.T("dialog.clear_all.title"),MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.ClearAllStages();RefreshMapVisuals();DataChanged?.Invoke(this,EventArgs.Empty);};
@@ -227,6 +255,73 @@ public sealed class GameSettingsControl : UserControl
         flow.Controls.Add(_cheatNote);
         var cheat=new FlowLayoutPanel{AutoSize=true};cheat.Controls.Add(Line("秘籍 1P 命数:",_cheatLives1));cheat.Controls.Add(Line("秘籍 2P 命数:",_cheatLives2));flow.Controls.Add(cheat);
         _finalRulesBox.Controls.Add(flow);
+    }
+
+    private void BuildGameplayExtensionBox()
+    {
+        var flow=new FlowLayoutPanel{FlowDirection=FlowDirection.TopDown,WrapContents=false,AutoSize=true,Padding=new Padding(2)};
+        _gameplayExtNote.Text="QXE3/QXE4：最大关卡、敌弹速度、保护罩、炸弹、敌方1UP与8槽道具爆率。保护罩单位为64-frame tick。";
+        flow.Controls.Add(_gameplayExtNote);
+        flow.Controls.Add(Line("最大关卡 / Max Stage:",_maxStage));
+        flow.Controls.Add(_grenadeShield);
+        var shields=new FlowLayoutPanel{AutoSize=true};
+        shields.Controls.Add(Line("我方出生盾 tick:",_shieldPlayerSpawn));
+        shields.Controls.Add(Line("敌方出生盾 tick:",_shieldEnemySpawn));
+        shields.Controls.Add(Line("我方帽子盾 tick:",_shieldPlayerHelmet));
+        shields.Controls.Add(Line("敌方帽子盾 tick:",_shieldEnemyHelmet));
+        flow.Controls.Add(shields);
+        flow.Controls.Add(Line("敌方吃 1UP 增加坦克数:",_enemyOneUp));
+        var bullet=new TableLayoutPanel{ColumnCount=3,RowCount=5,AutoSize=true,CellBorderStyle=TableLayoutPanelCellBorderStyle.Single};
+        bullet.Controls.Add(new Label{Text="敌坦克",AutoSize=true,Padding=new Padding(5)},0,0);
+        bullet.Controls.Add(new Label{Text="普通子弹",AutoSize=true,Padding=new Padding(5)},1,0);
+        bullet.Controls.Add(new Label{Text="吃星星后",AutoSize=true,Padding=new Padding(5)},2,0);
+        var names=new[]{"100分","200分","300分","400分"};
+        for(var i=0;i<4;i++)
+        {
+            bullet.Controls.Add(new Label{Text=names[i],AutoSize=true,Padding=new Padding(5)},0,i+1);
+            for(var j=0;j<2;j++){var c=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=110};c.Items.AddRange(["Normal","Fast"]);_bulletSpeed[i,j]=c;bullet.Controls.Add(c,j+1,i+1);}
+        }
+        flow.Controls.Add(bullet);
+        _dropMode.Items.AddRange(["Classic / 无手枪","With Pistol / 手枪开启"]);_dropMode.SelectedIndex=0;
+        flow.Controls.Add(Line("道具爆率表:",_dropMode));
+        var drop=new TableLayoutPanel{ColumnCount=2,RowCount=8,AutoSize=true,CellBorderStyle=TableLayoutPanelCellBorderStyle.Single};
+        var items=new[]{"Helmet","Clock","Shovel","Star","Grenade","1UP","Pistol"};
+        for(var i=0;i<7;i++){drop.Controls.Add(new Label{Text=items[i],AutoSize=true,Padding=new Padding(5)},0,i);drop.Controls.Add(_dropCounts[i],1,i);}
+        drop.Controls.Add(_dropApply,0,7);
+        flow.Controls.Add(drop);
+        _gameplayExtBox.Controls.Add(flow);
+    }
+
+    private void BuildBonusCadenceBox()
+    {
+        var flow=new FlowLayoutPanel{FlowDirection=FlowDirection.TopDown,WrapContents=false,AutoSize=true,Padding=new Padding(2)};
+        var row=new FlowLayoutPanel{AutoSize=true};
+        row.Controls.Add(Line("第几个坦克开始:",_bonusStart));
+        row.Controls.Add(Line("出现间隔:",_bonusInterval));
+        row.Controls.Add(Line("最多奖励坦克数:",_bonusCount));
+        flow.Controls.Add(row);flow.Controls.Add(_bonusOriginal);flow.Controls.Add(_bonusPreview);_bonusCadenceBox.Controls.Add(flow);
+    }
+
+    private void WireGameplayExtensionEvents()
+    {
+        _maxStage.ValueChanged+=(_,_)=>ApplyGameplayExt(()=>_rom!.MaxPlayableStage=(int)_maxStage.Value);
+        _grenadeShield.CheckedChanged+=(_,_)=>ApplyGameplayExt(()=>_rom!.GrenadesRespectShield=_grenadeShield.Checked);
+        _shieldPlayerSpawn.ValueChanged+=(_,_)=>ApplyGameplayExt(()=>_rom!.PlayerSpawnShieldTicks=(int)_shieldPlayerSpawn.Value);
+        _shieldEnemySpawn.ValueChanged+=(_,_)=>ApplyGameplayExt(()=>_rom!.EnemySpawnShieldTicks=(int)_shieldEnemySpawn.Value);
+        _shieldPlayerHelmet.ValueChanged+=(_,_)=>ApplyGameplayExt(()=>_rom!.PlayerHelmetShieldTicks=(int)_shieldPlayerHelmet.Value);
+        _shieldEnemyHelmet.ValueChanged+=(_,_)=>ApplyGameplayExt(()=>_rom!.EnemyHelmetShieldTicks=(int)_shieldEnemyHelmet.Value);
+        _enemyOneUp.ValueChanged+=(_,_)=>ApplyGameplayExt(()=>_rom!.EnemyOneUpAddCount=(int)_enemyOneUp.Value);
+        for(var i=0;i<4;i++)for(var j=0;j<2;j++){var ii=i;_bulletSpeed[i,j].SelectedIndexChanged+=(_,_)=>{if(_refreshing||_rom?.HasGameplayExtension!=true)return;ApplyGameplayExt(()=>_rom!.SetEnemyBulletSpeedProfile(ii,_bulletSpeed[ii,0].SelectedIndex==1,_bulletSpeed[ii,1].SelectedIndex==1));};}
+        _dropMode.SelectedIndexChanged+=(_,_)=>{if(!_refreshing)RefreshDropCountsCore();};
+        _dropApply.Click+=(_,_)=>ApplyGameplayExt(()=>_rom!.SetPowerUpDropCounts(_dropMode.SelectedIndex==1,_dropCounts.Select(x=>(int)x.Value).ToArray()));
+    }
+
+    private void WireBonusCadenceEvents()
+    {
+        _bonusStart.ValueChanged+=(_,_)=>ApplyBonusCadence();
+        _bonusInterval.ValueChanged+=(_,_)=>ApplyBonusCadence();
+        _bonusCount.ValueChanged+=(_,_)=>ApplyBonusCadence();
+        _bonusOriginal.Click+=(_,_)=>{if(_refreshing||_rom?.SupportsBonusTankCadence!=true||CurrentStage is <1 or >70)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.SetOriginalBonusTankCadence(CurrentStage);RefreshBonusCadenceCore();DataChanged?.Invoke(this,EventArgs.Empty);};
     }
 
     private void WireStagePlayerSpawnEvents()
@@ -334,8 +429,36 @@ public sealed class GameSettingsControl : UserControl
             RefreshCustomSpawnCore();
             RefreshPacingCore();
             RefreshFinalRulesCore();
+            RefreshGameplayExtensionCore();
+            RefreshBonusCadenceCore();
         }
         finally{_refreshing=false; I18n.TranslateControlTree(this);}
+    }
+
+    private void RefreshGameplayExtensionCore()
+    {
+        var ok=_rom?.HasGameplayExtension==true;_gameplayExtBox.Enabled=ok;
+        if(!ok){_gameplayExtNote.Text="当前 ROM 未检测到 QXE3/QXE4 Gameplay Extension。";return;}
+        _gameplayExtNote.Text="QXE3/QXE4：保护罩单位为64-frame tick（约1.07秒）；道具表总槽数必须为8。";
+        _maxStage.Value=_rom!.MaxPlayableStage;_grenadeShield.Checked=_rom.GrenadesRespectShield;
+        _shieldPlayerSpawn.Value=_rom.PlayerSpawnShieldTicks;_shieldEnemySpawn.Value=_rom.EnemySpawnShieldTicks;
+        _shieldPlayerHelmet.Value=_rom.PlayerHelmetShieldTicks;_shieldEnemyHelmet.Value=_rom.EnemyHelmetShieldTicks;_enemyOneUp.Value=_rom.EnemyOneUpAddCount;
+        for(var i=0;i<4;i++){var b=_rom.GetEnemyBulletSpeedProfile(i);_bulletSpeed[i,0].SelectedIndex=b.NormalFast?1:0;_bulletSpeed[i,1].SelectedIndex=b.AfterStarFast?1:0;}
+        RefreshDropCountsCore();
+    }
+
+    private void RefreshDropCountsCore()
+    {
+        if(_rom?.HasGameplayExtension!=true)return;var a=_rom.GetPowerUpDropCounts(_dropMode.SelectedIndex==1);
+        for(var i=0;i<7;i++)_dropCounts[i].Value=a[i];_dropCounts[6].Enabled=_dropMode.SelectedIndex==1;
+    }
+
+    private void RefreshBonusCadenceCore()
+    {
+        var ok=_rom?.SupportsBonusTankCadence==true&&CurrentStage is >=1 and <=70;_bonusCadenceBox.Enabled=ok;
+        if(!ok){_bonusPreview.Text="需要 QXE4 Runtime；Demo 不使用逐关奖励坦克规则。";return;}
+        var b=_rom!.GetBonusTankCadence(CurrentStage);_bonusStart.Value=b.Start;_bonusInterval.Value=b.Interval;_bonusCount.Value=b.Count;
+        var ord=_rom.GetBonusTankOrdinals(CurrentStage);_bonusPreview.Text=$"EnemyTotal={_rom.GetEnemyTotal(CurrentStage)}；实际奖励序号：{(ord.Length==0?"无":string.Join(" / ",ord.Select(x=>"#"+x)))}";
     }
 
     private void RefreshStagePlayerSpawnCore()
@@ -501,6 +624,20 @@ public sealed class GameSettingsControl : UserControl
     {
         if(_refreshing||_rom is null)return;
         try{BeforeEdit?.Invoke(this,EventArgs.Empty);action();DataChanged?.Invoke(this,EventArgs.Empty);}
+        catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.setting_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
+    }
+
+    private void ApplyGameplayExt(Action action)
+    {
+        if(_refreshing||_rom?.HasGameplayExtension!=true)return;
+        try{BeforeEdit?.Invoke(this,EventArgs.Empty);action();RefreshGameplayExtensionCore();DataChanged?.Invoke(this,EventArgs.Empty);}
+        catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.setting_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
+    }
+
+    private void ApplyBonusCadence()
+    {
+        if(_refreshing||_rom?.SupportsBonusTankCadence!=true||CurrentStage is <1 or >70)return;
+        try{BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.SetBonusTankCadence(CurrentStage,(int)_bonusStart.Value,(int)_bonusInterval.Value,(int)_bonusCount.Value);RefreshBonusCadenceCore();DataChanged?.Invoke(this,EventArgs.Empty);}
         catch(Exception ex){MessageBox.Show(FindForm(),I18n.FromSource(ex.Message),I18n.T("dialog.setting_failed"),MessageBoxButtons.OK,MessageBoxIcon.Error);RefreshValues();}
     }
 

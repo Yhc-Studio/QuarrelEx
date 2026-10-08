@@ -37,6 +37,7 @@ public sealed class MainForm : Form
     };
 
     private readonly ComboBox _stageCombo = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 115 };
+    private readonly List<int> _stageLogicalNumbers = new();
     private readonly StageCanvas _stageCanvas = new();
     private readonly Panel _mapViewport = new() { Dock = DockStyle.Fill, BackColor = SystemColors.ControlDark, Padding = new Padding(4) };
     private readonly FlowLayoutPanel _terrainPanel = new()
@@ -76,8 +77,9 @@ public sealed class MainForm : Form
     private readonly CheckBox _pistolLv4Check = new() { Text = "启用手枪 / Lv4（手枪直升 Lv3）", AutoSize = true };
     private readonly CheckBox _downgradeCheck = new() { Text = "被击中时逐级降低（Lv0 才爆炸）", AutoSize = true };
     private readonly CheckBox _treeDestroyCheck = new() { Text = "Lv4 子弹可以消除树林", AutoSize = true };
+    private readonly CheckBox _keepTreeAfterBaseCheck = new() { Text = "基地被毁后保留消树林能力（烟山式）", AutoSize = true, Margin = new Padding(24, 3, 3, 3) };
     private readonly CheckBox _fastMoveCheck = new() { Text = "我方坦克加速移动（Phase 6.2）", AutoSize = true };
-    private readonly CheckBox _randomEnemyCheck = new() { Text = "随机敌坦克出现顺序（保持各类型总数量）", AutoSize = true };
+    private readonly CheckBox _randomEnemyCheck = new() { Text = "随机敌坦克（类型 + HP 1~8 真随机；装甲同步）", AutoSize = true };
     private readonly CheckBox _enemyPickupCheck = new() { Text = "敌人可以拾取道具（32KB 70-map）", AutoSize = true };
     private readonly CheckBox _noFriendlyFireCheck = new() { Text = "取消队友互伤", AutoSize = true };
     private readonly CheckBox _lockInitialCheck = new() { Text = "锁定初始状态（死亡后恢复游戏设置中的初始等级）", AutoSize = true };
@@ -800,6 +802,7 @@ public sealed class MainForm : Form
         panel.Controls.Add(_pistolLv4Check);
         panel.Controls.Add(_downgradeCheck);
         panel.Controls.Add(_treeDestroyCheck);
+        panel.Controls.Add(_keepTreeAfterBaseCheck);
 
         var future = new Label
         {
@@ -845,6 +848,7 @@ public sealed class MainForm : Form
         _pistolLv4Check.CheckedChanged += (_, _) => FeatureCheckChanged(_pistolLv4Check, ExFeature.PistolLevel4);
         _downgradeCheck.CheckedChanged += (_, _) => FeatureCheckChanged(_downgradeCheck, ExFeature.DowngradeOnHit);
         _treeDestroyCheck.CheckedChanged += (_, _) => FeatureCheckChanged(_treeDestroyCheck, ExFeature.Level4DestroyTrees);
+        _keepTreeAfterBaseCheck.CheckedChanged += (_, _) => KeepTreeAfterBaseChanged();
         _fastMoveCheck.CheckedChanged += (_, _) => FeatureCheckChanged(_fastMoveCheck, ExFeature.PlayerFastMove);
         _randomEnemyCheck.CheckedChanged += (_, _) => FeatureCheckChanged(_randomEnemyCheck, ExFeature.RandomEnemySpawn);
         _enemyPickupCheck.CheckedChanged += (_, _) => FeatureCheckChanged(_enemyPickupCheck, ExFeature.EnemyPowerUpPickup);
@@ -865,6 +869,21 @@ public sealed class MainForm : Form
             RefreshExOptions();
             _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
             SetStatus($"Ex FeatureFlags = ${_rom.FeatureFlags:X2}", false);
+        }
+        catch (Exception ex) { SetStatus(ex.Message, true); }
+    }
+
+    private void KeepTreeAfterBaseChanged()
+    {
+        if (_refreshing || _rom is null || !_rom.SupportsKeepTreeDestroyAfterBaseDestroyed) return;
+        try
+        {
+            PushUndo();
+            _rom.KeepTreeDestroyAfterBaseDestroyed = _keepTreeAfterBaseCheck.Checked;
+            MarkDirty();
+            RefreshExOptions();
+            _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
+            SetStatus(I18n.T("status.keep_tree_after_base_updated"), false);
         }
         catch (Exception ex) { SetStatus(ex.Message, true); }
     }
@@ -922,6 +941,7 @@ public sealed class MainForm : Form
             _pistolLv4Check.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.PistolLevel4);
             _downgradeCheck.Checked = hasV2 && (_rom!.SupportsPlayerDeathLevel ? _rom.PlayerDeathLevel < 4 : _rom.IsFeatureEnabled(ExFeature.DowngradeOnHit));
             _treeDestroyCheck.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.Level4DestroyTrees);
+            _keepTreeAfterBaseCheck.Checked = hasV2 && _rom!.SupportsKeepTreeDestroyAfterBaseDestroyed && _rom.KeepTreeDestroyAfterBaseDestroyed;
             _fastMoveCheck.Checked = hasV2 && _rom!.SupportsPlayerFastMove && _rom.IsFeatureEnabled(ExFeature.PlayerFastMove);
             _randomEnemyCheck.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.RandomEnemySpawn);
             _enemyPickupCheck.Checked = hasV2 && _rom!.IsFeatureEnabled(ExFeature.EnemyPowerUpPickup);
@@ -936,6 +956,7 @@ public sealed class MainForm : Form
                 ? "被击中时逐级降低（由游戏设置中的死亡等级控制）"
                 : "被击中时逐级降低（Lv0 才爆炸）";
             _treeDestroyCheck.Enabled = hasV2 && _pistolLv4Check.Checked;
+            _keepTreeAfterBaseCheck.Enabled = hasV2 && _rom!.SupportsKeepTreeDestroyAfterBaseDestroyed && _treeDestroyCheck.Checked;
             _fastMoveCheck.Enabled = hasV2 && _rom!.SupportsPlayerFastMove;
             _randomEnemyCheck.Enabled = hasV2;
             _enemyPickupCheck.Enabled = hasV2 && _rom!.SupportsEnemyPowerUpPickup;
@@ -1008,7 +1029,9 @@ public sealed class MainForm : Form
         _gameSettings.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
         _gameSettings.DataChanged += (_, _) =>
         {
+            var keepStage=CurrentStage;
             RefreshAfterDataEditorChange(I18n.T("status.updated.settings"));
+            PopulateStages(keepStage);
             _gameSettings.RefreshValues();
             RefreshExOptions();
         };
@@ -1410,18 +1433,19 @@ public sealed class MainForm : Form
         }
     }
 
-    private void PopulateStages()
+    private void PopulateStages(int? preserveStage = null)
     {
-        _stageCombo.Items.Clear();
+        var target=preserveStage ?? (_stageLogicalNumbers.Count>_stageCombo.SelectedIndex&&_stageCombo.SelectedIndex>=0?_stageLogicalNumbers[_stageCombo.SelectedIndex]:1);
+        _stageCombo.Items.Clear();_stageLogicalNumbers.Clear();
         if (_rom is null) return;
-        for (var i = 1; i <= _rom.MaxEditableStage; i++)
-        {
-            _stageCombo.Items.Add(_rom.IsDemoStage(i) ? "Demo" : $"Stage {i}");
-        }
-        if (_stageCombo.Items.Count > 0) _stageCombo.SelectedIndex = 0;
+        var max=_rom.HasGameplayExtension?_rom.MaxPlayableStage:_rom.MaxNormalStage;
+        for (var i = 1; i <= max; i++){_stageCombo.Items.Add($"Stage {i}");_stageLogicalNumbers.Add(i);}
+        _stageCombo.Items.Add("Demo");_stageLogicalNumbers.Add(_rom.DemoStageNumber);
+        var index=_stageLogicalNumbers.IndexOf(target);if(index<0)index=0;
+        if (_stageCombo.Items.Count > 0) _stageCombo.SelectedIndex = index;
     }
 
-    private int CurrentStage => _stageCombo.SelectedIndex >= 0 ? _stageCombo.SelectedIndex + 1 : 1;
+    private int CurrentStage => _stageCombo.SelectedIndex >= 0 && _stageCombo.SelectedIndex < _stageLogicalNumbers.Count ? _stageLogicalNumbers[_stageCombo.SelectedIndex] : 1;
 
     private void RefreshAll()
     {

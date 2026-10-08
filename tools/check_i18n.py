@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static localization consistency checks for QuarrelEx Desktop/Web/Mobile."""
+"""Static localization consistency checks for QuarrelEx Desktop/Web."""
 from pathlib import Path
 import json, re, sys
 ROOT=Path(__file__).resolve().parents[1]
@@ -24,6 +24,8 @@ for p in (ROOT/'desktop'/'QuarrelEx').rglob('*.cs'):
     t=p.read_text(encoding='utf-8-sig',errors='ignore')
     used.update(re.findall(r'I18n\.T\(\s*"([^"]+)"',t))
 for p in (ROOT/'web'/'QuarrelEx.html',ROOT/'web'/'QuarrelEx_Mobile.html'):
+    if not p.exists():
+        continue
     t=p.read_text(encoding='utf-8')
     t=re.sub(r'<!-- QX_I18N_BEGIN -->.*?<!-- QX_I18N_END -->','',t,flags=re.S)
     used.update(re.findall(r'\b(?:uiT|uiF|qxT|qxFormat)\(\s*["\']([^"\']+)["\']',t))

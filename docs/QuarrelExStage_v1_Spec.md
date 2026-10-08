@@ -27,3 +27,14 @@
 The 13×13 map is stage data, but the TSA/Attr terrain table is shared by the ROM. Importing a stage package updates the terrain IDs carried by that package. Other stages that use the same IDs therefore see the same terrain-definition changes.
 
 The full `QuarrelExConfig v3` (`*.qexcfg.json`) remains unchanged and continues to be used for whole-project configuration exchange.
+
+
+## Optional QXE4 field: `BonusTankCadence`
+
+A Stage package may include:
+
+```json
+"BonusTankCadence": { "Start": 4, "Interval": 7, "Count": 3 }
+```
+
+Desktop/Web import this field only when the target ROM supports QXE4. `Count=0` disables automatic bonus tanks for that stage.

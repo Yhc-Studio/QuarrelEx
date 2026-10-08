@@ -29,7 +29,8 @@
         "X": 152,
         "Y": 216
       }
-    }
+    },
+    "KeepTreeDestroyAfterBaseDestroyed": true
   },
   "Palettes": {
     "Sprite": [

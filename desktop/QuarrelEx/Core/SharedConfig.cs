@@ -27,6 +27,8 @@ public sealed class QuarrelExStagePackage
     // Only terrain definitions referenced by Map are included. TSA/Attr tables are ROM-global,
     // so importing these definitions may also change other stages that use the same terrain IDs.
     public List<TerrainDefinitionConfig> Terrain { get; set; } = new();
+    // Optional QXE4 per-stage flashing/bonus tank cadence.
+    public BonusTankCadenceConfig? BonusTankCadence { get; set; }
 }
 
 public sealed class GameplayConfig
@@ -35,6 +37,15 @@ public sealed class GameplayConfig
     public int InitialTankLevel { get; set; }
     // Optional Runtime 6.9.4 / QXR1 v6 extension. Null preserves legacy DowngradeOnHit semantics.
     public int? PlayerDeathLevel { get; set; }
+    // Optional BCEX 32KB QXE3/QXE4 gameplay extension fields.
+    public int? MaxStage { get; set; }
+    public List<EnemyBulletSpeedConfig>? EnemyBulletSpeeds { get; set; }
+    public bool? GrenadesRespectShield { get; set; }
+    // BCEX 32KB Final Runtime. True keeps Lv4 forest destruction active after HQ destruction.
+    public bool? KeepTreeDestroyAfterBaseDestroyed { get; set; }
+    public ShieldTimersConfig? ShieldTimers { get; set; }
+    public int? EnemyOneUpAddCount { get; set; }
+    public PowerUpDropSlotsConfig? PowerUpDropSlots { get; set; }
     public bool LockInitialState { get; set; }
     public bool? PlayerFastMove { get; set; }
     public int? FeatureFlags { get; set; }
@@ -43,6 +54,33 @@ public sealed class GameplayConfig
     // Optional Config v3 extension used by BCEX 32KB runtime 6.5 Final Rules.
     // Older v3 files omit this field and keep the target ROM's current values.
     public FinalRulesConfig? FinalRules { get; set; }
+}
+
+public sealed class EnemyBulletSpeedConfig
+{
+    public string Normal { get; set; } = "Normal";
+    public string AfterStar { get; set; } = "Normal";
+}
+
+public sealed class ShieldTimersConfig
+{
+    public int PlayerSpawn { get; set; }
+    public int EnemySpawn { get; set; }
+    public int PlayerHelmet { get; set; }
+    public int EnemyHelmet { get; set; }
+}
+
+public sealed class PowerUpDropSlotsConfig
+{
+    public int[] Classic { get; set; } = new int[7];
+    public int[] WithPistol { get; set; } = new int[7];
+}
+
+public sealed class BonusTankCadenceConfig
+{
+    public int Start { get; set; } = 4;
+    public int Interval { get; set; } = 7;
+    public int Count { get; set; } = 3;
 }
 
 public sealed class FinalRulesConfig
@@ -124,6 +162,8 @@ public sealed class StageConfig
     // this object means that player uses the original/global spawn position.
     // If PlayerSpawn itself is absent, older Config v3 files preserve the target ROM.
     public StagePlayerSpawnConfig? PlayerSpawn { get; set; }
+    // Optional QXE4 per-stage automatic flashing/bonus tank cadence.
+    public BonusTankCadenceConfig? BonusTankCadence { get; set; }
 }
 
 public sealed class ConfigValidationResult

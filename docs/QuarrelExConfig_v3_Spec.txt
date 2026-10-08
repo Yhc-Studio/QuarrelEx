@@ -201,3 +201,22 @@ This field is independent of Gameplay.InitialTankLevel.
 Runtime storage:
   CPU $B56B stores the encoded cutoff: Lv0=$20, Lv1=$40, Lv2=$60, Lv3=$63, Lv4=$64.
 
+
+
+### QXE3 / QXE4 Gameplay Extension fields
+
+Config schema remains Version 3. The following fields are optional and are ignored with a warning on unsupported ROMs:
+
+Gameplay.MaxStage: 1..70
+Gameplay.EnemyBulletSpeeds: exactly 4 objects, each { Normal: "Normal"|"Fast", AfterStar: "Normal"|"Fast" }
+Gameplay.GrenadesRespectShield: bool
+Gameplay.ShieldTimers: { PlayerSpawn, EnemySpawn, PlayerHelmet, EnemyHelmet } in native 64-frame ticks (0..255)
+Gameplay.EnemyOneUpAddCount: 0..99
+Gameplay.PowerUpDropSlots: { Classic[7], WithPistol[7] }, each table totals exactly 8 slots; Classic Pistol count must be 0
+Stage.BonusTankCadence: { Start 1..255, Interval 1..255, Count 0..255 } for QXE4 Stage 1..70
+
+In the current BCEX 32KB Final Runtime, FeatureFlags bit4 Random Enemy means independent random Type plus independent HP 1..8. The HP value also mirrors into the enemy armor-stage bits, so any of the four enemy types can visibly behave as armored. No additional Random Enemy Config field is required.
+
+Gameplay.KeepTreeDestroyAfterBaseDestroyed is an optional boolean supported by the current BCEX 32KB Final Runtime. True preserves Lv4 forest-destruction checks after HQ destruction; false requires the HQ-alive state. Older Config v3 files may omit it.
+
+Gameplay.KeepTreeDestroyAfterBaseDestroyed: optional boolean; current BCEX 32KB Final Runtime.

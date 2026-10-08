@@ -218,3 +218,11 @@ This layout is particularly useful on 720p/768p monitors because the map is no l
 Emulator display palette
 ------------------------
 The Palette Editor can load a standard 192-byte .pal file (64 colors × RGB). Map, Terrain, TSA/CHR, spawn-tank and NES color-picker previews use the loaded colors, while ROM palette indices remain unchanged and the ROM is not marked dirty. Use Reset Default to restore the built-in QuarrelEx palette.
+
+BCEX 32KB Final Runtime
+--------------------------------
+- Desktop 1.1.10 matches Web 1.6.14 for Max Stage, per-type enemy bullet speed, shields/grenades/enemy 1UP, and 8-slot power-up drop rates.
+- Stage 1–70 can store independent bonus-tank Start / Interval / Count. The default 4 / 7 / 3 is equivalent to #4 / #11 / #18.
+- With Random Enemy enabled, every enemy independently randomizes both Type and HP (1–8). The four Count values only determine the stage total. HP also drives the Y.S.-style armor stage, so any enemy type may appear armored.
+- “Keep forest destruction after HQ loss” is independently configurable; when enabled, already-fired Lv4 bullets retain forest-destruction checks after the HQ is destroyed.
+- Config v3 and per-stage packages can carry the QXE3/QXE4 fields; older v3 files remain compatible.

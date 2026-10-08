@@ -29,6 +29,32 @@ public sealed class BattleCityRom
     private static readonly byte[] ExV2Magic = [(byte)'B',(byte)'C',(byte)'E',(byte)'X'];
     private static readonly byte[] FinalRulesMagic = [(byte)'Q',(byte)'X',(byte)'R',(byte)'1'];
     private static readonly byte[] PlayerDeathLevelHook = [0xBD,0x01,0x01,0xCD,0x6B,0xB5,0x90,0x18];
+    private static readonly byte[] GameplayExtMagicV3 = [(byte)'Q',(byte)'X',(byte)'E',(byte)'3'];
+    private static readonly byte[] GameplayExtMagicV4 = [(byte)'Q',(byte)'X',(byte)'E',(byte)'4'];
+    private static readonly byte[] GameplayExtBulletHook = [0x4C,0xC1,0xB3]; // JMP $B3C1 (supported legacy gameplay-extension hook)
+    private static readonly byte[] GameplayExtBulletHookPistolSteel = [0x4C,0x40,0xB5]; // JMP $B540 (current gameplay-extension hook)
+    private static readonly byte[] BonusTankCadenceHook = [0x20,0x4C,0xF1]; // JSR $F14C
+    private static readonly byte[] KeepTreeAfterBaseHook = [0x4C,0x90,0xF2]; // JMP $F290
+    private const int GameplayExtConfigCpu = 0xBFF7;
+    private const int GameplayExtVersionCpu = 0xBFFB;
+    private const int GameplayExtMaxStageCpu = 0xBFFC;
+    private const int GameplayExtBulletBaseCpu = 0xBFE3;
+    private const int GameplayExtPlayerSpawnShieldCpu = 0xBFFD;
+    private const int GameplayExtEnemySpawnShieldCpu = 0xBFFE;
+    private const int GameplayExtEnemyOneUpAddCpu = 0xBFFF;
+    private const int GameplayExtPlayerHelmetShieldCpu = 0xB56C;
+    private const int GameplayExtEnemyHelmetShieldCpu = 0xB56D;
+    private const int PowerUpDropClassicCpu = 0xE8FA;
+    private const int PowerUpDropPistolCpu = 0xEFA1;
+    private const int GameplayExtStageSelectCompareCpu = 0xC19A;
+    private const int GameplayExtStageSelectClampCpu = 0xC19E;
+    private const int GameplayExtStageAdvanceCompareCpu = 0xC25E;
+    private const int GameplayExtBulletHookCpu = 0xE0BC;
+    private const int BonusTankStartTableCpu = 0xF07A;
+    private const int BonusTankIntervalTableCpu = 0xF0C0;
+    private const int BonusTankCountTableCpu = 0xF106;
+    private const int BonusTankCadenceHookCpu = 0xE393;
+    private const int KeepTreeAfterBaseHookCpu = 0xFFCD;
     private const int FinalRulesConfigCpu = 0xB55F;
     private const int FinalRulesFlagsCpu = 0xB564;
     private const int FinalRulesExtraLifeModeCpu = 0xB565;
@@ -148,6 +174,195 @@ public sealed class BattleCityRom
         SupportsFinalRulesV5 &&
         SpanEquals(Cpu8000FileOffset(0xC377), new byte[] { 0x20, 0x6A, 0xC7 }) &&
         SpanEquals(Cpu8000FileOffset(0xDB68), new byte[] { 0x20, 0x90, 0xC7 });
+
+    public bool HasGameplayExtension
+    {
+        get
+        {
+            if (!HasIndependentMaps) return false;
+            var o = Cpu8000FileOffset(GameplayExtConfigCpu);
+            var version = _data[Cpu8000FileOffset(GameplayExtVersionCpu)];
+            var magicOk = (SpanEquals(o, GameplayExtMagicV3) && version >= 3) ||
+                          (SpanEquals(o, GameplayExtMagicV4) && version >= 4);
+            return magicOk && (SpanEquals(Cpu8000FileOffset(GameplayExtBulletHookCpu), GameplayExtBulletHook) ||
+                               SpanEquals(Cpu8000FileOffset(GameplayExtBulletHookCpu), GameplayExtBulletHookPistolSteel));
+        }
+    }
+
+    public bool SupportsBonusTankCadence =>
+        HasIndependentMaps &&
+        SpanEquals(Cpu8000FileOffset(GameplayExtConfigCpu), GameplayExtMagicV4) &&
+        _data[Cpu8000FileOffset(GameplayExtVersionCpu)] >= 4 &&
+        SpanEquals(Cpu8000FileOffset(BonusTankCadenceHookCpu), BonusTankCadenceHook);
+
+    public bool SupportsKeepTreeDestroyAfterBaseDestroyed =>
+        HasIndependentMaps &&
+        SpanEquals(Cpu8000FileOffset(GameplayExtConfigCpu), GameplayExtMagicV4) &&
+        _data[Cpu8000FileOffset(GameplayExtVersionCpu)] >= 5 &&
+        SpanEquals(Cpu8000FileOffset(KeepTreeAfterBaseHookCpu), KeepTreeAfterBaseHook);
+
+    public int MaxPlayableStage
+    {
+        get => HasGameplayExtension ? Math.Clamp((int)(_data[Cpu8000FileOffset(GameplayExtMaxStageCpu)] == 0 ? 70 : _data[Cpu8000FileOffset(GameplayExtMaxStageCpu)]), 1, 70) : (IsOriginal ? 35 : 70);
+        set
+        {
+            EnsureGameplayExtension();
+            if (value is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(value), "最大关卡必须是 1~70。");
+            _data[Cpu8000FileOffset(GameplayExtMaxStageCpu)] = (byte)value;
+            _data[Cpu8000FileOffset(GameplayExtStageSelectCompareCpu)] = (byte)(value + 1);
+            _data[Cpu8000FileOffset(GameplayExtStageSelectClampCpu)] = (byte)value;
+            _data[Cpu8000FileOffset(GameplayExtStageAdvanceCompareCpu)] = (byte)(value + 1);
+        }
+    }
+
+    public (bool NormalFast, bool AfterStarFast, byte Raw) GetEnemyBulletSpeedProfile(int typeIndex)
+    {
+        EnsureGameplayExtension();
+        if (typeIndex is < 0 or > 3) throw new ArgumentOutOfRangeException(nameof(typeIndex));
+        var raw = _data[Cpu8000FileOffset(GameplayExtBulletBaseCpu) + typeIndex];
+        return ((raw & 1) != 0, (raw & 2) != 0, raw);
+    }
+
+    public void SetEnemyBulletSpeedProfile(int typeIndex, bool normalFast, bool afterStarFast)
+    {
+        EnsureGameplayExtension();
+        if (typeIndex is < 0 or > 3) throw new ArgumentOutOfRangeException(nameof(typeIndex));
+        var o = Cpu8000FileOffset(GameplayExtBulletBaseCpu) + typeIndex;
+        var keep = (byte)(_data[o] & 0xFC);
+        _data[o] = (byte)(keep | (normalFast ? 1 : 0) | (afterStarFast ? 2 : 0));
+    }
+
+    public bool GrenadesRespectShield
+    {
+        get => HasGameplayExtension && (_data[Cpu8000FileOffset(FinalRulesFlagsCpu)] & 0x80) != 0;
+        set
+        {
+            EnsureGameplayExtension();
+            var o = Cpu8000FileOffset(FinalRulesFlagsCpu);
+            _data[o] = value ? (byte)(_data[o] | 0x80) : (byte)(_data[o] & 0x7F);
+        }
+    }
+
+    public bool KeepTreeDestroyAfterBaseDestroyed
+    {
+        get => SupportsKeepTreeDestroyAfterBaseDestroyed && (_data[Cpu8000FileOffset(FinalRulesFlagsCpu)] & 0x02) != 0;
+        set
+        {
+            EnsureKeepTreeDestroyAfterBaseDestroyed();
+            var o = Cpu8000FileOffset(FinalRulesFlagsCpu);
+            _data[o] = value ? (byte)(_data[o] | 0x02) : (byte)(_data[o] & 0xFD);
+        }
+    }
+
+    public int PlayerSpawnShieldTicks
+    {
+        get => HasGameplayExtension ? _data[Cpu8000FileOffset(GameplayExtPlayerSpawnShieldCpu)] : 3;
+        set { EnsureGameplayExtension(); _data[Cpu8000FileOffset(GameplayExtPlayerSpawnShieldCpu)] = (byte)Math.Clamp(value, 0, 255); }
+    }
+    public int EnemySpawnShieldTicks
+    {
+        get => HasGameplayExtension ? _data[Cpu8000FileOffset(GameplayExtEnemySpawnShieldCpu)] : 0;
+        set { EnsureGameplayExtension(); _data[Cpu8000FileOffset(GameplayExtEnemySpawnShieldCpu)] = (byte)Math.Clamp(value, 0, 255); }
+    }
+    public int PlayerHelmetShieldTicks
+    {
+        get => HasGameplayExtension ? _data[Cpu8000FileOffset(GameplayExtPlayerHelmetShieldCpu)] : 10;
+        set { EnsureGameplayExtension(); _data[Cpu8000FileOffset(GameplayExtPlayerHelmetShieldCpu)] = (byte)Math.Clamp(value, 0, 255); }
+    }
+    public int EnemyHelmetShieldTicks
+    {
+        get => HasGameplayExtension ? _data[Cpu8000FileOffset(GameplayExtEnemyHelmetShieldCpu)] : 0;
+        set { EnsureGameplayExtension(); _data[Cpu8000FileOffset(GameplayExtEnemyHelmetShieldCpu)] = (byte)Math.Clamp(value, 0, 255); }
+    }
+    public int EnemyOneUpAddCount
+    {
+        get => HasGameplayExtension ? Math.Clamp((int)_data[Cpu8000FileOffset(GameplayExtEnemyOneUpAddCpu)], 0, 99) : 0;
+        set
+        {
+            EnsureGameplayExtension();
+            if (value is < 0 or > 99) throw new ArgumentOutOfRangeException(nameof(value), "敌方 1UP 增加坦克数必须是 0~99。");
+            _data[Cpu8000FileOffset(GameplayExtEnemyOneUpAddCpu)] = (byte)value;
+        }
+    }
+
+    public int[] GetPowerUpDropCounts(bool withPistol)
+    {
+        EnsureGameplayExtension();
+        var counts = new int[7];
+        var o = Cpu8000FileOffset(withPistol ? PowerUpDropPistolCpu : PowerUpDropClassicCpu);
+        for (var i = 0; i < 8; i++)
+        {
+            var id = _data[o + i];
+            if (id <= 6) counts[id]++;
+        }
+        if (!withPistol) counts[6] = 0;
+        return counts;
+    }
+
+    public void SetPowerUpDropCounts(bool withPistol, IReadOnlyList<int> counts)
+    {
+        EnsureGameplayExtension();
+        if (counts.Count != 7) throw new InvalidDataException("道具爆率必须包含 7 个槽计数。");
+        if (counts.Any(v => v is < 0 or > 8)) throw new InvalidDataException("每种道具的槽数必须是 0~8 的整数。");
+        if (!withPistol && counts[6] != 0) throw new InvalidDataException("关闭手枪/Lv4的掉落表中，Pistol 槽数必须为 0。");
+        if (counts.Sum() != 8) throw new InvalidDataException("道具掉落槽总数必须正好为 8。");
+        var remain = counts.ToArray();
+        var table = new List<byte>(8);
+        while (table.Count < 8)
+        {
+            var progressed = false;
+            for (var id = 0; id < 7 && table.Count < 8; id++)
+            {
+                if (remain[id] <= 0) continue;
+                table.Add((byte)id); remain[id]--; progressed = true;
+            }
+            if (!progressed) break;
+        }
+        if (table.Count != 8) throw new InvalidDataException("无法生成 8 槽掉落表。");
+        var o = Cpu8000FileOffset(withPistol ? PowerUpDropPistolCpu : PowerUpDropClassicCpu);
+        for (var i = 0; i < 8; i++) _data[o + i] = table[i];
+    }
+
+    public BonusTankCadenceConfig GetBonusTankCadence(int stage)
+    {
+        EnsureBonusTankCadence(); ValidateNormalStage(stage);
+        var i = stage - 1;
+        return new BonusTankCadenceConfig
+        {
+            Start = Math.Max(1, _data[Cpu8000FileOffset(BonusTankStartTableCpu) + i]),
+            Interval = Math.Max(1, _data[Cpu8000FileOffset(BonusTankIntervalTableCpu) + i]),
+            Count = _data[Cpu8000FileOffset(BonusTankCountTableCpu) + i]
+        };
+    }
+
+    public void SetBonusTankCadence(int stage, int start, int interval, int count)
+    {
+        EnsureBonusTankCadence(); ValidateNormalStage(stage);
+        if (start is < 1 or > 255) throw new ArgumentOutOfRangeException(nameof(start));
+        if (interval is < 1 or > 255) throw new ArgumentOutOfRangeException(nameof(interval));
+        if (count is < 0 or > 255) throw new ArgumentOutOfRangeException(nameof(count));
+        var i = stage - 1;
+        _data[Cpu8000FileOffset(BonusTankStartTableCpu) + i] = (byte)start;
+        _data[Cpu8000FileOffset(BonusTankIntervalTableCpu) + i] = (byte)interval;
+        _data[Cpu8000FileOffset(BonusTankCountTableCpu) + i] = (byte)count;
+    }
+
+    public int[] GetBonusTankOrdinals(int stage)
+    {
+        var rule = GetBonusTankCadence(stage);
+        var total = GetEnemyTotal(stage);
+        var result = new List<int>();
+        var n = rule.Start;
+        for (var k = 0; k < rule.Count && n <= total && n <= 255; k++)
+        {
+            result.Add(n);
+            if (n + rule.Interval > 255) break;
+            n += rule.Interval;
+        }
+        return result.ToArray();
+    }
+
+    public void SetOriginalBonusTankCadence(int stage) => SetBonusTankCadence(stage, 4, 7, 3);
     public bool SkipFinalGameOver
     {
         get => HasFinalRules && (_data[Cpu8000FileOffset(FinalRulesFlagsCpu)] & 0x01) != 0;
@@ -939,6 +1154,7 @@ public sealed class BattleCityRom
         }
 
         var package = new QuarrelExStagePackage { SourceStage = stage, Map = map };
+        if (SupportsBonusTankCadence && stage is >= 1 and <= 70) package.BonusTankCadence = GetBonusTankCadence(stage);
         foreach (var id in used)
         {
             package.Terrain.Add(new TerrainDefinitionConfig
@@ -1004,6 +1220,15 @@ public sealed class BattleCityRom
                 if (!seen.Contains(id)) Error($"Map 使用了 Terrain ${id:X2}，但关卡配置没有携带该地形的 TSA/Attr 定义。");
         }
 
+        if (package.BonusTankCadence is not null)
+        {
+            var b = package.BonusTankCadence;
+            if (b.Start is < 1 or > 255 || b.Interval is < 1 or > 255 || b.Count is < 0 or > 255)
+                Error("BonusTankCadence 必须包含 Start 1~255、Interval 1~255、Count 0~255。");
+            else if (!SupportsBonusTankCadence)
+                Warn("目标 ROM 不支持 QXE4 奖励坦克频率；该项将被忽略。");
+        }
+
         if (package.SourceStage > 0 && package.SourceStage != targetStage)
             Warn($"来源为 Stage {package.SourceStage}；将导入到当前 Stage {(IsDemoStage(targetStage) ? "Demo" : targetStage.ToString())}。");
         if ((package.Terrain?.Count ?? 0) > 0)
@@ -1026,6 +1251,8 @@ public sealed class BattleCityRom
             SetTerrainAttribute(td.Id, (byte)td.Attr);
             for (var q = 0; q < 4; q++) SetTerrainTile(td.Id, q, (byte)td.Tiles[q]);
         }
+        if (SupportsBonusTankCadence && package.BonusTankCadence is not null && targetStage is >= 1 and <= 70)
+            SetBonusTankCadence(targetStage, package.BonusTankCadence.Start, package.BonusTankCadence.Interval, package.BonusTankCadence.Count);
 
         return validation.Warnings.ToList();
     }
@@ -1036,6 +1263,27 @@ public sealed class BattleCityRom
         cfg.Gameplay.StartingLives = StartingLives;
         cfg.Gameplay.InitialTankLevel = InitialTankLevel;
         cfg.Gameplay.PlayerDeathLevel = SupportsPlayerDeathLevel ? PlayerDeathLevel : null;
+        if (HasGameplayExtension)
+        {
+            cfg.Gameplay.MaxStage = MaxPlayableStage;
+            cfg.Gameplay.EnemyBulletSpeeds = Enumerable.Range(0, 4).Select(i =>
+            {
+                var p = GetEnemyBulletSpeedProfile(i);
+                return new EnemyBulletSpeedConfig { Normal = p.NormalFast ? "Fast" : "Normal", AfterStar = p.AfterStarFast ? "Fast" : "Normal" };
+            }).ToList();
+            cfg.Gameplay.GrenadesRespectShield = GrenadesRespectShield;
+            cfg.Gameplay.KeepTreeDestroyAfterBaseDestroyed = SupportsKeepTreeDestroyAfterBaseDestroyed ? KeepTreeDestroyAfterBaseDestroyed : null;
+            cfg.Gameplay.ShieldTimers = new ShieldTimersConfig
+            {
+                PlayerSpawn = PlayerSpawnShieldTicks, EnemySpawn = EnemySpawnShieldTicks,
+                PlayerHelmet = PlayerHelmetShieldTicks, EnemyHelmet = EnemyHelmetShieldTicks
+            };
+            cfg.Gameplay.EnemyOneUpAddCount = EnemyOneUpAddCount;
+            cfg.Gameplay.PowerUpDropSlots = new PowerUpDropSlotsConfig
+            {
+                Classic = GetPowerUpDropCounts(false), WithPistol = GetPowerUpDropCounts(true)
+            };
+        }
         cfg.Gameplay.LockInitialState = LockInitialState;
         cfg.Gameplay.FeatureFlags = HasExV2Config ? FeatureFlags : null;
         cfg.Gameplay.PlayerFastMove = SupportsPlayerFastMove ? IsFeatureEnabled(ExFeature.PlayerFastMove) : false;
@@ -1084,6 +1332,16 @@ public sealed class BattleCityRom
                     .Select(r => Enumerable.Range(0, 13).Select(c => GetCell(stage, r, c)).ToArray())
                     .ToArray()
             };
+            if (HasGameplayExtension)
+            {
+                lines.Add($"Gameplay Extension: {(SupportsBonusTankCadence ? "QXE4" : "QXE3")} / Max Stage {MaxPlayableStage}");
+                lines.Add($"保护罩: 出生 P={PlayerSpawnShieldTicks} / E={EnemySpawnShieldTicks} tick；帽子 P={PlayerHelmetShieldTicks} / E={EnemyHelmetShieldTicks} tick");
+                lines.Add($"敌方 1UP: +{EnemyOneUpAddCount}；炸弹尊重保护罩: {(GrenadesRespectShield ? "ON" : "OFF")}");
+                if (SupportsBonusTankCadence) lines.Add("奖励坦克频率: Stage 1~70 独立 Start / Interval / Count（QXE4）");
+                if (SupportsKeepTreeDestroyAfterBaseDestroyed) lines.Add($"基地被毁后保留消树林: {(KeepTreeDestroyAfterBaseDestroyed ? "ON" : "OFF")}（QXE4 v5）");
+                if (IsFeatureEnabled(ExFeature.RandomEnemySpawn)) lines.Add("随机敌坦克: Type + HP 1~8 真随机；装甲显示/受击阶段同步（BCEX 32KB Final）");
+            }
+
             if (HasFinalRules)
             {
                 sc.EnemySpawn = new EnemySpawnConfig
@@ -1110,6 +1368,7 @@ public sealed class BattleCityRom
             }
             if (SupportsFinalRulesV4)
                 sc.BaseExists = GetStageBaseExists(stage);
+            if (SupportsBonusTankCadence) sc.BonusTankCadence = GetBonusTankCadence(stage);
             if (SupportsFinalRulesV5)
             {
                 if (SupportsEnemyCounterDisplay) sc.EnemyCounterDisplay = GetEnemyCounterNumericPreference(stage) ? "Number" : "Icons";
@@ -1182,6 +1441,42 @@ public sealed class BattleCityRom
                 Error($"Gameplay.PlayerDeathLevel={g.PlayerDeathLevel}，必须在 0~4 或为 null。");
             else if (g.PlayerDeathLevel.HasValue && !SupportsPlayerDeathLevel)
                 Warn("目标 ROM 不支持独立死亡等级；PlayerDeathLevel 将被忽略。需要 Runtime 6.9.4 / QXR1 v6。");
+
+            if (g.MaxStage is < 1 or > 70) Error("Gameplay.MaxStage 必须是 1~70 的整数或 null。");
+            else if (g.MaxStage.HasValue && !HasGameplayExtension) Warn("目标 ROM 不支持 QXE3/QXE4 最大关卡设置；Gameplay.MaxStage 将被忽略。");
+            if (g.EnemyBulletSpeeds is not null)
+            {
+                if (g.EnemyBulletSpeeds.Count != 4) Error("Gameplay.EnemyBulletSpeeds 必须正好包含 4 项。");
+                else for (var i=0;i<4;i++)
+                {
+                    var b=g.EnemyBulletSpeeds[i];
+                    if (b is null || b.Normal is not ("Normal" or "Fast") || b.AfterStar is not ("Normal" or "Fast"))
+                        Error($"Gameplay.EnemyBulletSpeeds[{i}] 的 Normal/AfterStar 只能是 Normal 或 Fast。");
+                }
+                if (!HasGameplayExtension) Warn("目标 ROM 不支持 QXE3/QXE4 敌弹速度设置；EnemyBulletSpeeds 将被忽略。");
+            }
+            if (g.KeepTreeDestroyAfterBaseDestroyed.HasValue && !SupportsKeepTreeDestroyAfterBaseDestroyed)
+                Warn("目标 ROM 不支持 QXE4 v5 的基地被毁后消树林规则；KeepTreeDestroyAfterBaseDestroyed 将被忽略。");
+            if (g.ShieldTimers is not null)
+            {
+                foreach (var (name,value) in new[]{("PlayerSpawn",g.ShieldTimers.PlayerSpawn),("EnemySpawn",g.ShieldTimers.EnemySpawn),("PlayerHelmet",g.ShieldTimers.PlayerHelmet),("EnemyHelmet",g.ShieldTimers.EnemyHelmet)})
+                    if (value is < 0 or > 255) Error($"Gameplay.ShieldTimers.{name} 必须是 0~255 的整数。");
+            }
+            if (g.EnemyOneUpAddCount is < 0 or > 99) Error("Gameplay.EnemyOneUpAddCount 必须是 0~99 的整数或 null。");
+            if (g.PowerUpDropSlots is not null)
+            {
+                void ValidateDrop(string name,int[]? a,bool classic)
+                {
+                    if (a is null || a.Length != 7) { Error($"Gameplay.PowerUpDropSlots.{name} 必须正好有 7 项。"); return; }
+                    if (a.Any(v=>v is <0 or >8)) Error($"Gameplay.PowerUpDropSlots.{name} 每项必须是 0~8 的整数。");
+                    if (a.Sum()!=8) Error($"Gameplay.PowerUpDropSlots.{name} 合计必须正好为 8。");
+                    if (classic && a[6]!=0) Error("Gameplay.PowerUpDropSlots.Classic 的 Pistol 槽必须为 0。");
+                }
+                ValidateDrop("Classic",g.PowerUpDropSlots.Classic,true);
+                ValidateDrop("WithPistol",g.PowerUpDropSlots.WithPistol,false);
+            }
+            if ((g.GrenadesRespectShield.HasValue || g.ShieldTimers is not null || g.EnemyOneUpAddCount.HasValue || g.PowerUpDropSlots is not null) && !HasGameplayExtension)
+                Warn("目标 ROM 不支持 QXE3/QXE4 Gameplay Extension；相关字段将被忽略。");
 
             if (g.FeatureFlags is < 0 or > 255)
                 Error($"Gameplay.FeatureFlags={g.FeatureFlags}，必须在 0~255 或为 null。");
@@ -1462,6 +1757,14 @@ public sealed class BattleCityRom
                     }
                 }
 
+                if (sc.BonusTankCadence is not null)
+                {
+                    var b=sc.BonusTankCadence;
+                    if (b.Start is < 1 or > 255 || b.Interval is < 1 or > 255 || b.Count is < 0 or > 255)
+                        Error($"Stage {sc.Stage} BonusTankCadence 必须包含 Start 1~255、Interval 1~255、Count 0~255。");
+                    else if (!SupportsBonusTankCadence) Warn($"Stage {sc.Stage} 包含 BonusTankCadence，但目标 ROM 不是 QXE4；该项将被忽略。");
+                }
+
                 if (sc.Map is null || sc.Map.Length != 13 || sc.Map.Any(row => row is null || row.Length != 13))
                 {
                     Error($"Stage {sc.Stage} 的 Map 必须是完整 13×13。");
@@ -1610,6 +1913,25 @@ public sealed class BattleCityRom
             SetFeatureFlags((byte)g.FeatureFlags.Value);
         if (SupportsPlayerDeathLevel && g.PlayerDeathLevel.HasValue)
             PlayerDeathLevel = g.PlayerDeathLevel.Value;
+        if (HasGameplayExtension)
+        {
+            if (g.MaxStage.HasValue) MaxPlayableStage = g.MaxStage.Value;
+            if (g.EnemyBulletSpeeds is { Count: 4 })
+                for (var i=0;i<4;i++) SetEnemyBulletSpeedProfile(i,g.EnemyBulletSpeeds[i].Normal=="Fast",g.EnemyBulletSpeeds[i].AfterStar=="Fast");
+            if (g.GrenadesRespectShield.HasValue) GrenadesRespectShield = g.GrenadesRespectShield.Value;
+            if (SupportsKeepTreeDestroyAfterBaseDestroyed && g.KeepTreeDestroyAfterBaseDestroyed.HasValue) KeepTreeDestroyAfterBaseDestroyed = g.KeepTreeDestroyAfterBaseDestroyed.Value;
+            if (g.ShieldTimers is not null)
+            {
+                PlayerSpawnShieldTicks=g.ShieldTimers.PlayerSpawn; EnemySpawnShieldTicks=g.ShieldTimers.EnemySpawn;
+                PlayerHelmetShieldTicks=g.ShieldTimers.PlayerHelmet; EnemyHelmetShieldTicks=g.ShieldTimers.EnemyHelmet;
+            }
+            if (g.EnemyOneUpAddCount.HasValue) EnemyOneUpAddCount=g.EnemyOneUpAddCount.Value;
+            if (g.PowerUpDropSlots is not null)
+            {
+                if (g.PowerUpDropSlots.Classic is { Length: 7 }) SetPowerUpDropCounts(false,g.PowerUpDropSlots.Classic);
+                if (g.PowerUpDropSlots.WithPistol is { Length: 7 }) SetPowerUpDropCounts(true,g.PowerUpDropSlots.WithPistol);
+            }
+        }
         // If an older v3 config has no PlayerDeathLevel but does contain FeatureFlags,
         // SetFeatureFlags() above already maps legacy DowngradeOnHit ON/OFF to Death Lv0/Lv4.
         // If both fields are absent, preserve the target ROM's existing death threshold.
@@ -1682,6 +2004,8 @@ public sealed class BattleCityRom
                 SetStageBaseExists(sc.Stage, sc.BaseExists.Value);
             if (SupportsEnemyCounterDisplay && sc.EnemyCounterDisplay is not null)
                 SetEnemyCounterNumericPreference(sc.Stage, sc.EnemyCounterDisplay == "Number");
+            if (SupportsBonusTankCadence && sc.BonusTankCadence is not null)
+                SetBonusTankCadence(sc.Stage, sc.BonusTankCadence.Start, sc.BonusTankCadence.Interval, sc.BonusTankCadence.Count);
             if (SupportsFinalRulesV5 && sc.PlayerSpawn is not null)
             {
                 if (sc.PlayerSpawn.Player1 is null) SetStagePlayerSpawnOriginal(sc.Stage, false);
@@ -1876,6 +2200,26 @@ public sealed class BattleCityRom
     private int FinalRulesSpawnRecordOffset(int stage) => Cpu8000FileOffset(FinalRulesSpawnStartCpu + (stage - 1) * FinalRulesSpawnRecordSize);
     private int StagePlayerSpawnOffset(int stage, bool twoPlayer)
         => Cpu8000FileOffset((twoPlayer ? FinalRulesStageP2SpawnCpu : FinalRulesStageP1SpawnCpu) + stage - 1);
+    private void EnsureGameplayExtension()
+    {
+        if (!HasGameplayExtension) throw new InvalidOperationException("当前 ROM 没有受支持的 Gameplay Extension；请使用当前 BCEX 32KB Final Runtime。");
+    }
+
+    private void EnsureBonusTankCadence()
+    {
+        if (!SupportsBonusTankCadence) throw new InvalidOperationException("逐关奖励坦克频率需要 QXE4 Runtime。");
+    }
+
+    private void EnsureKeepTreeDestroyAfterBaseDestroyed()
+    {
+        if (!SupportsKeepTreeDestroyAfterBaseDestroyed) throw new InvalidOperationException("基地被毁后保留消树林需要当前 BCEX 32KB Final Runtime。");
+    }
+
+    private void ValidateNormalStage(int stage)
+    {
+        if (stage is < 1 or > 70) throw new ArgumentOutOfRangeException(nameof(stage), "该功能只支持 Stage 1~70。");
+    }
+
     private void EnsureFinalRules()
     {
         if (!HasFinalRules) throw new InvalidOperationException("当前 ROM 不支持 QXR1 Final Rules（需要 BCEX 32KB Runtime 6.5~6.9.4）。");
