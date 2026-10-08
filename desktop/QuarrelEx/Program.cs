@@ -11,7 +11,7 @@ internal static class Program
         Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        Application.SetDefaultFont(SystemFonts.MessageBoxFont);
+        Application.SetDefaultFont(ModernTheme.CreateUiFont());
         Application.Run(new MainForm());
     }
 }

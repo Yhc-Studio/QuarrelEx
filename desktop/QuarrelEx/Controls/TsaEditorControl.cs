@@ -177,7 +177,7 @@ public sealed class TsaEditorControl : UserControl
             TextImageRelation = TextImageRelation.ImageBeforeText,
             Tag = (id, quadrant),
             AutoEllipsis = true,
-            Font = new Font("Segoe UI", 8.5f)
+            Font = ModernTheme.CreateUiFont(8.5f)
         };
         button.Click += (_, _) =>
         {

@@ -26,6 +26,7 @@ public sealed class MainForm : Form
     private readonly Dictionary<EditorToolKind, ToolWindowForm> _toolWindows = new();
     private readonly Dictionary<EditorToolKind, ToolStripMenuItem> _toolWindowMenuItems = new();
     private readonly HashSet<Control> _romDropControls = new();
+    private readonly ToolTip _modernToolTip = new();
 
     private readonly TableLayoutPanel _rootLayout = new()
     {
@@ -103,6 +104,7 @@ public sealed class MainForm : Form
     {
         Text = "Quarrel Ex - Battle City / Ex Editor";
         StartPosition = FormStartPosition.CenterScreen;
+        DoubleBuffered = true;
         try
         {
             Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
@@ -120,8 +122,8 @@ public sealed class MainForm : Form
         // v0.9.2 targets 1366x768 / 1280x720 as first-class layouts.
         // The older 1280x760 client area exceeded the usable height once the
         // title bar/taskbar were included on many 768p systems.
-        ClientSize = new Size(1180, 660);
-        MinimumSize = new Size(820, 520);
+        ClientSize = new Size(1280, 760);
+        MinimumSize = new Size(920, 600);
 
         BuildRootLayout();
         EnableRomDropRecursive(this);
@@ -131,12 +133,18 @@ public sealed class MainForm : Form
         RefreshExOptions();
         I18n.LanguageChanged += I18n_LanguageChanged;
         ApplyLanguage();
+        ModernTheme.Apply(this);
 
         _stageCanvas.CellPaintRequested += StageCanvas_CellPaintRequested;
         _stageCanvas.CellPickRequested += StageCanvas_CellPickRequested;
         _stageCanvas.SelectionChanged += StageCanvas_SelectionChanged;
         _stageCanvas.SelectionMoveRequested += StageCanvas_SelectionMoveRequested;
-        _stageCombo.SelectedIndexChanged += (_, _) => { _stageCanvas.ClearSelection(false); RefreshStageView(); };
+        _stageCombo.SelectedIndexChanged += (_, _) =>
+        {
+            if (_refreshing) return;
+            _stageCanvas.ClearSelection(false);
+            RefreshStageView();
+        };
         FormClosing += MainForm_FormClosing;
         FormClosed += (_, _) => I18n.LanguageChanged -= I18n_LanguageChanged;
         Shown += (_, _) => { FitToWorkingArea(); ScheduleFitStageCanvasToViewport(); };
@@ -267,39 +275,39 @@ public sealed class MainForm : Form
         {
             GripStyle = ToolStripGripStyle.Hidden,
             Dock = DockStyle.Top,
-            ImageScalingSize = new Size(20, 20),
-            Padding = new Padding(2, 1, 2, 1)
+            ImageScalingSize = new Size(18, 18),
+            AutoSize = true,
+            Padding = new Padding(10, 5, 10, 5),
+            BackColor = ModernTheme.Surface
         };
-        tool.Items.Add(new ToolStripLabel("关卡:"));
+
+        var title = new ToolStripLabel("Workspace")
+        {
+            Font = ModernTheme.CreateUiFont(10f, FontStyle.Bold),
+            ForeColor = ModernTheme.Text,
+            Margin = new Padding(2, 0, 14, 0)
+        };
+        tool.Items.Add(title);
+        tool.Items.Add(new ToolStripLabel("关卡:") { ForeColor = ModernTheme.Muted });
         tool.Items.Add(new ToolStripControlHost(_stageCombo));
+
         _importStageToolButton.Click += (_, _) => ImportStagePackage();
         _exportStageToolButton.Click += (_, _) => ExportStagePackage();
         tool.Items.Add(_importStageToolButton);
         tool.Items.Add(_exportStageToolButton);
 
-        var open = new ToolStripButton("打开") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "打开 ROM (Ctrl+O)" };
+        var open = new ToolStripButton("打开 ROM") { DisplayStyle = ToolStripItemDisplayStyle.Text, ToolTipText = "打开 ROM (Ctrl+O)" };
         open.Click += (_, _) => OpenRom();
         _saveToolButton.Click += (_, _) => SaveRom(false);
+        _undoToolButton.Click += (_, _) => Undo();
+        _redoToolButton.Click += (_, _) => Redo();
+
         tool.Items.Add(new ToolStripSeparator());
         tool.Items.Add(open);
         tool.Items.Add(_saveToolButton);
-        _undoToolButton.Click += (_, _) => Undo();
-        _redoToolButton.Click += (_, _) => Redo();
         tool.Items.Add(_undoToolButton);
         tool.Items.Add(_redoToolButton);
-        tool.Items.Add(new ToolStripSeparator());
-
-        // Quarrel-style editor launchers. The original application icon is kept
-        // for the executable/window icon; these compact glyphs identify each
-        // separate editor window without consuming much 720p/768p space.
-        AddToolButton(tool, EditorToolKind.Enemy, "敌人编辑器", Keys.F2);
-        AddToolButton(tool, EditorToolKind.Tsa, "TSA / 属性编辑器", Keys.F3);
-        AddToolButton(tool, EditorToolKind.Palette, "调色板编辑器", Keys.F4);
-        AddToolButton(tool, EditorToolKind.FlagTsa, "Flag TSA Editor", Keys.F5);
-        AddToolButton(tool, EditorToolKind.GameSettings, "游戏设置", Keys.F6);
-        AddToolButton(tool, EditorToolKind.ExOptions, "Ex 选项", Keys.F7);
-        AddToolButton(tool, EditorToolKind.RomInfo, "ROM 信息", Keys.F8);
-        AddToolButton(tool, EditorToolKind.Screen, "Title / Game Over Screen Editor", Keys.F9);
+        ModernTheme.StyleToolStrip(tool);
         return tool;
     }
 
@@ -307,7 +315,7 @@ public sealed class MainForm : Form
     {
         var button = new ToolStripButton
         {
-            Image = EditorToolIcons.Create(kind),
+            Image = EditorToolIcons.Create(kind, 20, ModernTheme.Muted),
             DisplayStyle = ToolStripItemDisplayStyle.Image,
             ToolTipText = $"{text} ({shortcut})",
             Tag = kind
@@ -321,62 +329,220 @@ public sealed class MainForm : Form
         var layout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
-            ColumnCount = 2,
+            ColumnCount = 3,
             RowCount = 1,
-            Padding = new Padding(4),
+            Padding = Padding.Empty,
             Margin = Padding.Empty,
-            AutoScroll = false
+            BackColor = ModernTheme.WindowBack
         };
-        // v0.9.3 returns to the original Quarrel workflow: the main form is
-        // dedicated to map + terrain, while data editors are independent
-        // modeless windows launched from the toolbar or Window menu.
-        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 67));
-        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 252F));
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 64F));
+        layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 36F));
 
-        var mapBox = new GroupBox { Text = "地图 13×13", Dock = DockStyle.Fill, MinimumSize = new Size(360, 0), Margin = new Padding(2) };
+        var nav = BuildModernNavigation();
+
+        var mapCard = ModernTheme.CreateCard(10);
+        mapCard.Dock = DockStyle.Fill;
+        mapCard.Margin = new Padding(10, 10, 5, 10);
         var mapLayout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            RowCount = 3,
+            ColumnCount = 1,
+            Margin = Padding.Empty,
+            Padding = Padding.Empty,
+            BackColor = ModernTheme.Surface
+        };
+        mapLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        mapLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        mapLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        mapLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
+        mapLayout.Controls.Add(new Label
+        {
+            Text = "地图 13×13",
+            AutoSize = true,
+            Font = ModernTheme.CreateUiFont(12f, FontStyle.Bold),
+            ForeColor = ModernTheme.Text,
+            Padding = new Padding(2, 0, 0, 8)
+        }, 0, 0);
+        _mapViewport.BackColor = Color.FromArgb(229, 232, 237);
+        _mapViewport.Padding = new Padding(8);
+        _mapViewport.Controls.Add(_stageCanvas);
+        _stageCanvas.Dock = DockStyle.None;
+        _stageCanvas.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+        _mapViewport.Resize += (_, _) => ScheduleFitStageCanvasToViewport();
+        mapLayout.Controls.Add(_mapViewport, 0, 1);
+        _mapNote.Margin = Padding.Empty;
+        _mapNote.ForeColor = ModernTheme.Muted;
+        mapLayout.Controls.Add(_mapNote, 0, 2);
+        mapCard.Controls.Add(mapLayout);
+
+        var terrainCard = ModernTheme.CreateCard(10);
+        terrainCard.Dock = DockStyle.Fill;
+        terrainCard.Margin = new Padding(5, 10, 10, 10);
+        var terrainLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
             RowCount = 2,
             ColumnCount = 1,
-            AutoSize = false,
-            GrowStyle = TableLayoutPanelGrowStyle.FixedSize,
+            Margin = Padding.Empty,
+            BackColor = ModernTheme.Surface
+        };
+        terrainLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        terrainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        terrainLayout.Controls.Add(new Label
+        {
+            Text = "地形块",
+            AutoSize = true,
+            Font = ModernTheme.CreateUiFont(12f, FontStyle.Bold),
+            ForeColor = ModernTheme.Text,
+            Padding = new Padding(2, 0, 0, 8)
+        }, 0, 0);
+        _terrainPanel.BackColor = ModernTheme.Surface;
+        _terrainPanel.Padding = new Padding(2);
+        _terrainPanel.ClientSizeChanged += (_, _) => ScheduleTerrainButtonResize();
+        terrainLayout.Controls.Add(_terrainPanel, 0, 1);
+        terrainCard.Controls.Add(terrainLayout);
+
+        layout.Controls.Add(nav, 0, 0);
+        layout.Controls.Add(mapCard, 1, 0);
+        layout.Controls.Add(terrainCard, 2, 0);
+        return layout;
+    }
+
+    private Control BuildModernNavigation()
+    {
+        // Keep the navigation independent from the editor work area.  The old
+        // DockStyle.Top stack mixed labels, separators and buttons in one panel,
+        // which made spacing depend on insertion order and produced uneven icon /
+        // text baselines.  A fixed brand header + vertical navigation flow gives
+        // every item one shared grid and keeps the sidebar stable at all DPIs.
+        var nav = new Panel
+        {
+            Dock = DockStyle.Fill,
+            BackColor = ModernTheme.NavBack,
             Margin = Padding.Empty,
             Padding = Padding.Empty
         };
-        // The map note can become much wider in English/Japanese. Without an
-        // explicit 100% column, TableLayoutPanel may size its only column from
-        // the AutoSize label's PreferredSize. That silently makes the map
-        // viewport wider than the visible GroupBox; centering the canvas in
-        // that oversized viewport then appears as a large rightward offset.
-        mapLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-        mapLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-        mapLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
-        _mapViewport.Controls.Add(_stageCanvas);
-        // StageCanvas is positioned manually. Anchor=None causes WinForms to
-        // re-center the control when the parent is resized, which fights the
-        // explicit Location below and can shift the map far to the right.
-        _stageCanvas.Dock = DockStyle.None;
-        _stageCanvas.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-        _mapViewport.Resize += (_, _) => ScheduleFitStageCanvasToViewport();
-        mapLayout.Controls.Add(_mapViewport, 0, 0);
-        _mapNote.Margin = Padding.Empty;
-        mapLayout.Controls.Add(_mapNote, 0, 1);
-        mapBox.Controls.Add(mapLayout);
 
-        var terrainBox = new GroupBox
+        var brandPanel = new Panel
         {
-            Text = "地形块（选择工具 / 左键选择地形 / 地图右键吸取）",
-            Dock = DockStyle.Fill,
-            MinimumSize = new Size(230, 0),
-            Margin = new Padding(2)
+            Dock = DockStyle.Top,
+            Height = 92,
+            BackColor = ModernTheme.NavBack,
+            Padding = new Padding(20, 16, 16, 10)
         };
-        terrainBox.Controls.Add(_terrainPanel);
-        _terrainPanel.ClientSizeChanged += (_, _) => ScheduleTerrainButtonResize();
 
-        layout.Controls.Add(mapBox, 0, 0);
-        layout.Controls.Add(terrainBox, 1, 0);
-        return layout;
+        var brand = new Label
+        {
+            Text = "QuarrelEx",
+            Dock = DockStyle.Top,
+            Height = 34,
+            Font = ModernTheme.CreateUiFont(15.5f, FontStyle.Bold),
+            ForeColor = Color.White,
+            TextAlign = ContentAlignment.MiddleLeft,
+            Margin = Padding.Empty,
+            Padding = Padding.Empty
+        };
+        var subtitle = new Label
+        {
+            Text = "Battle City / Ex Editor",
+            Dock = DockStyle.Top,
+            Height = 25,
+            Font = ModernTheme.CreateUiFont(9.25f),
+            ForeColor = Color.FromArgb(158, 169, 184),
+            TextAlign = ContentAlignment.MiddleLeft,
+            Margin = Padding.Empty,
+            Padding = Padding.Empty
+        };
+        var divider = new Panel
+        {
+            Dock = DockStyle.Bottom,
+            Height = 1,
+            BackColor = Color.FromArgb(55, 61, 72),
+            Margin = Padding.Empty
+        };
+
+        // DockStyle.Top adds the most recently inserted control above the
+        // previous one, therefore add the subtitle first and the title last.
+        brandPanel.Controls.Add(divider);
+        brandPanel.Controls.Add(subtitle);
+        brandPanel.Controls.Add(brand);
+
+        var navBody = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            AutoScroll = true,
+            WrapContents = false,
+            FlowDirection = FlowDirection.TopDown,
+            BackColor = ModernTheme.NavBack,
+            Padding = new Padding(12, 8, 12, 14),
+            Margin = Padding.Empty
+        };
+
+        var navigationControls = new List<Control>();
+
+        void AddSection(string title)
+        {
+            var label = new Label
+            {
+                Text = title,
+                Height = 27,
+                Margin = new Padding(8, 10, 8, 4),
+                Padding = Padding.Empty,
+                Font = ModernTheme.CreateUiFont(8.75f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(126, 139, 157),
+                TextAlign = ContentAlignment.MiddleLeft,
+                AutoEllipsis = false
+            };
+            navBody.Controls.Add(label);
+            navigationControls.Add(label);
+        }
+
+        void AddNavigationItem(EditorToolKind kind, string text, Keys shortcut)
+        {
+            var button = ModernTheme.CreateNavigationButton(
+                text,
+                EditorToolIcons.Create(kind, 18, Color.FromArgb(194, 205, 219)));
+            button.Tag = kind;
+            button.Margin = new Padding(0, 1, 0, 1);
+            button.Click += (_, _) => ShowToolWindow(kind);
+            _modernToolTip.SetToolTip(button, $"{text} ({shortcut})");
+            navBody.Controls.Add(button);
+            navigationControls.Add(button);
+        }
+
+        AddSection("编辑工具");
+        AddNavigationItem(EditorToolKind.Enemy, "敌人编辑器", Keys.F2);
+        AddNavigationItem(EditorToolKind.Tsa, "TSA / 属性", Keys.F3);
+        AddNavigationItem(EditorToolKind.Palette, "调色板编辑器", Keys.F4);
+        AddNavigationItem(EditorToolKind.FlagTsa, "Flag TSA", Keys.F5);
+
+        AddSection("游戏规则");
+        AddNavigationItem(EditorToolKind.GameSettings, "游戏设置", Keys.F6);
+        AddNavigationItem(EditorToolKind.ExOptions, "Ex 选项", Keys.F7);
+
+        AddSection("信息与画面");
+        AddNavigationItem(EditorToolKind.RomInfo, "ROM 信息", Keys.F8);
+        AddNavigationItem(EditorToolKind.Screen, "标题 / Game Over", Keys.F9);
+
+        void FitNavigationWidth()
+        {
+            // Reserve a few pixels even before the vertical scrollbar becomes
+            // visible.  That avoids a one-frame horizontal scrollbar / relayout
+            // when the window is resized to a short height.
+            var width = Math.Max(120,
+                navBody.ClientSize.Width - navBody.Padding.Horizontal - SystemInformation.VerticalScrollBarWidth - 2);
+            foreach (var control in navigationControls)
+                control.Width = width;
+        }
+
+        navBody.ClientSizeChanged += (_, _) => FitNavigationWidth();
+        navBody.HandleCreated += (_, _) => BeginInvoke(new Action(FitNavigationWidth));
+
+        nav.Controls.Add(navBody);
+        nav.Controls.Add(brandPanel);
+        return nav;
     }
 
     private ToolStripMenuItem BuildLanguageMenu()
@@ -485,7 +651,7 @@ public sealed class MainForm : Form
             ShortcutKeys = shortcut,
             ShowShortcutKeys = true,
             CheckOnClick = false,
-            Image = EditorToolIcons.Create(kind),
+            Image = EditorToolIcons.Create(kind, 20, ModernTheme.Muted),
             Tag = kind
         };
         item.Click += (_, _) => ShowToolWindow(kind);
@@ -535,7 +701,7 @@ public sealed class MainForm : Form
             EditorToolKind.Tsa => ("Quarrel Ex - TSA / 属性编辑器", new Size(820, 560)),
             EditorToolKind.Palette => ("Quarrel Ex - 调色板编辑器", new Size(520, 430)),
             EditorToolKind.FlagTsa => ("Quarrel Ex - Flag TSA Editor", new Size(600, 500)),
-            EditorToolKind.GameSettings => ("Quarrel Ex - 游戏设置", new Size(700, 820)),
+            EditorToolKind.GameSettings => ("Quarrel Ex - 游戏设置", new Size(1000, 760)),
             EditorToolKind.ExOptions => ("Quarrel Ex - Ex 选项", new Size(580, 600)),
             EditorToolKind.Screen => ("Quarrel Ex - Title / Game Over Screen Editor", new Size(820, 660)),
             _ => ("Quarrel Ex - ROM 信息", new Size(600, 500))
@@ -1030,23 +1196,28 @@ public sealed class MainForm : Form
         _gameSettings.DataChanged += (_, _) =>
         {
             var keepStage=CurrentStage;
-            RefreshAfterDataEditorChange(I18n.T("status.updated.settings"));
-            PopulateStages(keepStage);
-            _gameSettings.RefreshValues();
+            // GameSettingsControl already refreshes the specific section that was
+            // edited. Avoid running the entire tall control tree several more times
+            // for a single mouse-wheel/value change.
+            RefreshAfterDataEditorChange(I18n.T("status.updated.settings"), refreshGameSettings:false);
+            var oldRefreshing=_refreshing;
+            _refreshing=true;
+            try{PopulateStages(keepStage);}
+            finally{_refreshing=oldRefreshing;}
             RefreshExOptions();
         };
         _screenEditor.BeforeEdit += (_, _) => { if (!_refreshing) PushUndo(); };
         _screenEditor.DataChanged += (_, _) => RefreshAfterDataEditorChange(I18n.T("status.updated.screen"));
     }
 
-    private void RefreshAfterDataEditorChange(string message)
+    private void RefreshAfterDataEditorChange(string message, bool refreshGameSettings=true)
     {
         if (_rom is null || _renderer is null) return;
         MarkDirty();
         _renderer.InvalidateCache();
         BuildTerrainButtons();
         _stageCanvas.Invalidate();
-        _gameSettings.RefreshValues();
+        if(refreshGameSettings)_gameSettings.RefreshValues();
         _screenEditor.RefreshView();
         _infoBox.Text = I18n.FromSourceMultiline(_rom.Describe());
         SetStatus(message, false);

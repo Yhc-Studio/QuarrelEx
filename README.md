@@ -1,7 +1,7 @@
 # QuarrelEx
 
-![Release](https://img.shields.io/badge/release-v1.1.10-blue)
-![Desktop](https://img.shields.io/badge/Desktop-1.1.10-512BD4)
+![Release](https://img.shields.io/badge/release-v1.2.0-blue)
+![Desktop](https://img.shields.io/badge/Desktop-1.2.0-512BD4)
 ![Web](https://img.shields.io/badge/Web-1.6.14-0aa0c0)
 ![Mobile](https://img.shields.io/badge/Mobile-1.1.1-0aa0c0)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -16,12 +16,21 @@
 
 | Component | Version |
 |---|---:|
-| QuarrelEx | 1.1.10 |
-| Desktop | 1.1.10 |
+| QuarrelEx | 1.2.0 |
+| Desktop | 1.2.0 |
 | Web | 1.6.14 |
 | Mobile Web | 1.1.1 |
 | Config format | QuarrelExConfig v3 |
 | BCEX 32KB | Final Runtime |
+
+## Desktop 1.2.0 Modern UI
+
+- New persistent left navigation with grouped Editing / Gameplay / Information sections, fixed icon/text alignment, and a card-style map / terrain workspace.
+- Reworked top command bar for stage selection, open/save, undo/redo and stage package actions.
+- Unified Fluent-inspired light styling, Microsoft YaHei UI-first typography and modernized tool windows.
+- Game Settings is no longer one huge scrolling surface; it is split into **Basic / Player Spawn / Enemy & Pacing / Rules & Runtime / Maintenance** pages.
+- Each settings page preserves its own scroll position and the selected page survives resize/refresh operations.
+- Still uses stock WinForms + .NET 8 with no third-party UI framework dependency.
 
 ## Highlights
 

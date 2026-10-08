@@ -7,8 +7,8 @@ namespace QuarrelEx.Controls;
 public sealed class GameSettingsControl : UserControl
 {
     private readonly NumericUpDown _lives = Num(1,255);
-    private readonly ComboBox _initial = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=140};
-    private readonly ComboBox _death = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=140};
+    private readonly ComboBox _initial = new SettingsComboBox(){DropDownStyle=ComboBoxStyle.DropDownList,Width=140};
+    private readonly ComboBox _death = new SettingsComboBox(){DropDownStyle=ComboBoxStyle.DropDownList,Width=140};
     private readonly Label _deathNote = new(){AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray};
     private readonly CheckBox _lock = new(){Text="锁定初始状态（死亡后恢复初始等级；吃星星仍可升级）",AutoSize=true};
     private readonly Dictionary<SpawnKind,(NumericUpDown X,NumericUpDown Y)> _spawns=new();
@@ -41,9 +41,9 @@ public sealed class GameSettingsControl : UserControl
     // Runtime 6.5/6.6 global final rules.
     private readonly GroupBox _finalRulesBox = new(){Text="Final Rules 全局规则（QXR1 v2~v6）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8),Margin=new Padding(0,12,0,4)};
     private readonly CheckBox _skipGameOver = new(){Text="Skip Final GAME OVER（默认 OFF；Hi-Score 保留）",AutoSize=true};
-    private readonly ComboBox _bonus2P = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=330};
-    private readonly ComboBox _armorMode = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=330};
-    private readonly ComboBox _lifeMode = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=320};
+    private readonly ComboBox _bonus2P = new SettingsComboBox(){DropDownStyle=ComboBoxStyle.DropDownList,Width=330};
+    private readonly ComboBox _armorMode = new SettingsComboBox(){DropDownStyle=ComboBoxStyle.DropDownList,Width=330};
+    private readonly ComboBox _lifeMode = new SettingsComboBox(){DropDownStyle=ComboBoxStyle.DropDownList,Width=320};
     private readonly NumericUpDown _lifeValue = Num(1,99);
     private readonly NumericUpDown _cheatLives1 = Num(1,99);
     private readonly NumericUpDown _cheatLives2 = Num(1,99);
@@ -69,7 +69,7 @@ public sealed class GameSettingsControl : UserControl
     private readonly NumericUpDown _shieldEnemyHelmet = Num(0,255);
     private readonly NumericUpDown _enemyOneUp = Num(0,99);
     private readonly ComboBox[,] _bulletSpeed = new ComboBox[4,2];
-    private readonly ComboBox _dropMode = new(){DropDownStyle=ComboBoxStyle.DropDownList,Width=180};
+    private readonly ComboBox _dropMode = new SettingsComboBox(){DropDownStyle=ComboBoxStyle.DropDownList,Width=180};
     private readonly NumericUpDown[] _dropCounts = Enumerable.Range(0,7).Select(_=>Num(0,8)).ToArray();
     private readonly Button _dropApply = new(){Text="应用爆率",AutoSize=true};
     private readonly Label _gameplayExtNote = new(){AutoSize=true,MaximumSize=new Size(590,0),ForeColor=Color.DimGray};
@@ -88,6 +88,12 @@ public sealed class GameSettingsControl : UserControl
     private NesRenderer? _renderer;
     private bool _refreshing;
     private Func<int>? _stageProvider;
+    private readonly TableLayoutPanel _settingsShell = new();
+    private readonly FlowLayoutPanel _settingsNav = new();
+    private readonly Panel _settingsPageHost = new();
+    private readonly List<SettingsScrollPanel> _settingsScrollHosts = new();
+    private readonly List<Button> _settingsNavButtons = new();
+    private int _activeSettingsPage;
 
     public event EventHandler? BeforeEdit;
     public event EventHandler? DataChanged;
@@ -95,30 +101,76 @@ public sealed class GameSettingsControl : UserControl
     public GameSettingsControl()
     {
         Dock=DockStyle.Fill;
+        DoubleBuffered=true;
+        BackColor=ModernTheme.WindowBack;
         for(int i=0;i<=4;i++){_initial.Items.Add($"Lv{i}");_death.Items.Add($"Lv{i}");}
         _bonus2P.Items.AddRange(["Original：本关击杀较多者 +1000", "Win Streak：连续胜场递增奖励"]);
         _armorMode.Items.AddRange(["Original：装甲坦克原版 4 发耐久", "One Hit：普通400分装甲=白色1HP；闪光奖励装甲仍为原版4HP"]);
         _lifeMode.Items.AddRange(["Original：20,000 分仅 +1 次", "Custom Once：自定义门槛仅 +1 次", "Repeat：固定分数间隔反复 +1", "Disabled：关闭分数加命"]);
 
-        var root=new FlowLayoutPanel{Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,WrapContents=false,AutoScroll=true,Padding=new Padding(12)};
-        root.Controls.Add(new Label{Text="游戏设置",Font=new Font(Font,FontStyle.Bold),AutoSize=true});
-        root.Controls.Add(_note);
-        root.Controls.Add(Line("起始命数 (1~255):",_lives));
-        root.Controls.Add(Line("初始坦克等级:",_initial));
-        root.Controls.Add(Line("死亡等级:",_death));
-        root.Controls.Add(_deathNote);
-        root.Controls.Add(_lock);
+        BuildStagePlayerSpawnBox();
+        BuildCustomSpawnBox();
+        BuildPacingBox();
+        BuildFinalRulesBox();
+        BuildGameplayExtensionBox();
+        BuildBonusCadenceBox();
+
+        _settingsShell.Dock=DockStyle.Fill;
+        _settingsShell.ColumnCount=2;
+        _settingsShell.RowCount=1;
+        _settingsShell.Margin=Padding.Empty;
+        _settingsShell.Padding=Padding.Empty;
+        _settingsShell.BackColor=ModernTheme.WindowBack;
+        _settingsShell.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,176F));
+        _settingsShell.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100F));
+
+        _settingsNav.Dock=DockStyle.Fill;
+        _settingsNav.FlowDirection=FlowDirection.TopDown;
+        _settingsNav.WrapContents=false;
+        _settingsNav.AutoScroll=false;
+        _settingsNav.Padding=new Padding(10,12,10,10);
+        _settingsNav.Margin=Padding.Empty;
+        _settingsNav.BackColor=Color.FromArgb(237,239,243);
+        _settingsNav.SizeChanged+=(_,_)=>ResizeSettingsNavigationButtons();
+
+        var navTitle=new Label
+        {
+            Text="游戏设置",
+            AutoSize=false,
+            Width=148,
+            Height=36,
+            Font=ModernTheme.CreateUiFont(12f,FontStyle.Bold),
+            ForeColor=ModernTheme.Text,
+            TextAlign=ContentAlignment.MiddleLeft,
+            Padding=new Padding(6,0,0,0),
+            Margin=new Padding(0,0,0,8)
+        };
+        _settingsNav.Controls.Add(navTitle);
+
+        _settingsPageHost.Dock=DockStyle.Fill;
+        _settingsPageHost.Margin=Padding.Empty;
+        _settingsPageHost.Padding=new Padding(8);
+        _settingsPageHost.BackColor=ModernTheme.WindowBack;
+
+        var basic=CreateSettingsPage("基础 / 全局出生点");
+        basic.Root.Controls.Add(PageHeading("基础与全局出生点","初始命数、坦克等级、死亡规则与原版全局出生坐标。"));
+        basic.Root.Controls.Add(_note);
+        basic.Root.Controls.Add(Line("起始命数 (1~255):",_lives));
+        basic.Root.Controls.Add(Line("初始坦克等级:",_initial));
+        basic.Root.Controls.Add(Line("死亡等级:",_death));
+        basic.Root.Controls.Add(_deathNote);
+        basic.Root.Controls.Add(_lock);
 
         var visualBox=new GroupBox
         {
             Text="原版全局出现位置（拖拽坦克；坐标输入与画面双向同步）",
-            Width=560,Height=486,Padding=new Padding(8),Margin=new Padding(0,10,0,4)
+            Width=600,Height=486,Padding=new Padding(8),Margin=new Padding(0,14,0,4)
         };
         _spawnEditor.Dock=DockStyle.Fill;
         visualBox.Controls.Add(_spawnEditor);
-        root.Controls.Add(visualBox);
+        basic.Root.Controls.Add(visualBox);
 
-        var spawnBox=new GroupBox{Text="原版全局出现位置精确坐标（0~255）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8)};
+        var spawnBox=new GroupBox{Text="原版全局出现位置精确坐标（0~255）",AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,Padding=new Padding(8),Margin=new Padding(0,12,0,4)};
         var grid=new TableLayoutPanel{ColumnCount=3,RowCount=6,AutoSize=true,CellBorderStyle=TableLayoutPanelCellBorderStyle.Single};
         grid.Controls.Add(new Label{Text="对象",AutoSize=true,Padding=new Padding(5)},0,0);
         grid.Controls.Add(new Label{Text="X",AutoSize=true,Padding=new Padding(5)},1,0);
@@ -133,23 +185,38 @@ public sealed class GameSettingsControl : UserControl
             _spawnLabels[kind]=label;
             grid.Controls.Add(label,0,row);grid.Controls.Add(x,1,row);grid.Controls.Add(y,2,row);row++;
         }
-        spawnBox.Controls.Add(grid);root.Controls.Add(spawnBox);
+        spawnBox.Controls.Add(grid);
+        basic.Root.Controls.Add(spawnBox);
 
-        BuildStagePlayerSpawnBox();
-        root.Controls.Add(_stagePlayerSpawnBox);
-        BuildCustomSpawnBox();
-        root.Controls.Add(_customSpawnBox);
-        BuildPacingBox();
-        root.Controls.Add(_pacingBox);
-        BuildFinalRulesBox();
-        root.Controls.Add(_finalRulesBox);
-        BuildGameplayExtensionBox();
-        root.Controls.Add(_gameplayExtBox);
-        BuildBonusCadenceBox();
-        root.Controls.Add(_bonusCadenceBox);
+        var player=CreateSettingsPage("玩家出生点");
+        player.Root.Controls.Add(PageHeading("逐关玩家出生点","Stage 1~70 的 P1 / P2 出生点设置。"));
+        player.Root.Controls.Add(_stagePlayerSpawnBox);
 
-        var clearFlow=new FlowLayoutPanel{AutoSize=true,Padding=new Padding(0,10,0,0)};clearFlow.Controls.Add(_clearStage);clearFlow.Controls.Add(_clearAll);root.Controls.Add(clearFlow);
-        Controls.Add(root);
+        var enemy=CreateSettingsPage("敌人 / 节奏");
+        enemy.Root.Controls.Add(PageHeading("敌人生成与节奏","自定义出生点、出现节奏与奖励坦克频率。"));
+        enemy.Root.Controls.Add(_customSpawnBox);
+        enemy.Root.Controls.Add(_pacingBox);
+        enemy.Root.Controls.Add(_bonusCadenceBox);
+
+        var runtime=CreateSettingsPage("规则 / Runtime");
+        runtime.Root.Controls.Add(PageHeading("游戏规则与 Runtime","Final Rules、Gameplay Extension、保护罩、道具与子弹规则。"));
+        runtime.Root.Controls.Add(_finalRulesBox);
+        runtime.Root.Controls.Add(_gameplayExtBox);
+
+        var maintenance=CreateSettingsPage("维护");
+        maintenance.Root.Controls.Add(PageHeading("关卡维护","这些操作会直接修改当前 ROM，可使用撤销恢复。"));
+        var clearCard=new FlowLayoutPanel{AutoSize=true,FlowDirection=FlowDirection.TopDown,WrapContents=false,Padding=new Padding(12),Margin=new Padding(0,10,0,0),BackColor=ModernTheme.Surface};
+        clearCard.Controls.Add(new Label{Text="清理操作",AutoSize=true,Font=ModernTheme.CreateUiFont(10f,FontStyle.Bold),ForeColor=ModernTheme.Text});
+        clearCard.Controls.Add(new Label{Text="建议在执行前先保存或确认撤销栈可用。",AutoSize=true,MaximumSize=new Size(620,0),ForeColor=ModernTheme.Muted,Padding=new Padding(0,4,0,8)});
+        var clearFlow=new FlowLayoutPanel{AutoSize=true,WrapContents=true};
+        clearFlow.Controls.Add(_clearStage);clearFlow.Controls.Add(_clearAll);
+        clearCard.Controls.Add(clearFlow);
+        maintenance.Root.Controls.Add(clearCard);
+
+        _settingsShell.Controls.Add(_settingsNav,0,0);
+        _settingsShell.Controls.Add(_settingsPageHost,1,0);
+        Controls.Add(_settingsShell);
+        ShowSettingsPage(0);
 
         _lives.ValueChanged += (_,_)=>Apply(()=>_rom!.StartingLives=(byte)_lives.Value);
         _initial.SelectedIndexChanged += (_,_)=>Apply(()=>{if(_initial.SelectedIndex>=0)_rom!.InitialTankLevel=_initial.SelectedIndex;});
@@ -176,6 +243,88 @@ public sealed class GameSettingsControl : UserControl
 
         _clearStage.Click += (_,_)=>{if(_rom is null||_stageProvider is null)return;if(MessageBox.Show(FindForm(),I18n.T("dialog.clear_stage.message"),I18n.T("dialog.clear_stage.title"),MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.ClearStage(_stageProvider());RefreshMapVisuals();DataChanged?.Invoke(this,EventArgs.Empty);};
         _clearAll.Click += (_,_)=>{if(_rom is null)return;if(MessageBox.Show(FindForm(),I18n.T("dialog.clear_all.message"),I18n.T("dialog.clear_all.title"),MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes)return;BeforeEdit?.Invoke(this,EventArgs.Empty);_rom.ClearAllStages();RefreshMapVisuals();DataChanged?.Invoke(this,EventArgs.Empty);};
+
+        ModernTheme.ApplyRecursive(this);
+    }
+
+    private (SettingsScrollPanel Host, FlowLayoutPanel Root) CreateSettingsPage(string title)
+    {
+        var host=new SettingsScrollPanel
+        {
+            Dock=DockStyle.Fill,
+            AutoScroll=true,
+            AutoScrollMargin=new Size(0,16),
+            BackColor=ModernTheme.WindowBack,
+            Visible=false,
+            Margin=Padding.Empty
+        };
+        var root=new FlowLayoutPanel
+        {
+            Location=Point.Empty,
+            MinimumSize=new Size(660,0),
+            Margin=Padding.Empty,
+            FlowDirection=FlowDirection.TopDown,
+            WrapContents=false,
+            AutoSize=true,
+            AutoSizeMode=AutoSizeMode.GrowAndShrink,
+            Padding=new Padding(16),
+            BackColor=ModernTheme.WindowBack
+        };
+        host.Controls.Add(root);
+        _settingsPageHost.Controls.Add(host);
+        _settingsScrollHosts.Add(host);
+
+        var button=new Button
+        {
+            Text=title,
+            Width=148,
+            Height=38,
+            FlatStyle=FlatStyle.Flat,
+            TextAlign=ContentAlignment.MiddleLeft,
+            Padding=new Padding(10,0,6,0),
+            Margin=new Padding(0,2,0,2),
+            BackColor=Color.Transparent,
+            ForeColor=ModernTheme.Text,
+            Cursor=Cursors.Hand,
+            TabStop=false,
+            UseVisualStyleBackColor=false,
+            Tag="ModernNavLight"
+        };
+        button.FlatAppearance.BorderSize=0;
+        button.FlatAppearance.MouseOverBackColor=Color.FromArgb(224,228,234);
+        var index=_settingsNavButtons.Count;
+        button.Click+=(_,_)=>ShowSettingsPage(index);
+        _settingsNavButtons.Add(button);
+        _settingsNav.Controls.Add(button);
+        return(host,root);
+    }
+
+    private void ShowSettingsPage(int index)
+    {
+        if(index<0||index>=_settingsScrollHosts.Count)return;
+        _activeSettingsPage=index;
+        for(var i=0;i<_settingsScrollHosts.Count;i++)
+        {
+            _settingsScrollHosts[i].Visible=i==index;
+            _settingsNavButtons[i].BackColor=i==index?Color.FromArgb(215,226,239):Color.Transparent;
+            _settingsNavButtons[i].ForeColor=i==index?ModernTheme.Accent:ModernTheme.Text;
+            _settingsNavButtons[i].Font=ModernTheme.CreateUiFont(9.25f,i==index?FontStyle.Bold:FontStyle.Regular);
+        }
+        _settingsScrollHosts[index].BringToFront();
+    }
+
+    private void ResizeSettingsNavigationButtons()
+    {
+        var width=Math.Max(120,_settingsNav.ClientSize.Width-_settingsNav.Padding.Horizontal-4);
+        foreach(var button in _settingsNavButtons)button.Width=width;
+    }
+
+    private static Control PageHeading(string title,string subtitle)
+    {
+        var panel=new FlowLayoutPanel{AutoSize=true,FlowDirection=FlowDirection.TopDown,WrapContents=false,Margin=new Padding(0,0,0,8),Padding=Padding.Empty};
+        panel.Controls.Add(new Label{Text=title,AutoSize=true,Font=ModernTheme.CreateUiFont(15f,FontStyle.Bold),ForeColor=ModernTheme.Text});
+        panel.Controls.Add(new Label{Text=subtitle,AutoSize=true,MaximumSize=new Size(640,0),ForeColor=ModernTheme.Muted,Padding=new Padding(0,3,0,5)});
+        return panel;
     }
 
     private void BuildStagePlayerSpawnBox()
@@ -279,7 +428,7 @@ public sealed class GameSettingsControl : UserControl
         for(var i=0;i<4;i++)
         {
             bullet.Controls.Add(new Label{Text=names[i],AutoSize=true,Padding=new Padding(5)},0,i+1);
-            for(var j=0;j<2;j++){var c=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=110};c.Items.AddRange(["Normal","Fast"]);_bulletSpeed[i,j]=c;bullet.Controls.Add(c,j+1,i+1);}
+            for(var j=0;j<2;j++){var c=new SettingsComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=110};c.Items.AddRange(["Normal","Fast"]);_bulletSpeed[i,j]=c;bullet.Controls.Add(c,j+1,i+1);}
         }
         flow.Controls.Add(bullet);
         _dropMode.Items.AddRange(["Classic / 无手枪","With Pistol / 手枪开启"]);_dropMode.SelectedIndex=0;
@@ -387,6 +536,106 @@ public sealed class GameSettingsControl : UserControl
         _cheatLives2.ValueChanged+=(_,_)=>ApplyFinalV3(()=>_rom!.CheatPlayer2Lives=(int)_cheatLives2.Value);
     }
 
+    private static SettingsScrollPanel? FindSettingsScrollPanel(Control control)
+    {
+        for(Control? p=control.Parent;p is not null;p=p.Parent)
+            if(p is SettingsScrollPanel host)return host;
+        return null;
+    }
+
+    private sealed class SettingsNumericUpDown : NumericUpDown
+    {
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            var host=FindSettingsScrollPanel(this);
+            if(host is null){base.OnMouseWheel(e);return;}
+            host.ScrollByWheel(e.Delta);
+            if(e is HandledMouseEventArgs handled)handled.Handled=true;
+        }
+    }
+
+    private sealed class SettingsComboBox : ComboBox
+    {
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            // A closed combo box must not consume the wheel while the user is
+            // navigating the long settings page.  Changing SelectedIndex here used
+            // to trigger a ROM write + several full RefreshValues passes per wheel
+            // detent, which looked like an application hang.
+            if(!DroppedDown && FindSettingsScrollPanel(this) is { } host)
+            {
+                host.ScrollByWheel(e.Delta);
+                if(e is HandledMouseEventArgs handled)handled.Handled=true;
+                return;
+            }
+            base.OnMouseWheel(e);
+        }
+    }
+
+    private sealed class SettingsScrollPanel : Panel
+    {
+        private int _savedScrollY;
+        private int _pendingRestoreY;
+        private bool _restorePending;
+
+        public int ScrollY => Math.Max(0, VerticalScroll.Value);
+
+        public void ScrollByWheel(int delta)
+        {
+            if(!VerticalScroll.Visible)return;
+            var lines=SystemInformation.MouseWheelScrollLines;
+            if(lines<=0)lines=3;
+            var notch=Math.Max(1,Math.Abs(delta)/SystemInformation.MouseWheelScrollDelta);
+            var step=Math.Max(18,VerticalScroll.SmallChange*lines)*notch;
+            var target=ScrollY + (delta>0 ? -step : step);
+            SetScrollY(target);
+        }
+
+        public void RestoreScrollY(int y)
+        {
+            _savedScrollY=Math.Max(0,y);
+            QueueRestore(_savedScrollY);
+        }
+
+        protected override void OnScroll(ScrollEventArgs se)
+        {
+            base.OnScroll(se);
+            _savedScrollY=ScrollY;
+        }
+
+        protected override void OnClientSizeChanged(EventArgs e)
+        {
+            var keep=_savedScrollY;
+            base.OnClientSizeChanged(e);
+            // Resizing a WinForms AutoScroll parent may temporarily force
+            // AutoScrollPosition back to the origin while it recomputes the scroll
+            // range. Restore the previous viewport after that layout pass finishes.
+            QueueRestore(keep);
+        }
+
+        private void QueueRestore(int y)
+        {
+            _pendingRestoreY=Math.Max(0,y);
+            if(_restorePending || !IsHandleCreated || IsDisposed)return;
+            _restorePending=true;
+            BeginInvoke(new Action(() =>
+            {
+                _restorePending=false;
+                if(IsDisposed)return;
+                SetScrollY(_pendingRestoreY);
+            }));
+        }
+
+        private void SetScrollY(int y)
+        {
+            if(!IsHandleCreated || IsDisposed)return;
+            var max=Math.Max(0,VerticalScroll.Maximum-VerticalScroll.LargeChange+1);
+            var value=Math.Clamp(y,0,max);
+            AutoScrollPosition=new Point(0,value);
+            _savedScrollY=value;
+        }
+    }
+
     private int CurrentStage => _stageProvider?.Invoke() ?? 1;
     private bool StagePlayerAvailable => _rom?.SupportsFinalRulesV5==true && CurrentStage is >=1 and <=70;
     private bool CustomAvailable => _rom?.HasFinalRules==true && CurrentStage is >=1 and <=70;
@@ -403,6 +652,8 @@ public sealed class GameSettingsControl : UserControl
 
     public void RefreshValues()
     {
+        var keepScroll=_settingsScrollHosts.Select(host=>host.ScrollY).ToArray();
+        var keepPage=_activeSettingsPage;
         _refreshing=true;
         try
         {
@@ -432,7 +683,13 @@ public sealed class GameSettingsControl : UserControl
             RefreshGameplayExtensionCore();
             RefreshBonusCadenceCore();
         }
-        finally{_refreshing=false; I18n.TranslateControlTree(this);}
+        finally
+        {
+            _refreshing=false;
+            I18n.TranslateControlTree(this);
+            for(var i=0;i<_settingsScrollHosts.Count&&i<keepScroll.Length;i++)_settingsScrollHosts[i].RestoreScrollY(keepScroll[i]);
+            ShowSettingsPage(keepPage);
+        }
     }
 
     private void RefreshGameplayExtensionCore()
@@ -678,21 +935,21 @@ public sealed class GameSettingsControl : UserControl
 
     private static ComboBox ModeCombo()
     {
-        var c=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=125};
+        var c=new SettingsComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=125};
         c.Items.AddRange(["Original / 全局","Custom / 本关"]);
         return c;
     }
 
-    private static NumericUpDown GridNum()=>new(){Minimum=BattleCityRom.CustomEnemySpawnMin,Maximum=BattleCityRom.CustomEnemySpawnMax,Increment=16,Width=90,Hexadecimal=false};
+    private static NumericUpDown GridNum()=>new SettingsNumericUpDown(){Minimum=BattleCityRom.CustomEnemySpawnMin,Maximum=BattleCityRom.CustomEnemySpawnMax,Increment=16,Width=90,Hexadecimal=false};
 
     private static ComboBox CountCombo()
     {
-        var c=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=125};
+        var c=new SettingsComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=125};
         c.Items.Add("Original (3)");
         for(var i=1;i<=8;i++)c.Items.Add(i.ToString());
         return c;
     }
 
-    private static NumericUpDown Num(int min,int max)=>new(){Minimum=min,Maximum=max,Width=90,Hexadecimal=false};
+    private static NumericUpDown Num(int min,int max)=>new SettingsNumericUpDown(){Minimum=min,Maximum=max,Width=90,Hexadecimal=false};
     private static Control Line(string text,Control control){var p=new FlowLayoutPanel{AutoSize=true};p.Controls.Add(new Label{Text=text,AutoSize=true,Padding=new Padding(0,6,8,0)});p.Controls.Add(control);return p;}
 }

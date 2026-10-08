@@ -1,7 +1,7 @@
 # QuarrelEx
 
-![Release](https://img.shields.io/badge/release-v1.1.10-blue)
-![Desktop](https://img.shields.io/badge/Desktop-1.1.10-512BD4)
+![Release](https://img.shields.io/badge/release-v1.2.0-blue)
+![Desktop](https://img.shields.io/badge/Desktop-1.2.0-512BD4)
 ![Web](https://img.shields.io/badge/Web-1.6.14-0aa0c0)
 ![Mobile](https://img.shields.io/badge/Mobile-1.1.1-0aa0c0)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -16,12 +16,21 @@
 
 | 组件 | 版本 |
 |---|---:|
-| QuarrelEx | 1.1.10 |
-| Desktop | 1.1.10 |
+| QuarrelEx | 1.2.0 |
+| Desktop | 1.2.0 |
 | Web | 1.6.14 |
 | Mobile Web | 1.1.1 |
 | 配置格式 | QuarrelExConfig v3 |
 | BCEX 32KB | Final Runtime |
+
+## Desktop 1.2.0 Modern UI
+
+- 主窗口改为现代化左侧导航 + 地图/地形卡片式工作区；导航按“编辑工具 / 游戏规则 / 信息与画面”分组，并统一图标槽位、文字基线和行距。
+- 顶部命令栏重新整理，保留关卡切换、打开、保存、撤销/重做和关卡导入导出。
+- 工具窗口统一使用现代浅色界面，中文界面优先使用 Microsoft YaHei UI（微软雅黑），并统一控件与字体度量。
+- “游戏设置”不再使用一条超长滚动页面，拆分为 **基础 / 玩家出生点 / 敌人节奏 / 规则 Runtime / 维护** 五个页面。
+- 每个设置页面独立保存滚动位置，窗口缩放或数据刷新后保持当前页面与阅读位置。
+- 继续保留 WinForms + .NET 8，实现不依赖第三方 UI 框架。
 
 ## 主要功能
 

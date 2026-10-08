@@ -1,6 +1,6 @@
 # QuarrelEx Desktop
 
-Current release: **Desktop 1.1.10**, compatible with the maintained **BCEX 32KB Final Runtime** and QuarrelExConfig v3.
+Current release: **Desktop 1.2.0 Modern UI**, compatible with the maintained **BCEX 32KB Final Runtime** and QuarrelExConfig v3.
 
 Build requirements:
 
@@ -19,3 +19,15 @@ python tools/check_i18n.py
 ```
 
 Desktop and Web share the same Config v3 semantics and current BCEX gameplay settings.
+
+
+## Modern UI
+
+Desktop 1.2.0 keeps the existing WinForms/.NET 8 codebase and ROM logic, but introduces a Fluent-inspired shell without third-party UI dependencies:
+
+- persistent 252 px left navigation with grouped Editing / Gameplay / Information sections, fixed 18 px glyph slots and unified text baselines;
+- card-style map / terrain workspace and modernized command bars;
+- Microsoft YaHei UI-first typography for consistent Chinese/Latin metrics, flat buttons, grids and tool windows;
+- a redesigned Game Settings workspace split into five short pages instead of one extremely long scrolling surface;
+- preserved per-page scroll positions and selected page while the settings window is resized or refreshed;
+- modeless editor windows remain available and retain their state when hidden.
